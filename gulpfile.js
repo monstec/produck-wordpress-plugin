@@ -45,10 +45,12 @@ var paths = {
         "php": "src/php/**/*",
         "css": ['src/css/**/*.scss', 'src/css/**/*.css'],
         "js": "src/js/**/*",
-        "img": "resources/img/**/*"
+        "img": "resources/img/**/*",
+        "static": "resources/static/**/*"
     },
     "build": {
         "root": "build",
+        "base": "build",
         "php": "build",
         "css": "build/css",
         "js": "build/js",
@@ -61,7 +63,7 @@ var paths = {
         "php": "dist/" + pluginName,
         "js": "dist/" + pluginName + "/js",
         "css": "dist/" + pluginName + "/css",
-        "img": "dist/" + pluginName + "/img"
+        "img": "dist/" + pluginName + "/img",
     }
 };
 
@@ -227,7 +229,7 @@ function copyChangedImages(destDir, deploy) {
         // only process changed images; this should save time for consecutive runs of this task or 'default'
         .pipe(gchanged(destDir))
         .pipe(gulp.dest(destDir))
-        .pipe((deploy ? gulp.dest(getCorrespondingDeploymentDir(paths.build.img)) : noop()));
+        .pipe((deploy ? gulp.dest(getCorrespondingDeploymentDir(destDir)) : noop()));
 
     return addReloadBehaviour(stream);
 }
@@ -240,6 +242,27 @@ function copyChangedImagesBuild() {
 // for distribution task
 function copyChangedImagesDist() {
     return copyChangedImages(paths.dist.img, false);
+}
+
+/*
+ * Images are just copied into the build directory.
+ */
+function copyStaticResources(destDir, deploy) {
+    var stream = gulp.src(paths.source.static)
+        .pipe(gulp.dest(destDir))
+        .pipe((deploy ? gulp.dest(getCorrespondingDeploymentDir(destDir)) : noop()));
+
+    return addReloadBehaviour(stream);
+}
+
+// for build task
+function copyStaticResourcesBuild() {
+    return copyStaticResources(paths.build.base, doDeployment);
+}
+
+// for distribution task
+function copyStaticResourcesDist() {
+    return copyStaticResources(paths.dist.base, false);
 }
 
 /*
@@ -294,15 +317,16 @@ gulp.task('scripts', processScriptsBuild);
 gulp.task('php', processPhpBuild);
 gulp.task('images', copyChangedImagesBuild);
 gulp.task('libs', copyLibrariesBuild);
+gulp.task('static', copyStaticResourcesBuild);
 
 gulp.task('clean', clean);
 gulp.task('watch', watch);
 
-gulp.task('default', gulp.series('clean', logDeploymentStatus, gulp.parallel('php', 'images', 'styles', 'scripts', 'libs')));
+gulp.task('default', gulp.series('clean', logDeploymentStatus, gulp.parallel('php', 'images', 'styles', 'scripts', 'libs', 'static')));
 
 gulp.task('dist', gulp.series('clean', logDeploymentStatus,
                               gulp.parallel(processPhpDist, copyChangedImagesDist, processStylesDist, processScriptsDist,
-                                            copyLibrariesDist),
+                                            copyLibrariesDist, copyStaticResourcesDist),
                               createDistributionArchive));
 
 

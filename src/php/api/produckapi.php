@@ -32,11 +32,10 @@ class ProduckApi {
         //$this->urlQuackEndpoint = "https://localhost:8443/chat-service/quack?userId=".$cid."&quackId=";
 
         // in dev environment, ignore the self-signed cert warnings
-        $this->streamContext["ssl"] = array(
-            "allow_self_signed" => true,
-            "verify_peer" => false,
-            "verify_peer_name" => false,
-        );
+        add_filter('http_request_args', function($r) {
+            $r['sslverify'] = false;
+            return $r;
+        });
         // @endif
     }
 

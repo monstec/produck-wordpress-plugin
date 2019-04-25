@@ -69,6 +69,7 @@ Install the  Produck.de Worpress plugin in just a few minutes by following these
 * Now install the plugin and activate the plugin in your Wordpress installation.
 * Then open the configuration of the Produck.de Plugin which can be found via the settings menu item of the Wordpress administration. You will be immediately prompted for your customer ID and whether you want to show a Produck.de link beneath your Quack-pages.
 * Change the other settings or keep it if suitable to your preferences. All settings are explained directly on the administration page.
+* Last but not least there is one more very important step. Since the Produck plugin uses virtual posts/pages the necessary routing does only work if the Permalinks setting of Wordpress is set to something other than the first option.
 
 Now you are ready to go. After you have created the first quacks, they should appear on your website automatically. Otherwise contact us under https://produck.de?cid=53.
 If you want to add products to your account, please contact us under https://produck.de?cid=53. We will help you to manage the process.

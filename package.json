@@ -1,8 +1,8 @@
 {
-  "name": "prestashop-modules",
+  "name": "produck-wordpress-plugin",
   "version": "0.0.1",
-  "description": "This project contains all modules for Prestashop.",
-  "repository": "git@elg.us.to:unicorn/con-client-plugins.git",
+  "description": "This project contains the produck.de plugin for wordpress",
+  "repository": "git@github.com:monstec/produck-wordpress-plugin.git",
   "license": "MonsTec-Standard-License-1.0",
   "devDependencies": {
     "@babel/core": "^7.0.0",

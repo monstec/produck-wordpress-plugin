@@ -32,8 +32,6 @@
     "gulp-strip-debug": "^3.0.0",
     "gulp-uglify": "^3.0.1",
     "gulp-zip": "^4.2.0",
-    "jquery": "^3.3.1",
-    "jquery-ui-dist": "^1.12.1",
     "js-cookie": "^2.2.0",
     "jshint": "^2.9.5",
     "merge-stream": "^1.0.1"

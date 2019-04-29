@@ -266,11 +266,11 @@ function copyStaticResourcesDist() {
 }
 
 /*
- * Creates a zip archive for each module that can be installed via Prestashop's back office.
+ * Creates a zip archive for each module that can be installed via WPs plugin section.
  */
 function createDistributionArchive() {
     // The base folder of the src-directive must be changed so that gulp-zip includes the base directory of the
-    // particular module. This is necessary because Prestashop requires the module-zip to contain this base directory
+    // particular module. This is necessary because WP requires the module-zip to contain this base directory
     // and not only the files in it. Otherwise it is not even possible to install the module.
     var stream = gulp.src(paths.dist.base + '/**/*', {base:paths.dist.base + '/..'})
         .pipe(zip(pluginName + '.zip'))
@@ -345,7 +345,7 @@ function logDeploymentStatus(done) {
 function checkDeploymentDir(targetDir) {
     // check if the environment variable exists and does have a value
     if (targetDir === undefined || targetDir === '') {
-        log(formatWarning('The environment variable WORDPRESS_PLUGINS_DIR is not set. Deployment to Prestashop will not take place.'));
+        log(formatWarning('The environment variable WORDPRESS_PLUGINS_DIR is not set. Deployment to WordPress will not take place.'));
         return false;
     }
 

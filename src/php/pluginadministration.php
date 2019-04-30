@@ -41,7 +41,7 @@ class ProduckPluginAdministration {
      * Create the HTML output for the page (screen) displayed when the menu item is clicked.
     */
     public function createPluginOptionsPage() {
-        if ( !current_user_can( 'manage_options' ) )  {
+        if (!current_user_can( 'manage_options')) {
             wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
         }
 
@@ -299,7 +299,9 @@ class ProduckPluginAdministration {
                 var data = {
                     'action': 'produck_first_config',
                     'cid': cid,
-                    'answer': powby
+                    'answer': powby,
+                    'produckConfigFirstSaveNonce': document.getElementById('produckConfigFirstSaveNonce').value,
+                    '_wp_http_referer': document.getElementsByName('_wp_http_referer')[0].value
                 };
 
                 document.getElementById('produckCustomerIdField').value = cid;
@@ -340,6 +342,9 @@ class ProduckPluginAdministration {
             <div class="button-cell">
               <button class="button button-primary" onclick="javascript:produck_sendFirstConfigAnswer();">Speichern</button>
               <button class="button" onclick="javascript:tb_remove();return false;">Abbruch</button>
+              <?php
+                wp_nonce_field('produck_config_first_save', 'produckConfigFirstSaveNonce');
+              ?>
             </div>
           </div>
         </div>
@@ -347,13 +352,19 @@ class ProduckPluginAdministration {
     }
 
     public function handleFirstConfigAnswer() {
+        if(!current_user_can('manage_options') 
+                || !isset($_POST['produckConfigFirstSaveNonce'])
+                || !wp_verify_nonce($_POST['produckConfigFirstSaveNonce'], 'produck_config_first_save')) {
+            wp_send_json('Not authorised!', 401);
+            wp_die();
+        }
+
         $cid = intval( $_POST['cid'] );
         $answer = boolval( $_POST['answer'] );
         $option = get_option('produck_config');
         $option['customerId'] = $cid;
         $option['poweredByLinkAllowed'] = ($answer) ? 1 : 0;
         update_option('produck_config', $option);
-        echo('OK');
         wp_die(); // this is required to terminate immediately and return a proper response
     }
 }

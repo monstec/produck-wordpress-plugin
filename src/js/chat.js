@@ -74,8 +74,7 @@ function initChatJs() {
 
         window.onmessage = ((e) => {
             if (e.data === 'sendPortToProduck' && allowedOrigins.includes(e.origin)) {
-                console.log(e);
-                new Promise((resolve) =>  resolve(sendCookieData()));
+                sendCookieData();
             }
         });
     }

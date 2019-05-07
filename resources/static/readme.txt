@@ -16,7 +16,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Fully-functional smart live-chat with built-in shop system, converting conversations to FAQ, to support SEO, content and social media marketing.
 
 == Description ==
-You have no shopping system in place, but want to sell products? You have no time and capacity for content-marketing and seo? So Produck.de is the perfect tool for you to make the next step! Use Germany's biggest Chat-Commerce Platform - the only chat which is a *shop and marketing tool at once*: Produck.de is a smart Live-Chat which enables product offers and purchases directly via chat and recycles conversations subsequently to make it reusable on your page in the form of FAQs, called Quacks. Those easily get indexed by search engines and can be shared in social media. Your rankings will benefit soon. Products can be uploaded and pushed to your customers in the chat. Customers can easily order products based on your dialogue. Produck.de provides you with full flexibility through mobile and stationary access.
+You have no shopping system in place, but want to sell products? You have no time and capacity for content-marketing and seo? So Produck.de is the perfect tool for you to make the next step! Become a member of Germany's biggest chat-commerce platform - the only chat which is a *shop and marketing tool at once*: Produck.de is a smart Live-Chat which enables product offers and purchases directly via chat and recycles conversations subsequently to make it reusable on your page in the form of FAQs, called Quacks. Those easily get indexed by search engines and can be shared in social media. Your rankings will benefit soon. Products can be uploaded and pushed to your customers in the chat. Customers can easily order products based on your dialogue. Produck.de provides you with full flexibility through mobile and stationary access.
 Note that by using this plugin and therefore the Produck service you accept the Produck terms and conditions (https://produck.de/agb.html) as well as the Produck data policy regulation (https://produck.de/data-sec.html).
 The source-code of the Produck plugin can be found on Github: https://github.com/monstec/produck-wordpress-plugin.
 
@@ -62,16 +62,15 @@ We recommend to submit at least two quacks per week, to keep your page interesti
 * We exploit the value of your answers by converting them into single pages, placed on your website and helping you to reach a better position on google and co.
 
 == Installation ==
-Install the  Produck.de Worpress plugin in just a few minutes by following these steps:
+Install the  Produck.de Wordpress plugin in just a few minutes by following these steps:
 
 * Register on https://www.produck.de/signup.html “Als Experte” (as expert).
 * After you have set up your account on Produck.de, login into your account and choose “Profil” on the left-side menu. In your profile, you will find your customer ID in the box “Kunden-ID”, which you will be needed to connect your chat and the quacks to your account.
 * Now install the plugin and activate the plugin in your Wordpress installation.
 * Then open the configuration of the Produck.de Plugin which can be found via the settings menu item of the Wordpress administration. You will be immediately prompted for your customer ID and whether you want to show a Produck.de link beneath your Quack-pages.
 * Change the other settings or keep it if suitable to your preferences. All settings are explained directly on the administration page.
-* Last but not least there is one more very important step. Since the Produck plugin uses virtual posts/pages the necessary routing does only work if the Permalinks setting of Wordpress is set to something other than the first option.
 
-Now you are ready to go. After you have created the first quacks, they should appear on your website automatically. Otherwise contact us under https://produck.de?cid=53.
+Now you are ready to go. After you have created the first quacks, they should appear on your website automatically. If not, contact us on https://produck.de?cid=53.
 If you want to add products to your account, please contact us under https://produck.de?cid=53. We will help you to manage the process.
 
 == Screenshots ==
@@ -144,7 +143,6 @@ Register on https://www.produck.de/signup.html “Als Experte” (as expert).
 On your webpage, a share button is attached to each Quack. On click, a popup will open and show several options to share the Quack i.e. on facebook, twitter or via email.
 = Got a question =
 Contact us via https://produck.de?cid=53. You can also find further FAQ under https://produck.de/faq.html.
-
 
 == Changelog ==
 # Version 1.0.0 #

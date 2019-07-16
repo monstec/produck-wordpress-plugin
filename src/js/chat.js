@@ -27,19 +27,6 @@ function initChatJs() {
 
     initProduckPopupSettings();
 
-    //Basic Version just showing a link to produck.de
-    /*jQuery('#produck-chat-block-home .produck-chat-link').click(function() {
-        var cid = document.getElementById('produck-chat-link').dataset.cid;
-        var url = 'https://www.produck.de';
-
-        if (cid && !isNaN(cid) && cid > 0) {
-            url += '?cid=' + cid;
-        }
-
-        window.open(url);
-    });*/
-
-
     let port1 = null;
     let port2 = null;
 
@@ -65,11 +52,9 @@ function initChatJs() {
     }
 
     function initIframeCommunication() {
-        //TODO eliminate localhost
         const allowedOrigins = [
               'https://produck.de',
               'https://www.produck.de',
-              'https://localhost',
         ];
 
         window.onmessage = ((e) => {
@@ -86,7 +71,7 @@ function initChatJs() {
 
         switch (payload.method) {
             case 'set':
-                Cookies.set(payload.key, JSON.stringify(payload.data), parseInt(payload.expiration));
+                Cookies.set(payload.key, JSON.stringify(payload.data), { expires: payload.expiration });
                 break;
             case 'get':
                 const data = Cookies.get(payload.key);

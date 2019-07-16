@@ -65,7 +65,7 @@ We recommend to submit at least two quacks per week, to keep your page interesti
 Install the  Produck.de Wordpress plugin in just a few minutes by following these steps:
 
 * Register on https://www.produck.de/signup.html “Als Experte” (as expert).
-* After you have set up your account on Produck.de, login into your account and choose “Profil” on the left-side menu. In your profile, you will find your customer ID in the box “Kunden-ID”, which you will be needed to connect your chat and the quacks to your account.
+* After you have set up your account on Produck.de, login into your account and choose “Profil” on the left-side menu. In your profile, you will find your customer ID in the box “Kunden-ID”, which will be needed to connect your chat and the quacks to your account.
 * Now install the plugin and activate the plugin in your Wordpress installation.
 * Then open the configuration of the Produck.de Plugin which can be found via the settings menu item of the Wordpress administration. You will be immediately prompted for your customer ID and whether you want to show a Produck.de link beneath your Quack-pages.
 * Change the other settings or keep it if suitable to your preferences. All settings are explained directly on the administration page.

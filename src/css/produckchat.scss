@@ -155,8 +155,11 @@ $font-color-white: #fff;
             position: relative;
 
             svg {
-                color: $font-color-light;
                 font-size: 1.2rem;
+
+                path {
+                    fill: $font-color-light;
+                }
 
                 &:hover {
                     color: $font-color-white;

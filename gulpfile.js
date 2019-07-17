@@ -35,10 +35,10 @@ var paths = {
     "libs": {
         "js": [
             'node_modules/shariff/dist/shariff.min.js',
-            'node_modules/js-cookie/src/js.cookie.js'
+            'node_modules/js-cookie/src/js.cookie.js',
         ],
         "css": [
-            'node_modules/shariff/dist/shariff.min.css'
+            'node_modules/shariff/dist/shariff.min.css',
         ]
     },
     "source": {

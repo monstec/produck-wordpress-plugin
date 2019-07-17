@@ -18,12 +18,12 @@ class OverviewPageContent implements DynamicPageContent {
     public function create(Array $requestParams) {
         // change title, description and keywords
         add_filter( 'pre_get_document_title', function() {
-            return "Quacks &Uuml;bersicht";
+            return "Q&A &Uuml;bersicht";
         });
 
         add_action('wp_head', function() {
-            $meta = '<meta name="description" content="In der Quacks Übersicht finden Sie spannende Fragen von fachkundigen Experten beantwortet."/>'.chr(0x0A);
-            $meta .= '<meta name="keywords" content="Quack, Produck, FAQ, QAQ, Question, Answer"/>'.chr(0x0A);
+            $meta = '<meta name="description" content="In der Q&A Übersicht finden Sie spannende Fragen von fachkundigen Experten beantwortet."/>'.chr(0x0A);
+            $meta .= '<meta name="keywords" content="Q&A, Produck, FAQ, Quacks, Question, Answer"/>'.chr(0x0A);
             echo $meta;
         });
 
@@ -31,7 +31,7 @@ class OverviewPageContent implements DynamicPageContent {
 
         $contentBuilder = '<div id="quacks-main-div" class="quacks-main block">';
         $contentBuilder .=   '<section itemscope="" itemtype="http://schema.org/Question" id="quacks-container" debog="2">';
-        $contentBuilder .=     '<h2 class="quacks-h2">In der Quacks &#220;bersicht finden Sie spannende Fragen von fachkundigen Experten beantwortet.</h2>';
+        $contentBuilder .=     '<h2 class="quacks-h2">In der Q&A &#220;bersicht finden Sie spannende Fragen von fachkundigen Experten beantwortet.</h2>';
         $contentBuilder .=     '<div id="quacklist-wrapper" class="quacks-flush-left">';
         $contentBuilder .=       '<div id="quack-overview-list">';
 
@@ -90,13 +90,13 @@ class OverviewPageContent implements DynamicPageContent {
                 $contentBuilder .=       '<div class="quacks-mini-counts">';
                 $contentBuilder .=         '<span title="'.$quackity.' rated quality">'.$quackity.'</span>';
                 $contentBuilder .=       '</div>';
-                $contentBuilder .=       '<div>&nbsp;quackity</div>';
+                $contentBuilder .=       '<div>&nbsp;Quackity</div>';
                 $contentBuilder .=     '</div>';
                 $contentBuilder .=     '<div class="quacks-views">';
                 $contentBuilder .=       '<div class="quacks-mini-counts">';
-                $contentBuilder .=         '<span title="'.$views.' views">'.$views.'</span>';
+                $contentBuilder .=         '<span title="'.$views.' Views">'.$views.'</span>';
                 $contentBuilder .=       '</div>';
-                $contentBuilder .=       '<div>&nbsp;views</div>';
+                $contentBuilder .=       '<div>&nbsp;Views</div>';
                 $contentBuilder .=       '<div class="quacks-share"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></div>';
                 $contentBuilder .=     '</div>';
                 $contentBuilder .=   '</div>';
@@ -134,7 +134,7 @@ class OverviewPageContent implements DynamicPageContent {
 
         $contentBuilder .= '<div id="quacks-share-modal">';
         $contentBuilder .=     '<div id="quacks-modal-content">';
-        $contentBuilder .=         '<h2>Quack Teilen</h2>';
+        $contentBuilder .=         '<h2>Q&A Teilen</h2>';
         $contentBuilder .=         '<div id="quacks-url-box">';
         $contentBuilder .=             '<input class="quacks-share-url" value="" />';
         $contentBuilder .=             '<span class="quacks-content-copy">';
@@ -158,7 +158,7 @@ class OverviewPageContent implements DynamicPageContent {
     }
 
     public function getPostTitle() {
-        return "Quacks &#220;bersicht";
+        return "Q&A &#220;bersicht";
     }
 
     public function getPostContent() {

@@ -25,7 +25,7 @@ function initQuackJs() {
             });
         }
 
-        var textElem = jQuery('#quacks-quacklist-wrapper .quacks-question-hyperlink');
+        var textElem = jQuery('#quacklist-wrapper .quacks-question-hyperlink');
 
         textElem.each(function () {
             var chatText = this.innerHTML;

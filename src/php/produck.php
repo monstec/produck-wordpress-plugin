@@ -143,7 +143,7 @@ class ProduckPlugin {
         } );
 
         // add script and style dependencies
-        // for an overview of defined already defined script handles (like 'jquery') see:
+        // for an overview of already defined script handles (like 'jquery') see:
         // https://developer.wordpress.org/reference/functions/wp_enqueue_script/
         // Note! Calling third party CDNs for reasons other than font inclusions is forbidden (WP-Policy);
         // all non-service related JavaScript and CSS must be included locally
@@ -152,8 +152,9 @@ class ProduckPlugin {
             wp_enqueue_script('produck-scripts', ProduckPlugin::getPluginUrl().'/js/produck.min.js');
             wp_enqueue_script('cookie-lib', ProduckPlugin::getPluginUrl().'/js/js.cookie.js');
             wp_enqueue_script('shariff-lib', ProduckPlugin::getPluginUrl().'/js/shariff.min.js');
-
-            wp_enqueue_style('shariff-style', ProduckPlugin::getPluginUrl().'/css/shariff.min.css');
+            
+            wp_enqueue_style('shariff-style', ProduckPlugin::getPluginUrl().'/css/shariff.complete.css');
+            wp_enqueue_style('font-awesome-style', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
             wp_enqueue_style('produck-chat-style', ProduckPlugin::getPluginUrl().'/css/produckchat.min.css');
             wp_enqueue_style('produck-quack-style', ProduckPlugin::getPluginUrl().'/css/quacks.min.css');
         });

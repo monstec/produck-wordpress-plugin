@@ -123,9 +123,9 @@ $progressbar-height: 64px;
                         svg {
                             font-size: 20px;
                             width: 17px;
-
+                            
                             &:hover {
-                                color: $teal-color;
+                                fill: $teal-color;
                             }
                         }
                     }
@@ -753,12 +753,13 @@ $progressbar-height: 64px;
                 font-size: 0.8em;
             }
 
-            i, svg {
+            svg {
                 margin-left: 10px;
                 cursor: pointer;
+                fill: $font-color-super-light;
 
                 &:hover {
-                    color: $teal-color;
+                    fill: $font-color-white;
                 }
             }
         }
@@ -863,4 +864,8 @@ $progressbar-height: 64px;
             text-decoration: none;
         }
     }
+}
+
+.fab, .fas {
+    font-family: FontAwesome;
 }

@@ -19,7 +19,7 @@ class ProduckQuacksWidget extends WP_Widget {
     public function __construct() {
         parent::__construct(
             'my_custom_widget',
-            __( 'Produck Quacks Widget', 'text_domain' ),
+            __( 'Produck Q&A Widget', 'text_domain' ),
             array(
                 'customize_selective_refresh' => true,
             )
@@ -30,7 +30,7 @@ class ProduckQuacksWidget extends WP_Widget {
     public function form($instance) {
         // Set widget defaults
         $defaults = array(
-            'widgetTitle' => 'Aktuelle Quacks'
+            'widgetTitle' => 'Aktuelle Q&As'
         );
 
         // Parse current settings with defaults, meaning for example, if there is no value for
@@ -110,7 +110,7 @@ class ProduckQuacksWidget extends WP_Widget {
 
         echo         '</div>';
         echo         '<div class="quacks-more-quacks-ref">';
-        echo           '<a href="'.ProduckPlugin::getQuackOverviewUrl().'" target="'.$quackDisplayTarget.'">Mehr Quacks</a>';
+        echo           '<a href="'.ProduckPlugin::getQuackOverviewUrl().'" target="'.$quackDisplayTarget.'">Mehr Q&As</a>';
         echo         '</div>';
         echo       '</div>';
         echo     '<section>';

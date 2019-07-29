@@ -56,7 +56,7 @@ class ProduckQuacksWidget extends WP_Widget {
     public function widget($args, $instance) {
         extract($args);
 
-        $produckApi = new ProduckApi(ProduckPlugin::getCustomerId());
+        $produckApi = new ProduckApi(ProduckPlugin::getQuackToken());
         $produckCache = new ProduckCache();
         $connector = new ProduckConnector($produckApi, $produckCache);
 

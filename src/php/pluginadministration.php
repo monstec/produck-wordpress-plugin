@@ -71,6 +71,7 @@ class ProduckPluginAdministration {
 
         add_settings_section('produck_settings_general', 'Allgemein', array($this, 'generalSectionText'), 'produck_settings_page');
         add_settings_field('produckCustomerIdField', 'Produck Benutzer ID:', array($this, 'createCustomerIdInputField'), 'produck_settings_page', 'produck_settings_general');
+        add_settings_field('produckQuackTokenField', 'Quack Token:', array($this, 'createQuackTokenInputField'), 'produck_settings_page', 'produck_settings_general');
 
         add_settings_section('produck_settings_chat', 'Chat', array($this, 'chatSectionText'), 'produck_settings_page');
         add_settings_field('chatEnabledField', 'Chat aktiviert?', array($this, 'createChatEnabledField'), 'produck_settings_page', 'produck_settings_chat');
@@ -90,7 +91,7 @@ class ProduckPluginAdministration {
      */
     public function generalSectionText() {
         echo '<p>Nehmen sie hier grundsätzliche Einstellungen vor, welche den Betrieb des Plugins ermöglichen. Die Produck '
-             .'Benutzer ID finden Sie in Ihrem Profil auf <a href="https://www.produck.de/xpert.html" target="_blank">www.produck.de</a>.';
+             .'Benutzer ID und das Quack Token finden Sie in Ihrem Profil bzw. in den Einstellungen auf <a href="https://www.produck.de/xpert.html" target="_blank">www.produck.de</a>.';
     }
 
     /**
@@ -129,6 +130,13 @@ class ProduckPluginAdministration {
         echo '<input type="text" id="produckCustomerIdField" name="produck_config[customerId]" size="10" value="'.$options['customerId'].'"/>';
     }
 
+    /**
+     * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'quackToken'.
+     */
+    public function createQuackTokenInputField() {
+        $options = get_option('produck_config');
+        echo '<input type="text" id="produckQuackTokenField" name="produck_config[quackToken]" size="50" value="'.$options['quackToken'].'"/>';
+    }
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'chatEnabled'.
      */
@@ -218,6 +226,15 @@ class ProduckPluginAdministration {
         } else {
             add_settings_error('produck_config', 'produckCustomerIdField',
                 'Die Benutzer ID muss eine ganze Zahl sein.');
+        }
+
+        // trim whitespace off the quack token
+        $inQuackToken = isset($input['quackToken']) ? ltrim(trim($input['quackToken']), '0') : '';
+        if(preg_match('/^[0-9a-fA-F]+$/i', $inQuackToken)) {
+            $trustedInput['quackToken'] = $inQuackToken;
+        } else {
+            add_settings_error('produck_config', 'produckQuackTokenField',
+                'Das Quack Token muss eine Zeichenkette aus hexadezimalen Ziffern sein.');
         }
 
         $inChatEnabled = isset($input['chatEnabled']) ? trim($input['chatEnabled']) : '';

@@ -73,6 +73,7 @@ function produck_activatePlugin() {
     // That means deacivating the plugin and then activating it again will not reset the settings.
     add_option('produck_config', array(
         'customerId' => null,
+        'quackToken' => null,
         'numberOfQuacksShown' => '5',
         'maxQuackUrlTitleLength' => '100',
         'openQuackInNewPage' => 1,
@@ -111,7 +112,7 @@ class ProduckPlugin {
     public function __construct() {
         $this->controller = new Controller(new TemplateLoader(ProduckPlugin::getPluginPath()));
 
-        $produckApi = new ProduckApi(ProduckPlugin::getCustomerId());
+        $produckApi = new ProduckApi(ProduckPlugin::getQuackToken());
         $produckCache = new ProduckCache();
         $this->connector = new ProduckConnector($produckApi, $produckCache);
     }
@@ -210,6 +211,14 @@ class ProduckPlugin {
     public static function getCustomerId() {
         if (isset(ProduckPlugin::$options['customerId'])) {
             return ProduckPlugin::$options['customerId'];
+        } else {
+            return null;
+        }
+    }
+
+    public static function getQuackToken() {
+        if (isset(ProduckPlugin::$options['quackToken'])) {
+            return ProduckPlugin::$options['quackToken'];
         } else {
             return null;
         }

@@ -3,7 +3,7 @@
  * Plugin Name: Produck
  * Plugin URI: https://www.produck.de
  * Description: This plugin enables you to show Quacks in your shop and integrate the ProDuck Chat Service.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: MonsTec UG (haftungsbeschränkt)
  * Author URI: https://www.monstec.de
  * License: GPLv2 or later

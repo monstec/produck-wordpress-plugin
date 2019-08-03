@@ -8,8 +8,8 @@ Author: MonsTec UG (haftungsbeschränkt)
 Requires at least: 5.0.0
 Tested up to: 5.1.1
 Requires PHP: 5.6
-Stable tag: 1.0.0
-Version: 1.0.0
+Stable tag: 1.1.0
+Version: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,10 +69,11 @@ Install the  Produck.de Wordpress plugin in just a few minutes by following thes
 * Now install the plugin and activate the plugin in your Wordpress installation.
 * Then open the configuration of the Produck.de Plugin which can be found via the settings menu item of the Wordpress administration. You will be immediately prompted for your customer ID and whether you want to show a Produck.de link beneath your Quack-pages.
 * Change the other settings or keep it if suitable to your preferences. All settings are explained directly on the administration page.
+* The most important setting is the quack token. This is mandatory if you want to show quacks on your website. You may obtain a token in the settings if your account on https://www.produck.de.
 * Finally, the Produck plugin uses virtual posts/pages, thus the necessary routing does only work if the permalinks setting of Wordpress is set to something other than the first option ("Plain"). Alternatively, you could for example choose "Day and Name".
 
-Now you are ready to go. After you have created the first quacks, they should appear on your website automatically. If not, contact us on https://produck.de?cid=53.
-If you want to add products to your account, please contact us under https://produck.de?cid=53. We will assist you and provide further instructions.
+Now you are ready to go. After you have created the first quacks, they should appear on your website automatically. If not, contact us on https://www.produck.de?cid=53.
+If you want to add products to your account, please contact us under https://www.produck.de?cid=53. We will assist you and provide further instructions.
 
 == Screenshots ==
 1. The chat will be displayed on demand at the bottom of your webpage.
@@ -117,7 +118,7 @@ This is up to you. You can show a contact email, a contact number or just a noti
 = In which area is Produck.de applicable? =
 Produck.de is already used in various businesses such as smart home, rubber industries, catamaran manufacturer or lawyers. Here you can find an example: https://www.monstec.de. Produck.de is especially useful, if you plan to sell products on your webpage and do not have a shopping system in place or your product is complex and often requires customer support. Also, Produck.de is useful, if you want to push the traffic of your site, without having much extra-effort.
 = Where can I find a documentation =
-Please review the live chat documentation on https://produck.de/docu.html. Further FAQs can be found on https://produck.de/faq.html.
+Please review the live chat documentation on https://www.produck.de/docu.html. Further FAQs can be found on https://www.produck.de/faq.html.
 = Can I specify groups of experts? =
 This will be available soon.
 = Can I see missed Chats? =
@@ -143,8 +144,10 @@ Register on https://www.produck.de/signup.html “Als Experte” (as expert).
 = How to share a Quack with my community? =
 On your webpage, a share button is attached to each Quack. On click, a popup will open and show several options to share the Quack i.e. on facebook, twitter or via email.
 = Got a question =
-Contact us via https://produck.de?cid=53. You can also find further FAQ under https://produck.de/faq.html.
+Contact us via https://www.produck.de?cid=53. You can also find further FAQ under https://www.produck.de/faq.html.
 
 == Changelog ==
+# Version 1.1.0 #
+improved authentication for quacks (introduced quack token)
 # Version 1.0.0 #
 first release

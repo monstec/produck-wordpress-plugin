@@ -1,4 +1,4 @@
-=== Produck Shop Chat ===
+=== Customer Service to Content Marketing Converter by Produck ===
 Contributors: monstec
 Plugin Name: Customer Service to Content Marketing Converter by Produck 
 Plugin URI: https://produck.de
@@ -144,6 +144,8 @@ On your webpage, a share button is attached to each chat. On click, a popup will
 Contact us via https://www.produck.de?cid=53. You can also find further FAQs under https://www.produck.de/faq.html.
 
 == Changelog ==
+# Version 1.1.1 #
+some textual corrections and improvements
 # Version 1.1.0 #
 improved authentication for quacks (introduced quack token)
 # Version 1.0.0 #

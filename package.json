@@ -27,14 +27,15 @@
     "gulp-postcss": "^8.0.0",
     "gulp-preprocess": "^3.0.2",
     "gulp-rename": "^1.4.0",
-    "gulp-sass": "^4.0.1",
+    "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-strip-debug": "^3.0.0",
     "gulp-uglify": "^3.0.1",
     "gulp-zip": "^4.2.0",
     "js-cookie": "^2.2.0",
     "jshint": "^2.9.5",
-    "merge-stream": "^1.0.1"
+    "merge-stream": "^1.0.1",
+    "node-sass": "^4.13.0"
   },
   "dependencies": {
     "shariff": "^3.2.0"

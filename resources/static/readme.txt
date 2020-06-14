@@ -6,7 +6,7 @@ Tags: chat, content marketing, social media marketing
 Author URI: https://produck.de/
 Author: MonsTec UG (haftungsbeschränkt)
 Requires at least: 5.0.0
-Tested up to: 5.1.1
+Tested up to: 5.4.2
 Requires PHP: 5.6
 Stable tag: 1.1.1
 Version: 1.1.1

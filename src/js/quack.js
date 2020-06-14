@@ -3,7 +3,6 @@
 function initQuackJs() {
     //convert url in quack-oberview clickable links
     function linkifyDialogue() {
-
         // http://, https://, ftp://
         var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
 
@@ -42,8 +41,6 @@ function initQuackJs() {
     /* exported initShareContent */
 
     function styleShareShariff(quackRef, title) {
-
-
         var buttonsContainer = jQuery('.quacks-share-shariff');
         new Shariff(buttonsContainer, {
             orientation: 'horizontal',
@@ -63,7 +60,6 @@ function initQuackJs() {
     }
 
     function initShareContent() {
-
         jQuery(document).on('click', '#quacks-share-brand > .quacks-share', function () {
             // for quacksSite get href from current site
             let questionRefDetailSite = window.location.href;
@@ -78,7 +74,6 @@ function initQuackJs() {
         });
 
         function createShareCard(href, question) {
-
             // for the future, we can provide beautiful shortlinks
             const canonicalElement = document.querySelector('link[rel=canonical]');
             if (canonicalElement !== null) {
@@ -104,9 +99,7 @@ function initQuackJs() {
         }
     }
 
-
     function copytoClipboard(inputVal) {
-
         jQuery(document).on('click', '.quacks-content-copy', function () {
             this.copied = false;
 

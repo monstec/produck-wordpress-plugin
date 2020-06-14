@@ -38,6 +38,9 @@ defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 // has to go in 'wp-config.php' to work properly
 //define('WP_DEBUG', true);
 //define('WP_DEBUG_LOG', true);
+//define('SCRIPT_DEBUG', true);
+//define('WP_DEBUG_DISPLAY', true);
+//define('SAVEQUERIES', true);
 // @endif
 
 require_once 'vpage/page.php';
@@ -154,7 +157,7 @@ class ProduckPlugin {
             wp_enqueue_script('cookie-lib', ProduckPlugin::getPluginUrl().'/js/js.cookie.js');
             wp_enqueue_script('shariff-lib', ProduckPlugin::getPluginUrl().'/js/shariff.min.js');
             
-            wp_enqueue_style('shariff-style', ProduckPlugin::getPluginUrl().'/css/shariff.complete.css');
+            wp_enqueue_style('shariff-style', ProduckPlugin::getPluginUrl().'/css/shariff.min.css');
             wp_enqueue_style('font-awesome-style', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
             wp_enqueue_style('produck-chat-style', ProduckPlugin::getPluginUrl().'/css/produckchat.min.css');
             wp_enqueue_style('produck-quack-style', ProduckPlugin::getPluginUrl().'/css/quacks.min.css');

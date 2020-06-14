@@ -53,8 +53,11 @@ function initChatJs() {
 
     function initIframeCommunication() {
         const allowedOrigins = [
-              'https://produck.de',
-              'https://www.produck.de',
+            'https://produck.de',
+            'https://www.produck.de',
+            // @if ENV!='production'
+            'https://localhost'
+            // @endif
         ];
 
         window.onmessage = ((e) => {

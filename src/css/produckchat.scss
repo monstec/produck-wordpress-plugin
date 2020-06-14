@@ -177,7 +177,7 @@ $font-color-white: #fff;
 
 
         iframe {
-            width: 335px;
+            width: 335px !important;
             height: calc(100vh - 36px);
             max-height: calc(90vh - 36px);
             max-width: 100vw;

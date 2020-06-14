@@ -125,7 +125,7 @@ function processPhpDist() {
  */
 function processStyles(destDir, deploy) {
     var postCssPlugins = [
-        autoprefixer({ browsers: ['last 2 version'] }),
+        autoprefixer(),
         cssnano()
     ];
 

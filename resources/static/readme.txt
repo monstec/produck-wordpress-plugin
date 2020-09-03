@@ -144,6 +144,8 @@ On your webpage, a share button is attached to each chat. On click, a popup will
 Contact us via https://www.produck.de?cid=53. You can also find further FAQs under https://www.produck.de/faq.html.
 
 == Changelog ==
+# Version 1.1.2 #
+adapted url of produck chat
 # Version 1.1.1 #
 some textual corrections and improvements
 # Version 1.1.0 #

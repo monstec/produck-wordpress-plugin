@@ -97,10 +97,12 @@ if (is_admin()) {
 class ProduckPlugin {
     const TEMPLATE_SUB_DIR = 'templates';
     // @if ENV='production'
-    const PRODUCK_URL = 'https://produck.de/';
+    const PRODUCK_URL = 'https://www.produck.de/';
+    const PRODUCK_CHAT_URL = 'https://www.produck.de/chat.html';
     // @endif
     // @if ENV!='production'
     const PRODUCK_URL = 'https://localhost/';
+    const PRODUCK_CHAT_URL = 'https://localhost/chat.html';
     // @endif
 
     // replacements for pretty urls
@@ -237,9 +239,9 @@ class ProduckPlugin {
 
     public static function getCustomerProduckLink() {
         if (isset(ProduckPlugin::$options['customerId'])) {
-            return self::PRODUCK_URL.'?cid='.ProduckPlugin::$options['customerId'];
+            return self::PRODUCK_CHAT_URL.'?cid='.ProduckPlugin::$options['customerId'];
         } else {
-            return self::PRODUCK_URL;
+            return self::PRODUCK_CHAT_URL;
         }
     }
 

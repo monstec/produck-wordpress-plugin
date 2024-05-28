@@ -23,26 +23,15 @@ class ProduckConnector {
         $response = $this->api->getQuack($id);
         $quackData = json_decode($response, true);
 
-        // check if quack contains required properties
-        if (!isset($quackData['messages']) || !isset($quackData['messages'][0])) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON decode error: ' . json_last_error_msg());
+        } else if (isset($quackData) && !empty($quackData)) {            
+            return $quackData;
+        } else {
+            // Handle the case where 'content' is not found or is empty
+            error_log('Empty in the response');
             return null;
         }
-
-        // check if the id of the asking user is set which is needed to arrange speech bubbles
-        if (!isset($quackData['askingId'])) {
-            // if it is not set fall back to the userId of the first message
-            if (isset($quackData['messages'][0]['userId'])) {
-                $quackData['askingId'] = $quackData['messages'][0]['userId'];
-            } else {
-                return null;
-            }
-        }
-
-        if (!isset($quackData['title'])) {
-            return null;
-        }
-
-        return $quackData;
     }
 
     /**
@@ -54,12 +43,17 @@ class ProduckConnector {
         $response = $this->api->getQuacks();
         $quackData = json_decode($response, true);
 
-        if (is_array($quackData) && sizeof($quackData) > 0) {
-            if (isset($max) && is_numeric($max) && $max > 0 && $max <= sizeof($quackData)) {
-                $quackData = array_slice($quackData, 0, $max);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON decode error: ' . json_last_error_msg());
+        } else if (isset($quackData['content']) && is_array($quackData['content']) && !empty($quackData['content'])) {
+            if (isset($max) && is_numeric($max) && $max > 0 && $max <= sizeof($quackData['content'])) {
+                $quackData = array_slice($quackData['content'], 0, $max);
             }
-            return $quackData;
+            return $quackData['content'];
         } else {
+            // Handle the case where 'content' is not found or is empty
+            error_log('Content key not found or empty in the response');
             return null;
         }
     }

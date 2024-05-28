@@ -4,6 +4,11 @@ namespace MonsTec\Produck;
 // prevent direct access
 defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 
+//TODO switch error logging 
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 /**
  * Wrapper for the Quacks-API.
  */
@@ -26,10 +31,10 @@ class ProduckApi {
         // @endif
         // @if ENV!='production'
         // dockerhost is resolved as the "localhost", the hostmachine where everything is run at
-        $this->urlQuacksEndpoint = "https://dockerhost:8443/chat-service/quacks?quackToken=".$token;
-        $this->urlQuackEndpoint = "https://dockerhost:8443/chat-service/quack?quackToken=".$token."&quackId=";
-        //$this->urlQuacksEndpoint = "https://localhost:8443/chat-service/quacks?quackToken=".$token;
-        //$this->urlQuackEndpoint = "https://localhost:8443/chat-service/quack?quackToken=".$token."&quackId=";
+        $this->urlQuacksEndpoint = "https://dockerhost:443/chat-service/quacks?quackToken=".$token;
+        $this->urlQuackEndpoint = "https://dockerhost:443/chat-service/quack?quackToken=".$token."&quackId=";
+        //$this->urlQuacksEndpoint = "http://localhost:8083/chat-service/quacks?quackToken=".$token;
+        //$this->urlQuackEndpoint = "http://localhost:8083/chat-service/quack?quackToken=".$token."&quackId=";
 
         // in dev environment, ignore the self-signed cert warnings
         add_filter('http_request_args', function($r) {

@@ -4,13 +4,13 @@
  * Plugin URI: https://www.produck.de
  * Description: This plugin enables you to show Quacks in your shop and integrate the ProDuck Chat Service.
  * Version: 1.1.0
- * Author: MonsTec UG (haftungsbeschränkt)
+ * Author: MonsTec GmbH
  * Author URI: https://www.monstec.de
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 /*
-Copyright (C) 2019 MonsTec UG (haftungsbeschränkt)
+Copyright (C) 2024 MonsTec GmbH
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -150,14 +150,24 @@ class ProduckPlugin {
         // all non-service related JavaScript and CSS must be included locally
         add_action( 'wp_enqueue_scripts', function() {
             wp_enqueue_script('jquery');
-            wp_enqueue_script('produck-scripts', ProduckPlugin::getPluginUrl().'/js/produck.min.js');
-            wp_enqueue_script('cookie-lib', ProduckPlugin::getPluginUrl().'/js/js.cookie.js');
-            wp_enqueue_script('shariff-lib', ProduckPlugin::getPluginUrl().'/js/shariff.min.js');
+            wp_enqueue_script('produck-scripts', ProduckPlugin::getPluginUrl() . '/js/produck.min.js');
+            wp_enqueue_script('cookie-lib', ProduckPlugin::getPluginUrl() . '/js/js.cookie.js');
+            wp_enqueue_script('shariff-lib', ProduckPlugin::getPluginUrl() . '/js/shariff.min.js');
+            wp_enqueue_script('materialize-lib', ProduckPlugin::getPluginUrl() . '/js/materialize.min.js');
+            wp_enqueue_script('i18next', ProduckPlugin::getPluginUrl() . '/js/jquery-i18next.min.js');
+            wp_enqueue_script('jquery-i18next', ProduckPlugin::getPluginUrl() . '/js/jquery-i18next.min.js');
+            wp_enqueue_script('i18next-browser-languagedetector', ProduckPlugin::getPluginUrl() . '/js/i18nextBrowserLanguageDetector.min.js)');
+            wp_enqueue_script( 'prdkDeals', 'https://www.produck.de/assets/jsn/deals.json', false);
             
-            wp_enqueue_style('shariff-style', ProduckPlugin::getPluginUrl().'/css/shariff.complete.css');
-            wp_enqueue_style('font-awesome-style', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
-            wp_enqueue_style('produck-chat-style', ProduckPlugin::getPluginUrl().'/css/produckchat.min.css');
-            wp_enqueue_style('produck-quack-style', ProduckPlugin::getPluginUrl().'/css/quacks.min.css');
+            wp_enqueue_style('material-icons', 'https://fonts.googleapis.com/icon?family=Material+Icons');
+            wp_enqueue_style('materialize-style', ProduckPlugin::getPluginUrl() . '/css/materialize.min.css');
+            wp_enqueue_style('produck-chat-style', ProduckPlugin::getPluginUrl() . '/css/produckchat.min.css');
+            wp_enqueue_style('produck-quack-style', ProduckPlugin::getPluginUrl() . '/css/quacks.min.css');
+            wp_enqueue_style('produck-link-style', ProduckPlugin::getPluginUrl() . '/css/linkify.min.css');
+            wp_enqueue_style('produck-article-style', ProduckPlugin::getPluginUrl() . '/css/quacks_new.min.css');
+            wp_enqueue_style('shariff-style', ProduckPlugin::getPluginUrl() . '/css/shariff.min.css');
+            wp_enqueue_style('font-awesome-style', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/fontawesome.min.css');
+
         });
 
         // add dynamic pages for the produck plugin
@@ -245,7 +255,7 @@ class ProduckPlugin {
     }
 
     public static function getImageURL($imageName) {
-        return ProduckPlugin::getPluginUrl().'/img/'.$imageName;
+        return ProduckPlugin::getPluginUrl() . '/img/'.$imageName;
     }
 
     public static function isOpenQuackInNewPage() {

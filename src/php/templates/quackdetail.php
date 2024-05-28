@@ -4,7 +4,7 @@
 *
 * @package MonsTec
 * @subpackage Produck
-* @since Produck 1.0
+* @since Produck 1.1
 */
 // prevent direct access
 defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
@@ -20,12 +20,14 @@ get_header();
 			the_post();
 		?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-				<header class="quacks-header">
-					<?php the_title( '<h1 class="quacks-h1">', '</h1>' ); ?>
+				<header class="entry-header quacks-header">
+					<?php the_title( '<h1 class="entry title quacks-headline">', '</h1>' ); ?>
 				</header><!-- .entry-header -->
-					<?php
-					the_content();
-					?>
+                <div class="entry-content">
+				<?php
+                    the_content();
+                    ?>
+                </div><!-- .entry-content -->
 			</article><!-- #post-## -->
 		<?php
 		// End of the loop.

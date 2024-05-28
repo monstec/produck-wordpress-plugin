@@ -24,8 +24,8 @@ class ProduckPluginAdministration {
      * Contains the menu-building code.
      */
     public function addPluginAdminPage() {
-        add_options_page('Produck Einstellungen', // displayed in title tags
-                         'Produck', // text to be used for the menu
+        add_options_page('ProDuck Einstellungen', // displayed in title tags
+                         'ProDuck', // text to be used for the menu
                          'manage_options', //capability required for the menu to be displayed
                          'produck-settings', // slug name used to refer to this menu (should be unique)
                          array($this, 'createPluginOptionsPage')); // callback function that will output the page content
@@ -73,24 +73,25 @@ class ProduckPluginAdministration {
         add_settings_field('produckCustomerIdField', 'Produck Benutzer ID:', array($this, 'createCustomerIdInputField'), 'produck_settings_page', 'produck_settings_general');
         add_settings_field('produckQuackTokenField', 'Quack Token:', array($this, 'createQuackTokenInputField'), 'produck_settings_page', 'produck_settings_general');
 
-        add_settings_section('produck_settings_chat', 'Chat', array($this, 'chatSectionText'), 'produck_settings_page');
-        add_settings_field('chatEnabledField', 'Chat aktiviert?', array($this, 'createChatEnabledField'), 'produck_settings_page', 'produck_settings_chat');
-
-        add_settings_section('produck_settings_quacks', 'Quacks', array($this, 'quacksSectionText'), 'produck_settings_page');
-        add_settings_field('openQuackInNewPageField', 'Quacks in neuem Fenster öffnen?', array($this, 'createOpenQuackInNewPageField'), 'produck_settings_page', 'produck_settings_quacks');
+        add_settings_section('produck_settings_quacks', 'Beitragsoptionen', array($this, 'quacksSectionText'), 'produck_settings_page');
+        add_settings_field('openQuackInNewPageField', 'Beiträge in neuem Fenster öffnen?', array($this, 'createOpenQuackInNewPageField'), 'produck_settings_page', 'produck_settings_quacks');
         add_settings_field('maxQuackUrlTitleLengthField', 'Max. Anzahl an Zeichen für den Titel in der URL:', array($this, 'createMaxQuackUrlTitleLengthField'), 'produck_settings_page', 'produck_settings_quacks');
         add_settings_field('useThemeTemplateField', 'Theme-eigenes Seitentemplate verwenden?', array($this, 'createUseThemeTemplateField'), 'produck_settings_page', 'produck_settings_quacks');
-        add_settings_field('poweredByLinkAllowedField', '"Powered by Produck"-Links anzeigen?', array($this, 'createPoweredByLinkAllowedField'), 'produck_settings_page', 'produck_settings_quacks');
+        add_settings_field('poweredByLinkAllowedField', '"Content provided by ProDuck"-Links anzeigen?', array($this, 'createPoweredByLinkAllowedField'), 'produck_settings_page', 'produck_settings_quacks');
 
         add_settings_section('produck_settings_widget', 'Widget', array($this, 'widgetSectionText'), 'produck_settings_page');
-        add_settings_field('numberOfQuacksShownField', 'Max. Anzahl angezeigter Quacks', array($this, 'createNumberOfQuacksShownField'), 'produck_settings_page', 'produck_settings_widget');
+        add_settings_field('numberOfQuacksShownField', 'Max. Anzahl angezeigter Beiträgen', array($this, 'createNumberOfQuacksShownField'), 'produck_settings_page', 'produck_settings_widget');
+        add_settings_field('verifyQuacksBeforePublishing', 'Erlaubt es dem Seitenbesitzer Beiträge vor der Veröffentlichung zuzustimmen', array($this, 'createverifyQuacksBeforePublishing'), 'produck_settings_page');
+    
+        add_settings_section('produck_settings_chat', 'Chat-Optionen', array($this, 'chatSectionText'), 'produck_settings_page');
+        add_settings_field('chatEnabledField', 'Chat aktiviert?', array($this, 'createChatEnabledField'), 'produck_settings_page', 'produck_settings_chat');
     }
 
     /**
      * Defines the description for the section 'general settings'.
      */
     public function generalSectionText() {
-        echo '<p>Nehmen sie hier grundsätzliche Einstellungen vor, welche den Betrieb des Plugins ermöglichen. Die Produck '
+        echo '<p>Nehmen sie hier grundsätzliche Einstellungen vor, welche den Betrieb des Plugins ermöglichen. Die ProDuck '
              .'Benutzer ID und das Quack Token finden Sie in Ihrem Profil bzw. in den Einstellungen auf <a href="https://www.produck.de/xpert.html" target="_blank">www.produck.de</a>.';
     }
 
@@ -105,11 +106,11 @@ class ProduckPluginAdministration {
      * Defines the description for the section 'quacks settings'.
      */
     public function quacksSectionText() {
-        echo '<p>Definieren Sie hier ob Links zu einzelnen Quacks und zur Quacksübersicht in einem neuen Fenster bzw. '
+        echo '<p>Definieren Sie hier ob Links zu einzelnen Beiträgen und zur Beitragsübersicht in einem neuen Fenster bzw. '
              .'Tab geöffnet werden sollen (oder im aktuellen Fenster).<br/>'
-             .'Außerdem können Sie die maximale Länge der URL von einzelnen Quacks beeinflussen, indem sie die maximale '
+             .'Außerdem können Sie die maximale Länge der URL von einzelnen Seiten beeinflussen, indem sie die maximale '
              .'Länge des Teils, der den Titel darstellt, einstellen.<br/>'
-             .'Schließlich können Sie wählen, ob Sie das vom Produck-Plugin mitgelieferte Seitentemplate für Quacks-'
+             .'Schließlich können Sie wählen, ob Sie das vom Produck-Plugin mitgelieferte Seitentemplate für Beitrags-'
              .'spezifische Seiten verwenden wollen, oder lieber das Seitentemplate des von Ihnen verwendeten Themes.</p>';
     }
 
@@ -117,7 +118,7 @@ class ProduckPluginAdministration {
      * Defines the description for the section 'widget settings'.
      */
     public function widgetSectionText() {
-        echo '<p>Hier können Sie die Anzahl der maximal angezeigten Quacks im Quacks-Widgets definieren.'
+        echo '<p>Hier können Sie die Anzahl der maximal angezeigten Beiträge im ProDuck-Widget definieren.'
              .'Beachten Sie bitte, dass Sie das Widget noch unter "Design->Widgets" zu den anzuzeigenden Widgets '
              .'hinzufügen müssen, wenn Sie es verwenden wollen.</p>';
     }
@@ -204,6 +205,22 @@ class ProduckPluginAdministration {
     }
 
     /**
+     * Creates the HTML-code for the input element that let's the user decide whether to verify articles before publishing or not.
+     */
+    public function createverifyQuacksBeforePublishing() {
+        $options = get_option('produck_config');
+        echo '<select id="verifyArticlesBeforePublishing" name="produck_config[verifyArticlesBeforePublishing]">';
+        if ($options['verifyArticlesBeforePublishing'] > 0) {
+            echo ' <option value="1" selected="selected">Ja</option>';
+            echo ' <option value="0">Nein</option>';
+        } else {
+            echo ' <option value="1">Ja</option>';
+            echo ' <option value="0" selected="selected">Nein</option>';
+        }
+        echo '</select>';
+    }
+
+    /**
      * Validate the user's input on the settings page. The validated input will be returned and then stored
      * in the database by the settings-API.
      */
@@ -277,7 +294,7 @@ class ProduckPluginAdministration {
     }
 
     public function showFirstConfigurationDialogue() {
-        // inject a script that opens a thickox to ask for the user's permission to show powered-by-links
+        // inject a script that opens a thickbox to ask for the user's permission to show powered-by-links
         ?>
         <script>
             jQuery(window).load(function($) {
@@ -337,7 +354,7 @@ class ProduckPluginAdministration {
         <div id="produckFirstConfigDialogue">
           <div class="produck-admin-dialogue-pane">
             <div class="explanation-cell">
-              Um Produck in Wordpress nutzen zu können, wird Ihre Produck Kunden-ID benötigt. Diese finden Sie in Ihrem Profil auf produck.de.
+              Um ProDuck in Wordpress nutzen zu können, wird Ihre Produck Kunden-ID benötigt. Diese finden Sie in Ihrem Profil auf produck.de.
             </div>
             <div class="label-cell-cid">
               Produck Kunden-ID:
@@ -346,7 +363,7 @@ class ProduckPluginAdministration {
               <input type="text" id="produckFirstConfigCustomerIdField"/>
             </div>
             <div class="label-cell-powby">
-              Darf Produck durch &quot;Provided By&quot;-Links unter Quacks und der Quacks-Übersicht auf den Service aufmerksam machen?
+              Darf Produck durch &quot;Provided By&quot;-Links unter Beiträgen und der Beitrags-Übersicht auf den Service aufmerksam machen?
             </div>
             <div class="value-cell-powby">
               <select id="produckFirstConfigPoweredByLinkAnswerField">

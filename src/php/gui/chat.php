@@ -22,7 +22,7 @@ class Chat {
         $view .=    '</div>';
         $view .=   '</div>';
         $view .=   '<div id="produck-chat-link" class="produck-chat-link" title="Chatten und Kaufen" data-cid="'.$cid.'">';
-        $view .=     '<img class="produck-ducky" src="'.$duckyImage.'" alt="helpful ducky"/>';
+        $view .=     '<img class="produck-ducky" src="'.$duckyImage.'" alt="produck brand logo"/>';
         $view .=   '</div>';
         $view .=   '<div id="produck-iframe-wrapper">';
         $view .=     '<iframe id="produck-iframe" frameborder="0" allowfullscreen="" src="'.$produckLink.'"></iframe>';

@@ -18,12 +18,12 @@ class OverviewPageContent implements DynamicPageContent {
     public function create(Array $requestParams) {
         // change title, description and keywords
         add_filter( 'pre_get_document_title', function() {
-            return "Q&A &Uuml;bersicht";
+            return "Gastbeiträge";
         });
 
         add_action('wp_head', function() {
-            $meta = '<meta name="description" content="In der Q&A Übersicht finden Sie spannende Fragen von fachkundigen Experten beantwortet."/>'.chr(0x0A);
-            $meta .= '<meta name="keywords" content="Q&A, Produck, FAQ, Quacks, Question, Answer"/>'.chr(0x0A);
+            $meta = '<meta name="description" content="Aktuelle Gastbeiträge"/>'.chr(0x0A);
+            $meta .= '<meta name="keywords" content="Fachbeiträge, Artikel, FAQ, Quacks, Question, Answer, Q&A, Produck"/>'.chr(0x0A);
             echo $meta;
         });
 
@@ -42,7 +42,7 @@ class OverviewPageContent implements DynamicPageContent {
                 $contentBuilder .=   '<div id="quacks-host-wrap-wrapper">';
                 $contentBuilder .=     '<a class="quacks-host-ref" href="'.ProduckPlugin::getCustomerProduckLink().'" target="_blank">';
                 $contentBuilder .=       '<span>Provided by ProDuck</span>';
-                $contentBuilder .=       '<img src="'.ProduckPlugin::getImageURL('ducky.png').'" alt="helpful ducky"/>';
+                $contentBuilder .=       '<img src="'.ProduckPlugin::getImageURL('ducky.png').'" alt="ProDuck Brand Logo"/>';
                 $contentBuilder .=     '</a>';
                 $contentBuilder .=   '</div>';
                 $contentBuilder .= '</div>';
@@ -50,11 +50,11 @@ class OverviewPageContent implements DynamicPageContent {
 
             foreach($quackData as $quack) {
                 if (!isset($quack['title']) || strlen($quack['title']) < 1
-                        || !isset($quack['quackId']) || strlen($quack['quackId']) < 1) {
+                        || !isset($quack['id']) || strlen($quack['id']) < 1) {
                     continue;
                 }
 
-                $quackId = $quack['quackId'];
+                $quackId = $quack['id'];
                 $title = $quack['title'];
                 $quackDisplayTarget = ProduckPlugin::isOpenQuackInNewPage() ? "_blank" : "";
 
@@ -66,19 +66,19 @@ class OverviewPageContent implements DynamicPageContent {
                 if (isset($quack['quackity'])) {
                     $quackity = round($quack['quackity'], 1);
                 } else {
-                    $quackity = (ProduckPlugin::getHash($question) % 1000) / 100.0;
+                    $quackity = '-';
                 }
 
                 $views = null;
                 if (isset($quack['views'])) {
                     $views = $quack['views'];
                 } else {
-                    $views = ($this->getHash($question . $date) % 1000);
+                    $views = '-';
                 }
 
                 $time = null;
-                if (isset($quack['timestamp'])) {
-                    $time = new DateTime($quack['timestamp']);
+                if (isset($quack['publicationTime'])) {
+                    $time = new DateTime($quack['publicationTime']);
                 } else {
                     $time = new DateTime();
                 }
@@ -106,10 +106,12 @@ class OverviewPageContent implements DynamicPageContent {
                 $contentBuilder .=     '</h3>';
                 $contentBuilder .=     '<div class="quacks-tags">';
 
-                foreach($quack['tags'] as $tag) {
-                    $contentBuilder .= '<div class="quacks-chip">';
-                    $contentBuilder .=   '<a href="'.$quackLink.'" title="show questions tagged '.$tag.'">'.$tag.'</a>';
-                    $contentBuilder .= '</div>';
+                if (isset($quack['tags']) && is_array($quack['tags'])) {
+                    foreach($quack['tags'] as $tag) {
+                        $contentBuilder .= '<div class="quacks-chip">';
+                        $contentBuilder .=   '<a href="'.$quackLink.'" title="show questions tagged '.$tag.'">'.$tag.'</a>';
+                        $contentBuilder .= '</div>';
+                    }
                 }
 
                 $contentBuilder .=    '</div>';

@@ -1,50 +1,25 @@
-/* exported initQuackJs */
+/* global produckLib */
+/* global M */
+/* global Shariff */
 
-function initQuackJs() {
-    //convert url in quack-oberview clickable links
-    function linkifyDialogue() {
+import initQuackPage from './main.js';
 
-        // http://, https://, ftp://
-        var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+export default class initQuack extends initQuackPage {
+    constructor(){
+        super();
 
-        // www. sans http:// or https://
-        var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-
-        // Email addresses
-        var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
-
-        //replaces url-like-elements with a-tags
-        if (!String.linkify) {
-            Object.defineProperty(String.prototype, "linkify", {
-                value: function () {
-                    return this
-                    .replace(urlPattern, '<a href ="$&" target="blank">$&</a><span>*</span>')
-                    .replace(pseudoUrlPattern, '$1<a href="http://$2" target="blank">$2</a><span>*</span>')
-                    .replace(emailAddressPattern, '<a href="mailto:$&" target="blank">$&</a>');
-                }
-            });
-        }
-
-        var textElem = jQuery('#quacklist-wrapper .quacks-question-hyperlink');
-
-        textElem.each(function () {
-            var chatText = this.innerHTML;
-            // just replace text if containing urlPattern
-            if (chatText.match(urlPattern) || chatText.match(pseudoUrlPattern) || chatText.match(emailAddressPattern)) {
-                var linkedText = chatText.linkify();
-                jQuery(this).html(linkedText);
-            }
-        });
+        // @if ENV='production'
+        this.log = new produckLib.Log(1);
+        // @endif
+        // @if ENV!='production'
+        this.log = new produckLib.Log(4, "initQuackJs");
+        // @endif
     }
 
-    /* global Shariff */
-    /* exported styleShariff */
-    /* exported initShareContent */
 
-    function styleShareShariff(quackRef, title) {
+    styleShareShariff(quackRef, title) {
 
-
-        var buttonsContainer = jQuery('.quacks-share-shariff');
+        var buttonsContainer = jQuery('.share-shariff');
         new Shariff(buttonsContainer, {
             orientation: 'horizontal',
             url: quackRef,
@@ -53,8 +28,8 @@ function initQuackJs() {
             lang: "de",
             infoUrl: quackRef,
             title: title,
-            services: "[facebook; twitter; instagram; googleplus; xing; linkedin; mail;]",
-            mediaUrl: "assets/img/ducky.png",
+            services: "[facebook; twitter; instagram; xing; linkedin; mail;]",
+            mediaUrl: "/assets/img/ducky.png",
             buttonStyle: "icon",
             theme: "standard",
             referrerTrack: null,
@@ -62,25 +37,19 @@ function initQuackJs() {
         });
     }
 
-    function initShareContent() {
+    initShareContent() {
 
-        jQuery(document).on('click', '#quacks-share-brand > .quacks-share', function () {
+        jQuery(document).on('click', '.share-brand > .share', function () {
             // for quacksSite get href from current site
-            let questionRefDetailSite = window.location.href;
-            let questionTextDetailSite = jQuery("#question").text();
+            var questionRefDetailSite = window.location.href;
+            var questionTextDetailSite = jQuery("#question").text();
             createShareCard(questionRefDetailSite, questionTextDetailSite);
-        });
-
-        jQuery(document).on('click', '.quacks-views > .quacks-share', function () {
-            let questionRefSingleCard = jQuery(this).parents('.quacks-dialogue-summary').find('.quacks-text-line > a').attr('href');
-            let questionTextSingleCard = jQuery(this).parents('.quacks-dialogue-summary').find('.quacks-text-line > a').text();
-            createShareCard(questionRefSingleCard, questionTextSingleCard);
         });
 
         function createShareCard(href, question) {
 
             // for the future, we can provide beautiful shortlinks
-            const canonicalElement = document.querySelector('link[rel=canonical]');
+            var canonicalElement = document.querySelector('link[rel=canonical]');
             if (canonicalElement !== null) {
                 href = canonicalElement.href;
             }
@@ -89,12 +58,13 @@ function initQuackJs() {
                 navigator.share({
                     title: question,
                     text: 'Good Question, Good Answer',
-                    url: href,
-                })
-                  .then(() => console.log('Successful share'))
-                  .catch((error) => console.log('Error sharing', error));
-            }
-            else if (!navigator.share) {
+                    url: href
+                }).then(function () {
+                    return console.log('Successful share');
+                }).catch(function (error) {
+                    return console.log('Error sharing', error);
+                });
+            } else if (!navigator.share) {
                 jQuery(".quacks-share-url").val(href);
                 jQuery('#quacks-share-modal').css({ "display": "flex" });
                 styleShareShariff(href, question);
@@ -102,12 +72,11 @@ function initQuackJs() {
                 closeShareCard();
             }
         }
-    }
+    }  
 
+    copytoClipboard(inputVal) {
 
-    function copytoClipboard(inputVal) {
-
-        jQuery(document).on('click', '.quacks-content-copy', function () {
+        jQuery(document).on('click', '.content-copy', function () {
             this.copied = false;
 
             // Create textarea element
@@ -140,12 +109,34 @@ function initQuackJs() {
         });
     }
 
-    function closeShareCard() {
+    closeShareCard() {
         jQuery(document).on('click', '#quacks-close-share-modal', function () {
             jQuery('#quacks-share-modal').css({ "display": "none" });
         });
     }
 
-    linkifyDialogue();
-    initShareContent();
+    /* global Materialize */
+    /* exported styleShariff */
+
+    initMaterializeInContentBlock() {
+
+        let elems = document.querySelectorAll('.quack-inner-block');
+        M.ScrollSpy.init(elems, { scrollOffset: 75});
+    
+        elems = document.querySelectorAll('.materialboxed');
+        M.Materialbox.init(elems);
+    
+        elems = document.querySelectorAll('.collapsible');
+        M.Collapsible.init(elems);
+    
+        elems = document.querySelectorAll('.collapsible.expandable');
+        M.Collapsible.init(elems, {accordion: false});
+    }
+
+    initialise () {
+        const instance = this;
+        instance.initShareContent();
+        instance.initMaterializeInContentBlock();
+        instance.lazyload.lazyloaderInit();
+    }
 }

@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> aritcle export and gulp update
 /* global produckLib */
 /* global M */
 /* global Cookies */

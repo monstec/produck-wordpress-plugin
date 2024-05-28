@@ -16,9 +16,13 @@ export default class initQuack extends initQuackPage {
         // @endif
     }
 
+<<<<<<< HEAD
 
     styleShareShariff(quackRef, title) {
 
+=======
+    styleShareShariff(quackRef, title) {
+>>>>>>> aritcle export and gulp update
         var buttonsContainer = jQuery('.share-shariff');
         new Shariff(buttonsContainer, {
             orientation: 'horizontal',
@@ -38,7 +42,10 @@ export default class initQuack extends initQuackPage {
     }
 
     initShareContent() {
+<<<<<<< HEAD
 
+=======
+>>>>>>> aritcle export and gulp update
         jQuery(document).on('click', '.share-brand > .share', function () {
             // for quacksSite get href from current site
             var questionRefDetailSite = window.location.href;
@@ -75,7 +82,10 @@ export default class initQuack extends initQuackPage {
     }  
 
     copytoClipboard(inputVal) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> aritcle export and gulp update
         jQuery(document).on('click', '.content-copy', function () {
             this.copied = false;
 

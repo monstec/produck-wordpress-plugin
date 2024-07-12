@@ -16,10 +16,11 @@ class ProduckQuacksWidget extends WP_Widget {
     // Main constructor
     // Note: The __()-function is for internationalisation, see:
     // https://make.wordpress.org/polyglots/handbook/#Localization_Technology
+    // The headline of the widget is changed in the widget settings in wordpress directly
     public function __construct() {
         parent::__construct(
             'my_custom_widget',
-            __( 'Produck Q&A Widget', 'text_domain' ),
+            __( 'Produck Widget', 'text_domain' ),
             array(
                 'customize_selective_refresh' => true,
             )
@@ -28,10 +29,17 @@ class ProduckQuacksWidget extends WP_Widget {
 
     // The widget form (for the backend )
     public function form($instance) {
-        // Set widget defaults
+
+        $externalPosts = ProduckPlugin::getTranslations(false, 'text', 'current_posts');
         $defaults = array(
-            'widgetTitle' => 'Aktuelle Q&As'
+            'widgetTitle' => 'Current Posts'
         );
+        if (isset($externalPosts)) {
+            // Set widget defaults
+            $defaults = array(
+                'widgetTitle' => $externalPosts
+            );
+        }
 
         // Parse current settings with defaults, meaning for example, if there is no value for
         // 'widgetTitle' in $instance then use the value in $defaults.
@@ -77,19 +85,21 @@ class ProduckQuacksWidget extends WP_Widget {
         $quackDisplayTarget = ProduckPlugin::isOpenQuackInNewPage() ? "_blank" : "";
         $quackData = $connector->getQuacks(ProduckPlugin::getNumberOfQuacksShown());
 
-        echo   '<div id="quacks-external-box" class="quacks-main">';
+        //print_r($quackData);
+
+        echo   '<div id="quacks-widget-box" class="quacks-main">';
         echo     '<section id="quacks-container">';
         echo       '<div id="quacklist-wrapper-external-box" class="quacks-block_content flush-left">';
-        echo         '<div id="quack-overview-list-external-box" class="quacks-external-box">';
+        echo         '<div id="quack-overview-list-external-box">';
 
         if ($quackData != null) {
             foreach($quackData as $quack) {
                 if (!isset($quack['title']) || strlen($quack['title']) < 1
-                        || !isset($quack['quackId']) || strlen($quack['quackId']) < 1) {
+                        || !isset($quack['id']) || strlen($quack['id']) < 1) {
                     continue;
                 }
 
-                $quackId = $quack['quackId'];
+                $quackId = $quack['id'];
                 $title = $quack['title'];
 
                 $prettyUrlTitlePart = ProduckPlugin::transformTitleToUrlPart($title);
@@ -104,13 +114,13 @@ class ProduckQuacksWidget extends WP_Widget {
             }
         } else {
             echo           '<p>';
-            echo             'Chatten und Kaufen auf <a href="'.ProduckPlugin::getCustomerProduckLink().'" target="_blank">ProDuck.de</a>!';
+            echo             'Provided by <a href="'.ProduckPlugin::getCustomerProduckLink().'" target="_blank">ProDuck.de</a>!';
             echo           '</p>';
         }
 
         echo         '</div>';
         echo         '<div class="quacks-more-quacks-ref">';
-        echo           '<a href="'.ProduckPlugin::getQuackOverviewUrl().'" target="'.$quackDisplayTarget.'">Mehr Q&As</a>';
+        echo           '<a href="'.ProduckPlugin::getQuackOverviewUrl().'" target="'.$quackDisplayTarget.'" data-i18n="text.more_posts">More Posts</a>';
         echo         '</div>';
         echo       '</div>';
         echo     '<section>';

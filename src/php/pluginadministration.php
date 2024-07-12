@@ -7,57 +7,77 @@ defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
  * The creation of this class followed this tutorial:
  * http://ottopress.com/2009/wordpress-settings-api-tutorial/
  */
-class ProduckPluginAdministration {
-    public function __construct() {
+class ProduckPluginAdministration
+{
+    private $translations;
+
+    public function __construct()
+    {
         add_action('admin_menu', array($this, 'addPluginAdminPage'));
         add_action('admin_init', array($this, 'pluginAdminInit'));
-        add_action('admin_head', function() {
+        add_action('admin_head', function () {
             echo '<link rel="stylesheet" href="'
-                .ProduckPlugin::getPluginUrl().'/css/administration.min.css'
-                .'" type="text/css" media="all" />';
+                . ProduckPlugin::getPluginUrl() . '/css/administration.min.css'
+                . '" type="text/css" media="all" />';
         });
 
         add_action('wp_ajax_produck_first_config', array($this, 'handleFirstConfigAnswer'));
+
+        $this->translations = ProduckPlugin::getTranslations(true, false, false);
+    }
+
+    public function getTranslation($section, $key)
+    {
+        if (isset($this->translations['translation'][$section][$key])) {
+            return $this->translations['translation'][$section][$key];
+        }
+        return null;
     }
 
     /**
      * Contains the menu-building code.
      */
-    public function addPluginAdminPage() {
-        add_options_page('ProDuck Einstellungen', // displayed in title tags
-                         'ProDuck', // text to be used for the menu
-                         'manage_options', //capability required for the menu to be displayed
-                         'produck-settings', // slug name used to refer to this menu (should be unique)
-                         array($this, 'createPluginOptionsPage')); // callback function that will output the page content
+    public function addPluginAdminPage()
+    {
+        add_options_page(
+            'ProDuck Einstellungen', // displayed in title tags
+            'ProDuck', // text to be used for the menu
+            'manage_options', //capability required for the menu to be displayed
+            'produck-settings', // slug name used to refer to this menu (should be unique)
+            array($this, 'createPluginOptionsPage')
+        ); // callback function that will output the page content
 
         if (ProduckPlugin::isPoweredByLinkAllowed() < 0) {
             add_thickbox();
-            add_action('produck_administration_requested',
-                       array($this, 'showFirstConfigurationDialogue'));
+            add_action(
+                'produck_administration_requested',
+                array($this, 'showFirstConfigurationDialogue')
+            );
         }
     }
 
     /**
      * Create the HTML output for the page (screen) displayed when the menu item is clicked.
-    */
-    public function createPluginOptionsPage() {
-        if (!current_user_can( 'manage_options')) {
-            wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+     */
+    public function createPluginOptionsPage()
+    {
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.'));
         }
 
         do_action('produck_administration_requested');
 
-        ?>
+?>
         <div>
-        <h2>Produck Konfiguration</h2>
-        Hier finden Sie Einstellungen für das Produck-Plugin.
-        <form action="options.php" method="post">
-        <?php settings_fields('produck_options'); ?>
-        <?php do_settings_sections('produck_settings_page'); ?>
-        <input class="button button-primary" name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
-        </form>
+            <h2><?php $this->getTranslation('settings', 'produck_configuration') ?></h2>
+            <?php $this->getTranslation('settings', 'plugin_settings_info') ?>
+            <form action="options.php" method="post">
+                <?php settings_fields('produck_options'); ?>
+                <?php do_settings_sections('produck_settings_page'); ?>
+                <input class="button button-primary" name="Submit" type="submit" value="<?php esc_attr_e('Save Changes'); ?>" />
+            </form>
         </div>
-        <?php
+    <?php
     }
 
     /**
@@ -66,140 +86,145 @@ class ProduckPluginAdministration {
      * logically group options/fields.
      * For each field a callback is used to define the actual HTML code for the field.
      */
-    public function pluginAdminInit(){
+    public function pluginAdminInit()
+    {
         register_setting('produck_options', 'produck_config', array($this, 'validateProduckOptions'));
 
-        add_settings_section('produck_settings_general', 'Allgemein', array($this, 'generalSectionText'), 'produck_settings_page');
-        add_settings_field('produckCustomerIdField', 'Produck Benutzer ID:', array($this, 'createCustomerIdInputField'), 'produck_settings_page', 'produck_settings_general');
+        add_settings_section('produck_settings_general', $this->getTranslation('settings', 'general'), array($this, 'generalSectionText'), 'produck_settings_page');
+        add_settings_field('produckCustomerIdField', $this->getTranslation('settings', 'produck_user_id'), array($this, 'createCustomerIdInputField'), 'produck_settings_page', 'produck_settings_general');
         add_settings_field('produckQuackTokenField', 'Quack Token:', array($this, 'createQuackTokenInputField'), 'produck_settings_page', 'produck_settings_general');
 
-        add_settings_section('produck_settings_quacks', 'Beitragsoptionen', array($this, 'quacksSectionText'), 'produck_settings_page');
-        add_settings_field('openQuackInNewPageField', 'Beiträge in neuem Fenster öffnen?', array($this, 'createOpenQuackInNewPageField'), 'produck_settings_page', 'produck_settings_quacks');
-        add_settings_field('maxQuackUrlTitleLengthField', 'Max. Anzahl an Zeichen für den Titel in der URL:', array($this, 'createMaxQuackUrlTitleLengthField'), 'produck_settings_page', 'produck_settings_quacks');
-        add_settings_field('useThemeTemplateField', 'Theme-eigenes Seitentemplate verwenden?', array($this, 'createUseThemeTemplateField'), 'produck_settings_page', 'produck_settings_quacks');
-        add_settings_field('poweredByLinkAllowedField', '"Content provided by ProDuck"-Links anzeigen?', array($this, 'createPoweredByLinkAllowedField'), 'produck_settings_page', 'produck_settings_quacks');
+        add_settings_section('produck_settings_quacks', $this->getTranslation('settings', 'post_options'), array($this, 'quacksSectionText'), 'produck_settings_page');
+        add_settings_field('openQuackInNewPageField', $this->getTranslation('settings', 'open_posts_in_new_window'), array($this, 'createOpenQuackInNewPageField'), 'produck_settings_page', 'produck_settings_quacks');
+        add_settings_field('maxQuackUrlTitleLengthField', $this->getTranslation('settings', 'max_title_length_in_url'), array($this, 'createMaxQuackUrlTitleLengthField'), 'produck_settings_page', 'produck_settings_quacks');
+        add_settings_field('useThemeTemplateField', $this->getTranslation('settings', 'use_theme_template'), array($this, 'createUseThemeTemplateField'), 'produck_settings_page', 'produck_settings_quacks');
+        add_settings_field('poweredByLinkAllowedField', $this->getTranslation('settings', 'show_provided_by_links'), array($this, 'createPoweredByLinkAllowedField'), 'produck_settings_page', 'produck_settings_quacks');
 
         add_settings_section('produck_settings_widget', 'Widget', array($this, 'widgetSectionText'), 'produck_settings_page');
-        add_settings_field('numberOfQuacksShownField', 'Max. Anzahl angezeigter Beiträgen', array($this, 'createNumberOfQuacksShownField'), 'produck_settings_page', 'produck_settings_widget');
-        add_settings_field('verifyQuacksBeforePublishing', 'Erlaubt es dem Seitenbesitzer Beiträge vor der Veröffentlichung zuzustimmen', array($this, 'createverifyQuacksBeforePublishing'), 'produck_settings_page');
-    
-        add_settings_section('produck_settings_chat', 'Chat-Optionen', array($this, 'chatSectionText'), 'produck_settings_page');
-        add_settings_field('chatEnabledField', 'Chat aktiviert?', array($this, 'createChatEnabledField'), 'produck_settings_page', 'produck_settings_chat');
+        add_settings_field('numberOfQuacksShownField', $this->getTranslation('settings', 'max_number_of_posts'), array($this, 'createNumberOfQuacksShownField'), 'produck_settings_page', 'produck_settings_widget');
+        //add_settings_field('verifyQuacksBeforePublishing', 'Erlaubt es dem Seitenbesitzer Beiträge vor der Veröffentlichung zuzustimmen', array($this, 'createverifyQuacksBeforePublishing'), 'produck_settings_page');
+
+        add_settings_section('produck_settings_chat', $this->getTranslation('settings', 'chat_options'), array($this, 'chatSectionText'), 'produck_settings_page');
+        add_settings_field('chatEnabledField', $this->getTranslation('settings', 'chat_enabled'), array($this, 'createChatEnabledField'), 'produck_settings_page', 'produck_settings_chat');
     }
 
     /**
      * Defines the description for the section 'general settings'.
      */
-    public function generalSectionText() {
-        echo '<p>Nehmen sie hier grundsätzliche Einstellungen vor, welche den Betrieb des Plugins ermöglichen. Die ProDuck '
-             .'Benutzer ID und das Quack Token finden Sie in Ihrem Profil bzw. in den Einstellungen auf <a href="https://www.produck.de/xpert.html" target="_blank">www.produck.de</a>.';
+    public function generalSectionText()
+    {
+        echo $this->getTranslation('settings', 'settings_intro_general');
     }
 
     /**
      * Defines the description for the section 'chat settings'.
      */
-    public function chatSectionText() {
-        echo '<p>Wenn Sie den Produckchat direkt auf Ihrer Wordpressseite einsetzen wollen, können Sie ihn hier aktivieren.</p>';
+    public function chatSectionText()
+    {
+        echo $this->getTranslation('settings', 'settings_intro_chat');
     }
 
     /**
      * Defines the description for the section 'quacks settings'.
      */
-    public function quacksSectionText() {
-        echo '<p>Definieren Sie hier ob Links zu einzelnen Beiträgen und zur Beitragsübersicht in einem neuen Fenster bzw. '
-             .'Tab geöffnet werden sollen (oder im aktuellen Fenster).<br/>'
-             .'Außerdem können Sie die maximale Länge der URL von einzelnen Seiten beeinflussen, indem sie die maximale '
-             .'Länge des Teils, der den Titel darstellt, einstellen.<br/>'
-             .'Schließlich können Sie wählen, ob Sie das vom Produck-Plugin mitgelieferte Seitentemplate für Beitrags-'
-             .'spezifische Seiten verwenden wollen, oder lieber das Seitentemplate des von Ihnen verwendeten Themes.</p>';
+    public function quacksSectionText()
+    {
+        echo $this->getTranslation('settings', 'settings_intro_links');
     }
 
     /**
      * Defines the description for the section 'widget settings'.
      */
-    public function widgetSectionText() {
-        echo '<p>Hier können Sie die Anzahl der maximal angezeigten Beiträge im ProDuck-Widget definieren.'
-             .'Beachten Sie bitte, dass Sie das Widget noch unter "Design->Widgets" zu den anzuzeigenden Widgets '
-             .'hinzufügen müssen, wenn Sie es verwenden wollen.</p>';
+    public function widgetSectionText()
+    {
+        echo $this->getTranslation('settings', 'settings_intro_widget');
     }
 
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'customerId'.
      */
-    public function createCustomerIdInputField() {
+    public function createCustomerIdInputField()
+    {
         $options = get_option('produck_config');
-        echo '<input type="text" id="produckCustomerIdField" name="produck_config[customerId]" size="10" value="'.$options['customerId'].'"/>';
+        echo '<input type="text" id="produckCustomerIdField" name="produck_config[customerId]" size="10" value="' . $options['customerId'] . '"/>';
     }
 
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'quackToken'.
      */
-    public function createQuackTokenInputField() {
+    public function createQuackTokenInputField()
+    {
         $options = get_option('produck_config');
-        echo '<input type="text" id="produckQuackTokenField" name="produck_config[quackToken]" size="50" value="'.$options['quackToken'].'"/>';
+        echo '<input type="text" id="produckQuackTokenField" name="produck_config[quackToken]" size="50" value="' . $options['quackToken'] . '"/>';
     }
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'chatEnabled'.
      */
-    public function createChatEnabledField() {
+    public function createChatEnabledField()
+    {
         $options = get_option('produck_config');
         echo '<select id="chatEnabledField" name="produck_config[chatEnabled]">';
-        echo ' <option value="1"'.(($options['chatEnabled']) ? 'selected="selected"' : '').'>Ja</option>';
-        echo ' <option value="0"'.((!$options['chatEnabled']) ? 'selected="selected"' : '').'>Nein</option>';
+        echo ' <option value="1"' . (($options['chatEnabled']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'yes') . '</option>';
+        echo ' <option value="0"' . ((!$options['chatEnabled']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'no') . '</option>';
         echo '</select>';
     }
 
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'openQuackInNewPage'.
      */
-    public function createOpenQuackInNewPageField() {
+    public function createOpenQuackInNewPageField()
+    {
         $options = get_option('produck_config');
         echo '<select id="openQuackInNewPageField" name="produck_config[openQuackInNewPage]">';
-        echo ' <option value="1"'.(($options['openQuackInNewPage']) ? 'selected="selected"' : '').'>Ja</option>';
-        echo ' <option value="0"'.((!$options['openQuackInNewPage']) ? 'selected="selected"' : '').'>Nein</option>';
+        echo ' <option value="1"' . (($options['openQuackInNewPage']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'yes') . '</option>';
+        echo ' <option value="0"' . ((!$options['openQuackInNewPage']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'no') . '</option>';
         echo '</select>';
     }
 
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'maxQuackUrlTitleLength'.
      */
-    public function createMaxQuackUrlTitleLengthField() {
+    public function createMaxQuackUrlTitleLengthField()
+    {
         $options = get_option('produck_config');
-        echo '<input id="maxQuackUrlTitleLengthField" name="produck_config[maxQuackUrlTitleLength]" size="10" type="text" value="'.$options['maxQuackUrlTitleLength'].'"/>';
+        echo '<input id="maxQuackUrlTitleLengthField" name="produck_config[maxQuackUrlTitleLength]" size="10" type="text" value="' . $options['maxQuackUrlTitleLength'] . '"/>';
     }
 
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'numberOfQuacksShown'.
      */
-    public function createNumberOfQuacksShownField() {
+    public function createNumberOfQuacksShownField()
+    {
         $options = get_option('produck_config');
-        echo '<input id="numberOfQuacksShownField" name="produck_config[numberOfQuacksShown]" size="10" type="text" value="'.$options['numberOfQuacksShown'].'"/>';
+        echo '<input id="numberOfQuacksShownField" name="produck_config[numberOfQuacksShown]" size="10" type="text" value="' . $options['numberOfQuacksShown'] . '"/>';
     }
 
     /**
      * Creates the HTML-code for the input element that let's the user decide whether to use the plugins built in
      * template for quack pages or the default theme page-template.
      */
-    public function createUseThemeTemplateField() {
+    public function createUseThemeTemplateField()
+    {
         $options = get_option('produck_config');
         echo '<select id="useThemeTemplateField" name="produck_config[useThemeTemplate]">';
-        echo ' <option value="1"'.(($options['useThemeTemplate']) ? 'selected="selected"' : '').'>Ja</option>';
-        echo ' <option value="0"'.((!$options['useThemeTemplate']) ? 'selected="selected"' : '').'>Nein</option>';
+        echo ' <option value="1"' . (($options['useThemeTemplate']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'yes') . '</option>';
+        echo ' <option value="0"' . ((!$options['useThemeTemplate']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'no') . '</option>';
         echo '</select>';
     }
 
     /**
      * Creates the HTML-code for the input element that let's the user decide whether to show powered-by-links or not.
      */
-    public function createPoweredByLinkAllowedField() {
+    public function createPoweredByLinkAllowedField()
+    {
         $options = get_option('produck_config');
         echo '<select id="poweredByLinkAllowedField" name="produck_config[poweredByLinkAllowed]">';
         if ($options['poweredByLinkAllowed'] > 0) {
-            echo ' <option value="1" selected="selected">Ja</option>';
-            echo ' <option value="0">Nein</option>';
+            echo ' <option value="1" selected="selected">' . $this->getTranslation('settings', 'yes') . '</option>';
+            echo ' <option value="0">' . $this->getTranslation('settings', 'no') . '</option>';
         } else {
-            echo ' <option value="1">Ja</option>';
-            echo ' <option value="0" selected="selected">Nein</option>';
+            echo ' <option value="1">' . $this->getTranslation('settings', 'yes') . '</option>';
+            echo ' <option value="0" selected="selected">' . $this->getTranslation('settings', 'no') . '</option>';
         }
         echo '</select>';
     }
@@ -207,15 +232,16 @@ class ProduckPluginAdministration {
     /**
      * Creates the HTML-code for the input element that let's the user decide whether to verify articles before publishing or not.
      */
-    public function createverifyQuacksBeforePublishing() {
+    public function createverifyQuacksBeforePublishing()
+    {
         $options = get_option('produck_config');
         echo '<select id="verifyArticlesBeforePublishing" name="produck_config[verifyArticlesBeforePublishing]">';
         if ($options['verifyArticlesBeforePublishing'] > 0) {
-            echo ' <option value="1" selected="selected">Ja</option>';
-            echo ' <option value="0">Nein</option>';
+            echo ' <option value="1" selected="selected">' . $this->getTranslation('settings', 'yes') . '</option>';
+            echo ' <option value="0">' . $this->getTranslation('settings', 'no') . '</option>';
         } else {
-            echo ' <option value="1">Ja</option>';
-            echo ' <option value="0" selected="selected">Nein</option>';
+            echo ' <option value="1">' . $this->getTranslation('settings', 'yes') . '</option>';
+            echo ' <option value="0" selected="selected">' . $this->getTranslation('settings', 'no') . '</option>';
         }
         echo '</select>';
     }
@@ -224,7 +250,8 @@ class ProduckPluginAdministration {
      * Validate the user's input on the settings page. The validated input will be returned and then stored
      * in the database by the settings-API.
      */
-    public function validateProduckOptions($input) {
+    public function validateProduckOptions($input)
+    {
         // First load current configuration then only update those values that actually a treated in this
         // function. This way properties that are stored in the options array but cannot be updated via the
         // settings page are left as they are and not set to nothing or something undefined. This should just
@@ -238,67 +265,80 @@ class ProduckPluginAdministration {
 
         // trim whitespace and leading zeros off the customer-ID
         $inCustomerId = isset($input['customerId']) ? ltrim(trim($input['customerId']), '0') : '';
-        if(preg_match('/^[1-9][0-9]{0,31}$/i', $inCustomerId)) {
+        if (preg_match('/^[1-9][0-9]{0,31}$/i', $inCustomerId)) {
             $trustedInput['customerId'] = $inCustomerId;
         } else {
-            add_settings_error('produck_config', 'produckCustomerIdField',
-                'Die Benutzer ID muss eine ganze Zahl sein.');
+            add_settings_error(
+                'produck_config',
+                'produckCustomerIdField',
+                $this->getTranslation('settings', 'user_id_must_be_integer')
+            );
         }
 
         // trim whitespace off the quack token
         $inQuackToken = isset($input['quackToken']) ? ltrim(trim($input['quackToken']), '0') : '';
-        if(preg_match('/^[0-9a-fA-F]+$/i', $inQuackToken)) {
+        if (preg_match('/^[0-9a-fA-F]+$/i', $inQuackToken)) {
             $trustedInput['quackToken'] = $inQuackToken;
         } else {
-            add_settings_error('produck_config', 'produckQuackTokenField',
-                'Das Quack Token muss eine Zeichenkette aus hexadezimalen Ziffern sein.');
+            add_settings_error(
+                'produck_config',
+                'produckQuackTokenField',
+                $this->getTranslation('settings', 'quack_token_must_be_hex')
+            );
         }
 
         $inChatEnabled = isset($input['chatEnabled']) ? trim($input['chatEnabled']) : '';
-        if(preg_match('/^[0|1]$/i', $inChatEnabled)) {
+        if (preg_match('/^[0|1]$/i', $inChatEnabled)) {
             $trustedInput['chatEnabled'] = $inChatEnabled;
         }
 
         $inopenQuackInNewPage = isset($input['openQuackInNewPage']) ? trim($input['openQuackInNewPage']) : '';
-        if(preg_match('/^[0|1]$/i', $inopenQuackInNewPage)) {
+        if (preg_match('/^[0|1]$/i', $inopenQuackInNewPage)) {
             $trustedInput['openQuackInNewPage'] = $inopenQuackInNewPage;
         }
 
         $maxQuackUrlTitleLength = isset($input['maxQuackUrlTitleLength']) ? trim($input['maxQuackUrlTitleLength']) : '';
-        if(preg_match('/^[1-9][0-9]{0,31}$/i', $maxQuackUrlTitleLength)) {
+        if (preg_match('/^[1-9][0-9]{0,31}$/i', $maxQuackUrlTitleLength)) {
             $trustedInput['maxQuackUrlTitleLength'] = $maxQuackUrlTitleLength;
         } else {
-            add_settings_error('produck_config', 'maxQuackUrlTitleLengthField',
-                'Die Längenangabe für den Quacktitel muss eine ganze Zahl sein.');
+            add_settings_error(
+                'produck_config',
+                'maxQuackUrlTitleLengthField',
+                $this->getTranslation('settings', 'title_length_must_be_integer')
+            );
         }
 
         $inNumberOfQuacksShown = isset($input['numberOfQuacksShown']) ? trim($input['numberOfQuacksShown']) : '';
-        if(preg_match('/^[1-9][0-9]{0,31}$/i', $inNumberOfQuacksShown)) {
+        if (preg_match('/^[1-9][0-9]{0,31}$/i', $inNumberOfQuacksShown)) {
             $trustedInput['numberOfQuacksShown'] = $inNumberOfQuacksShown;
         } else {
-            add_settings_error('produck_config', 'numberOfQuacksShownField',
-            'Die Anzahl der angezeigten Quacks muss eine ganze Zahl sein.');
+            add_settings_error(
+                'produck_config',
+                'numberOfQuacksShownField',
+                $this->getTranslation('settings', 'number_of_quacks_must_be_integer')
+            );
         }
 
         $useThemeTemplate = isset($input['useThemeTemplate']) ? trim($input['useThemeTemplate']) : '';
-        if(preg_match('/^[0|1]$/i', $useThemeTemplate)) {
+        if (preg_match('/^[0|1]$/i', $useThemeTemplate)) {
             $trustedInput['useThemeTemplate'] = $useThemeTemplate;
         }
 
         $poweredByLinkAllowed = isset($input['poweredByLinkAllowed']) ? trim($input['poweredByLinkAllowed']) : '';
-        if(preg_match('/^[0|1]$/i', $poweredByLinkAllowed)) {
+        if (preg_match('/^[0|1]$/i', $poweredByLinkAllowed)) {
             $trustedInput['poweredByLinkAllowed'] = $poweredByLinkAllowed;
         }
 
         return $trustedInput;
     }
 
-    public function showFirstConfigurationDialogue() {
+    public function showFirstConfigurationDialogue()
+    {
         // inject a script that opens a thickbox to ask for the user's permission to show powered-by-links
-        ?>
+    ?>
         <script>
             jQuery(window).load(function($) {
-                tb_show("Produck Konfiguration","#TB_inline?width=400&height=180&inlineId=produckFirstConfigDialogue", null);
+                tb_show(<?php $this->getTranslation('settings', 'produck_configuration') ?>, "#TB_inline?width=400&height=180&inlineId=produckFirstConfigDialogue", null);
             });
 
             function produck_sendFirstConfigAnswer() {
@@ -309,14 +349,14 @@ class ProduckPluginAdministration {
 
                 var feedback;
                 if (isNaN(cid) || cid < 1) {
-                    feedback = "Kunden-ID ungültig";
+                    feedback = <?php $this->getTranslation('settings', 'invalid_user_id') ?>;
                 }
 
                 if (isNaN(powby) || powby != 0 && powby != 1) {
                     if (feedback) {
-                        feedback += "und Antwort ungültig";
+                        feedback += <?php $this->getTranslation('settings', 'invalid_user_id') . ' plus ' .  $this->getTranslation('settings', 'invalid_response') ?> "Antwort ungültig";
                     } else {
-                        feedback = "Antwort ungültig";
+                        feedback = <?php $this->getTranslation('settings', 'invalid_response') ?>;
                     }
                 }
 
@@ -352,49 +392,52 @@ class ProduckPluginAdministration {
             }
         </script>
         <div id="produckFirstConfigDialogue">
-          <div class="produck-admin-dialogue-pane">
-            <div class="explanation-cell">
-              Um ProDuck in Wordpress nutzen zu können, wird Ihre Produck Kunden-ID benötigt. Diese finden Sie in Ihrem Profil auf produck.de.
+            <div class="produck-admin-dialogue-pane">
+                <div class="explanation-cell">
+                    <?php $this->getTranslation('settings', 'produck_id_needed') ?>
+                </div>
+                <div class="label-cell-cid">
+                    <?php $this->getTranslation('settings', 'produck_user_id_label') ?>
+                </div>
+                <div class="value-cell-cid">
+                    <input type="text" id="produckFirstConfigCustomerIdField" />
+                </div>
+                <div class="label-cell-powby">
+                    <?php $this->getTranslation('settings', 'support_produck_links') ?>
+                </div>
+                <div class="value-cell-powby">
+                    <select id="produckFirstConfigPoweredByLinkAnswerField">
+                        <option value="1" selected="selected">Okay</option>
+                        <option value="0"><?php $this->getTranslation('settings', 'no') ?></option>
+                    </select>
+                </div>
+                <div id="produckFirstConfigFeedback" class="feedback-cell">
+                </div>
+                <div class="button-cell">
+                    <button class="button button-primary" onclick="javascript:produck_sendFirstConfigAnswer();"><?php $this->getTranslation('settings', 'save') ?></button>
+                    <button class="button" onclick="javascript:tb_remove();return false;"><?php $this->getTranslation('settings', 'cancel') ?></button>
+                    <?php
+                    wp_nonce_field('produck_config_first_save', 'produckConfigFirstSaveNonce');
+                    ?>
+                </div>
             </div>
-            <div class="label-cell-cid">
-              Produck Kunden-ID:
-            </div>
-            <div class="value-cell-cid">
-              <input type="text" id="produckFirstConfigCustomerIdField"/>
-            </div>
-            <div class="label-cell-powby">
-              Darf Produck durch &quot;Provided By&quot;-Links unter Beiträgen und der Beitrags-Übersicht auf den Service aufmerksam machen?
-            </div>
-            <div class="value-cell-powby">
-              <select id="produckFirstConfigPoweredByLinkAnswerField">
-                <option value="1" selected="selected">Ja</option>
-                <option value="0">Nein</option>
-              </select>
-            </div>
-            <div id="produckFirstConfigFeedback" class="feedback-cell">
-            </div>
-            <div class="button-cell">
-              <button class="button button-primary" onclick="javascript:produck_sendFirstConfigAnswer();">Speichern</button>
-              <button class="button" onclick="javascript:tb_remove();return false;">Abbruch</button>
-              <?php
-                wp_nonce_field('produck_config_first_save', 'produckConfigFirstSaveNonce');
-              ?>
-            </div>
-          </div>
         </div>
-        <?php
+<?php
     }
 
-    public function handleFirstConfigAnswer() {
-        if(!current_user_can('manage_options') 
-                || !isset($_POST['produckConfigFirstSaveNonce'])
-                || !wp_verify_nonce($_POST['produckConfigFirstSaveNonce'], 'produck_config_first_save')) {
+    public function handleFirstConfigAnswer()
+    {
+        if (
+            !current_user_can('manage_options')
+            || !isset($_POST['produckConfigFirstSaveNonce'])
+            || !wp_verify_nonce($_POST['produckConfigFirstSaveNonce'], 'produck_config_first_save')
+        ) {
             wp_send_json('Not authorised!', 401);
             wp_die();
         }
 
-        $cid = intval( $_POST['cid'] );
-        $answer = boolval( $_POST['answer'] );
+        $cid = intval($_POST['cid']);
+        $answer = boolval($_POST['answer']);
         $option = get_option('produck_config');
         $option['customerId'] = $cid;
         $option['poweredByLinkAllowed'] = ($answer) ? 1 : 0;

@@ -9,7 +9,7 @@ defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 class Chat {
     public function getHtml() {
         $cid = ProduckPlugin::getCustomerId();
-        $duckyImage = ProduckPlugin::getImageURL('ducky.png');
+        $duckyImage = ProduckPlugin::getImageURL('ducky_xs.png');
         $produckLink = ProduckPlugin::getCustomerProduckLink();
 
         $view = '<div id="produck-chat-block-home" class="passive" title="Hilfe und Angebote im Chat">';

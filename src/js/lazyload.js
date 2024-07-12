@@ -1,18 +1,8 @@
 /* global produckLib */
 /* global M */
 
-import initQuackPage from './main.js';
-
-export default class LazyLoad extends initQuackPage {
+export default class LazyLoad {
     constructor(){
-        super();
-
-        // @if ENV='production'
-        this.log = new produckLib.Log(1);
-        // @endif
-        // @if ENV!='production'
-        this.log = new produckLib.Log(4, "LazyLoad");
-        // @endif
     }
     
     lazyloaderInit() {

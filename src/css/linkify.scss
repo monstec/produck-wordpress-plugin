@@ -348,6 +348,11 @@ $hover-color2: rgba(50,162,162, 1);
             @media #{$mobile}, #{$tablet} {
               font-size: 12px;
             }
+
+            svg {
+              height: 14px;
+              margin: 0 10px 0 5px;
+            }
           }
         }
   

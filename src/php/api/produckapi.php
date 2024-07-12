@@ -25,15 +25,15 @@ class ProduckApi {
 
         // directives of the build preprocessing done by gulp-preprocess
         // @if ENV='production'
-        $this->urlQuacksEndpoint = "https://api.produck.de/chat-service/quacks?quackToken=".$token;
+        $this->urlQuacksEndpoint = "https://api.produck.de/chat-service/quacks/external?quackToken=".$token;
         $this->urlQuackEndpoint = "https://api.produck.de/chat-service/quack?quackToken=".$token."&quackId=";
 
         // @endif
         // @if ENV!='production'
         // dockerhost is resolved as the "localhost", the hostmachine where everything is run at
-        $this->urlQuacksEndpoint = "https://dockerhost:443/chat-service/quacks?quackToken=".$token;
+        $this->urlQuacksEndpoint = "https://dockerhost:443/chat-service/quacks/external?quackToken=".$token;
         $this->urlQuackEndpoint = "https://dockerhost:443/chat-service/quack?quackToken=".$token."&quackId=";
-        //$this->urlQuacksEndpoint = "http://localhost:8083/chat-service/quacks?quackToken=".$token;
+        //$this->urlQuacksEndpoint = "http://localhost:8083/chat-service/quacks/external?quackToken=".$token;
         //$this->urlQuackEndpoint = "http://localhost:8083/chat-service/quack?quackToken=".$token."&quackId=";
 
         // in dev environment, ignore the self-signed cert warnings

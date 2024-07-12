@@ -1,131 +1,161 @@
 <?php
+
 namespace MonsTec\Produck;
+
 use ProduckPlugin;
-use DateTime;
 
 // prevent direct access
 defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 
-class OverviewPageContent implements DynamicPageContent {
+class OverviewPageContent implements DynamicPageContent
+{
     protected $connector;
     protected $content;
     protected $headContent;
 
-    function __construct($produckConnectorObject) {
+    function __construct($produckConnectorObject)
+    {
         $this->connector = $produckConnectorObject;
     }
 
-    public function create(Array $requestParams) {
+    public function create(array $requestParams)
+    {
         // change title, description and keywords
-        add_filter( 'pre_get_document_title', function() {
-            return "Gastbeiträge";
+        add_filter('pre_get_document_title', function () {
+            $externalPosts = ProduckPlugin::getTranslations(false, 'text', 'external_posts');
+            if (isset($externalPosts)) {
+                return $externalPosts;
+            } else {
+                return 'External Posts';
+            }
         });
 
-        add_action('wp_head', function() {
-            $meta = '<meta name="description" content="Aktuelle Gastbeiträge"/>'.chr(0x0A);
-            $meta .= '<meta name="keywords" content="Fachbeiträge, Artikel, FAQ, Quacks, Question, Answer, Q&A, Produck"/>'.chr(0x0A);
+        add_action('wp_head', function () {
+            $meta = '<meta name="description" data-i18n="[content]text.current_posts_by_external_authors" />' . chr(0x0A);
+            $meta .= '<meta name="keywords" content="Blog Platform, Content Hub, Articles, Q&A, FAQ, Chat, Knowledge Base, Content Sharing, Content Management, Online Community, Blogging, Information Hub, Blog Network, User-Generated Content, Produck"/>' . chr(0x0A);
             echo $meta;
         });
 
-        $quackData = $this->connector->getQuacks();
+        $quacksData = $this->connector->getQuacks();
+        $usersData = $this->connector->getUsers();
 
-        $contentBuilder = '<div id="quacks-main-div" class="quacks-main block">';
-        $contentBuilder .=   '<section itemscope="" itemtype="http://schema.org/Question" id="quacks-container" debog="2">';
-        $contentBuilder .=     '<h2 class="quacks-h2">In der Q&A &#220;bersicht finden Sie spannende Fragen von fachkundigen Experten beantwortet.</h2>';
-        $contentBuilder .=     '<div id="quacklist-wrapper" class="quacks-flush-left">';
-        $contentBuilder .=       '<div id="quack-overview-list">';
+        //print_r($usersData[2]['nickname']);
 
-        if ($quackData != null) {
+        $contentBuilder = '<div id="quacks-main-div" class="main block bg-dark">';
+        $contentBuilder .= '<section id="quacks-overview-container" debog="2">';
+        $contentBuilder .= '<h2 data-i18n="text.post_overview">Find exciting articles, chats, and questions</h2>';
+        $contentBuilder .= '<div id="quacklist-wrapper" class="flush-left">';
+
+        if ($quacksData != null) {
 
             if (ProduckPlugin::isPoweredByLinkAllowed() > 0) {
                 $contentBuilder .= '<div id="quacks-share-brand">';
                 $contentBuilder .=   '<div id="quacks-host-wrap-wrapper">';
-                $contentBuilder .=     '<a class="quacks-host-ref" href="'.ProduckPlugin::getCustomerProduckLink().'" target="_blank">';
+                $contentBuilder .=     '<a class="quacks-host-ref" href="https://www.produck.de" target="_blank">';
                 $contentBuilder .=       '<span>Provided by ProDuck</span>';
-                $contentBuilder .=       '<img src="'.ProduckPlugin::getImageURL('ducky.png').'" alt="ProDuck Brand Logo"/>';
+                $contentBuilder .=       '<img src="' . ProduckPlugin::getImageURL('ducky_xs.png') . '" alt="ProDuck Brand Logo"/>';
                 $contentBuilder .=     '</a>';
                 $contentBuilder .=   '</div>';
                 $contentBuilder .= '</div>';
             }
 
-            foreach($quackData as $quack) {
-                if (!isset($quack['title']) || strlen($quack['title']) < 1
-                        || !isset($quack['id']) || strlen($quack['id']) < 1) {
+            foreach ($quacksData as $quack) {
+                if (
+                    !isset($quack['title']) || strlen($quack['title']) < 1
+                    || !isset($quack['id']) || strlen($quack['id']) < 1
+                ) {
                     continue;
                 }
 
                 $quackId = $quack['id'];
+                $userId = $quack['userId'];
+                $user = $usersData[$userId];
+                $quackity = isset($quack['quackity']) ? $quack['quackity'] : 0.0;
+                $formattedQuackity = number_format($quackity, 1, '.', '');
                 $title = $quack['title'];
+                $summary = isset($quack['summary']) ? $quack['summary'] : '';
+                $summaryText = strlen($summary) > 155 ? substr($summary, 0, 155) . '...' : $summary;
+                $publicationTime = date('d.m.Y', strtotime($quack['publicationTime']));
+                $tagsHomeLink = 'https://produck.de/quacks'; // Update with your actual path
                 $quackDisplayTarget = ProduckPlugin::isOpenQuackInNewPage() ? "_blank" : "";
-
                 $prettyUrlTitlePart = ProduckPlugin::transformTitleToUrlPart($title);
-                $questionPath = '/quack/'.$quackId.'/'.$prettyUrlTitlePart;
-                $quackLink = rtrim(home_url(), '/').$questionPath;
+                $quackPath = '/quack/' . $quackId . '/' . $prettyUrlTitlePart;
+                $quackLink = rtrim(home_url(), '/') . $quackPath;
 
-                $quackity = null;
-                if (isset($quack['quackity'])) {
-                    $quackity = round($quack['quackity'], 1);
+                $contentBuilder .= '<div class="dialogue-summary broad">';
+                $contentBuilder .= '<div class="quack-category-block bottom">';
+                $contentBuilder .= '<span class="chip active">' . $quack['referenceType'] . '</span>';
+                $contentBuilder .= '</div>';
+                $contentBuilder .= '<div id="stats-wrapper">';
+
+                // Publication date
+                $contentBuilder .= '<div class="quack-date">';
+                $contentBuilder .= '<a class="published">';
+                $contentBuilder .= '<span data-i18n="[title]text.published_on;[prepend]text.date_on">' . $publicationTime . '</span>';
+                $contentBuilder .= '</a>';
+                $contentBuilder .= '</div>';
+
+                if ($quackity > 0.0) {
+                    $contentBuilder .= '<div class="votes">';
+                    $contentBuilder .= '<div class="mini-counts" title="' . $formattedQuackity . ' Rating">';
+                    $contentBuilder .= '<span>' . $formattedQuackity . '</span>';
+                    $contentBuilder .= '</div>';
+                    $contentBuilder .= '<div class="flex-box"><i class="material-icons">star_border</i></div>';
+                    $contentBuilder .= '</div>';
                 } else {
-                    $quackity = '-';
+                    $contentBuilder .= '<div class="votes"></div>';
                 }
 
-                $views = null;
-                if (isset($quack['views'])) {
-                    $views = $quack['views'];
-                } else {
-                    $views = '-';
+                //Teilen
+                $contentBuilder .= '<div class="share-brand">';
+                $contentBuilder .= '<div class="share">';
+                $contentBuilder .= '<span data-i18n="text.share;[title]text.share">Share</span>';
+                $contentBuilder .= '<i class="material-icons" onclick="return;">share</i>';
+                $contentBuilder .= '</div>';
+                $contentBuilder .= '</div>';
+                $contentBuilder .= '</div>';
+                $contentBuilder .= '<div class="summary-text">';
+                $contentBuilder .= '<h3><a class="quacks-question-hyperlink" href="' . $quackLink . '" target="' . $quackDisplayTarget . '">' . $title . '</a></h3>';
+
+                if ($summary !== '') {
+                    $contentBuilder .= '<div class="info-text">';
+                    $contentBuilder .= '<span>' . $summaryText . '</span>';
+                    $contentBuilder .= '</div>';
                 }
 
-                $time = null;
-                if (isset($quack['publicationTime'])) {
-                    $time = new DateTime($quack['publicationTime']);
+                // Author block
+                $contentBuilder .= '<div class="card-author-block short-card">';
+                if (isset($user['portraitImg']) && $user['portraitImg'] != null) {
+                    $contentBuilder .= '<a class="portrait-image-wrapper" href="https://produck.de/profile/' . $userId . '">';
+                    $contentBuilder .= '<img src="' . $user['portraitImg'] . '" loading="lazy" class="image" alt="Author\'s Portrait" />';
+                    $contentBuilder .= '</a>';
                 } else {
-                    $time = new DateTime();
+                    $contentBuilder .= '<a class="portrait-image-wrapper" href="https://produck.de/profile/' . $userId . '">';
+                    $contentBuilder .= '<img src="https://produck.de/assets/img/icons/ducky_portrait_placeholder_transparent_xs_borderless.png" loading="lazy" class="image-placeholder" alt="Author\'s Portrait Placeholder" />';
+                    $contentBuilder .= '</a>';
                 }
-                $date = $time->format('d.m.Y');
+                $contentBuilder .= '<a class="author-name" href="https://produck.de/profile/' . $userId . '">';
+                $contentBuilder .= '<span data-i18n="[prepend]text.written_by">' . (!empty($user['fullName']) ? $user['fullName'] : 'Unknown Author') . '</span>';
+                $contentBuilder .= '</a>';
+                $contentBuilder .= '</div>';
 
-                $contentBuilder .= '<div class="quacks-dialogue-summary narrow">';
-                $contentBuilder .=   '<div class="quacks-stats-wrapper">';
-                $contentBuilder .=     '<div class="quacks-votes">';
-                $contentBuilder .=       '<div class="quacks-mini-counts">';
-                $contentBuilder .=         '<span title="'.$quackity.' rated quality">'.$quackity.'</span>';
-                $contentBuilder .=       '</div>';
-                $contentBuilder .=       '<div>&nbsp;Quackity</div>';
-                $contentBuilder .=     '</div>';
-                $contentBuilder .=     '<div class="quacks-views">';
-                $contentBuilder .=       '<div class="quacks-mini-counts">';
-                $contentBuilder .=         '<span title="'.$views.' Views">'.$views.'</span>';
-                $contentBuilder .=       '</div>';
-                $contentBuilder .=       '<div>&nbsp;Views</div>';
-                $contentBuilder .=       '<div class="quacks-share"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></div>';
-                $contentBuilder .=     '</div>';
-                $contentBuilder .=   '</div>';
-                $contentBuilder .=   '<div class="quacks-summary-text">';
-                $contentBuilder .=     '<h3 class="quacks-text-line">';
-                $contentBuilder .=       '<a class="quacks-question-hyperlink" href="'.$quackLink.'" target="'.$quackDisplayTarget.'">'.$title.'</a>';
-                $contentBuilder .=     '</h3>';
-                $contentBuilder .=     '<div class="quacks-tags">';
-
+                // Tags
+                $contentBuilder .= '<div class="tags">';
                 if (isset($quack['tags']) && is_array($quack['tags'])) {
-                    foreach($quack['tags'] as $tag) {
-                        $contentBuilder .= '<div class="quacks-chip">';
-                        $contentBuilder .=   '<a href="'.$quackLink.'" title="show questions tagged '.$tag.'">'.$tag.'</a>';
+                    foreach ($quack['tags'] as $tag) {
+                        $tagUrl = $tagsHomeLink . '/1/' . $tag;
+                        $contentBuilder .= '<div class="chip">';
+                        $contentBuilder .= '<a rel="noopener nofollow ugc" target="_blank" title="show topics tagged ' . $tag . '" href="' . $tagUrl . '">' . $tag . '</a>';
                         $contentBuilder .= '</div>';
                     }
                 }
-
-                $contentBuilder .=    '</div>';
-                $contentBuilder .=    '<div class="quacks-question-date">';
-                $contentBuilder .=        '<span class="quacks-published" title="vom '.$date.'">vom '.$date.'</span>';
-                $contentBuilder .=      '</a>';
-                $contentBuilder .=    '</div>';
-                $contentBuilder .=  '</div>';
+                $contentBuilder .= '</div>';
+                $contentBuilder .= '</div>';
                 $contentBuilder .= '</div>';
             }
-
         } else {
             $contentBuilder .= '<p>';
-            $contentBuilder .=   'Chatten und Kaufen auf <a href="'.ProduckPlugin::getCustomerProduckLink().'" target="_blank">ProDuck.de</a>!';
+            $contentBuilder .=   'Host your Content on <a href="' . ProduckPlugin::getCustomerProduckLink() . '" target="_blank">ProDuck.de</a>!';
             $contentBuilder .= '</p>';
         }
 
@@ -136,7 +166,7 @@ class OverviewPageContent implements DynamicPageContent {
 
         $contentBuilder .= '<div id="quacks-share-modal">';
         $contentBuilder .=     '<div id="quacks-modal-content">';
-        $contentBuilder .=         '<h2>Q&A Teilen</h2>';
+        $contentBuilder .=         '<h2 data-i18n="text.share_page"></h2>';
         $contentBuilder .=         '<div id="quacks-url-box">';
         $contentBuilder .=             '<input class="quacks-share-url" value="" />';
         $contentBuilder .=             '<span class="quacks-content-copy">';
@@ -148,23 +178,30 @@ class OverviewPageContent implements DynamicPageContent {
         $contentBuilder .=         '</div>';
         $contentBuilder .=     '</div>';
         $contentBuilder .=     '<div class="quacks-modal-footer">';
-        $contentBuilder .=         '<a id="quacks-close-share-modal" href="#!" class="quacks-modal-close waves-effect waves-teal-light btn-flat">Schlie&#xDF;en</a>';
+        $contentBuilder .=         '<a id="quacks-close-share-modal" href="#!" class="quacks-modal-close waves-effect waves-teal-light btn-flat" data-i18n="text.close">Close</a>';
         $contentBuilder .=     '</div>';
         $contentBuilder .= '</div>';
 
         $this->content = $contentBuilder;
     }
 
-    public function echoHeadContent() {
+    public function echoHeadContent()
+    {
         echo $this->headContent;
     }
 
-    public function getPostTitle() {
-        return "Q&A &#220;bersicht";
+    public function getPostTitle()
+    {
+        $externalPosts = ProduckPlugin::getTranslations(false, 'text', 'external_posts');
+        if (isset($externalPosts)) {
+            return $externalPosts;
+        } else {
+            return 'External Posts';
+        }
     }
 
-    public function getPostContent() {
+    public function getPostContent()
+    {
         return $this->content;
     }
 }
-?>

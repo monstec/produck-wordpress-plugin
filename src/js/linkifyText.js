@@ -5,33 +5,29 @@
  ** Author: Dr. Joerg Heinze
  */
 
-import initQuackPage from './main.js';
+import i18next from "i18next";
 
-export default class initLinkifyText extends initQuackPage {
+export default class LinkifyText {
   constructor() {
-    super();
-
-    // @if ENV='production'
-    this.log = new produckLib.Log(1);
-    // @endif
-    // @if ENV!='production'
-    this.log = new produckLib.Log(4, "initQuackJs");
-    // @endif
-
     this.asinRunIdCache = [];
     this.requestedAsinsCache = [];
     this.adsCache;
   }
 
-  initialise () {
+  initialise() {
     let instance = this;
-    let teaserContent = $(".entry-headline"),
-    mainContent = $(".entry-content"),
-    userId = $("#author-details-block").data('author-id') != null ? $("#author-details-block").data('author-id') : 4079;
+    let teaserContent = jQuery(".entry-headline"),
+      mainContent = jQuery(".entry-content"),
+      userId =
+        jQuery("#author-details-block").data("author-id") != null
+          ? jQuery("#author-details-block").data("author-id")
+          : 4079;
 
-    if (teaserContent != undefined && teaserContent.length > 0) instance.linkifyDialogue(teaserContent, userId);
-    if (mainContent != undefined && mainContent.length > 0)   instance.linkifyDialogue(mainContent, userId);
-}
+    if (teaserContent != undefined && teaserContent.length > 0)
+      instance.linkifyDialogue(teaserContent, userId);
+    if (mainContent != undefined && mainContent.length > 0)
+      instance.linkifyDialogue(mainContent, userId);
+  }
 
   buildWidgetItem(productObj, widgetType) {
     let instance = this;
@@ -144,20 +140,27 @@ export default class initLinkifyText extends initQuackPage {
         '<div class="product-button">' +
         '<a class="prdk-btn amazon-buy-btn" href="' +
         productObj.productUrl +
-        '" title="Bei Amazon ansehen*" target="_blank" rel="nofollow sponsored noopener"><i class="fa fa-amazon"></i>Bei Amazon ansehen*</a>' +
+        '" title="' +
+        i18next.t("text.view_on_amzn") +
+        '" target="_blank" rel="nofollow noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M257.2 162.7c-48.7 1.8-169.5 15.5-169.5 117.5 0 109.5 138.3 114 183.5 43.2 6.5 10.2 35.4 37.5 45.3 46.8l56.8-56S341 288.9 341 261.4V114.3C341 89 316.5 32 228.7 32 140.7 32 94 87 94 136.3l73.5 6.8c16.3-49.5 54.2-49.5 54.2-49.5 40.7-.1 35.5 29.8 35.5 69.1zm0 86.8c0 80-84.2 68-84.2 17.2 0-47.2 50.5-56.7 84.2-57.8v40.6zm136 163.5c-7.7 10-70 67-174.5 67S34.2 408.5 9.7 379c-6.8-7.7 1-11.3 5.5-8.3C88.5 415.2 203 488.5 387.7 401c7.5-3.7 13.3 2 5.5 12zm39.8 2.2c-6.5 15.8-16 26.8-21.2 31-5.5 4.5-9.5 2.7-6.5-3.8s19.3-46.5 12.7-55c-6.5-8.3-37-4.3-48-3.2-10.8 1-13 2-14-.3-2.3-5.7 21.7-15.5 37.5-17.5 15.7-1.8 41-.8 46 5.7 3.7 5.1 0 27.1-6.5 43.1z"/></svg>' +
+        i18next.t("text.view_on_amzn") +
+        "</a>" +
         "</div>" +
         '<div class="product-notes">' +
-        '<span class="product-price-info">Preis inkl. MwSt., zzgl. Versandkosten. Letzte Aktualisierung am ' +
+        '<span class="product-price-info">' +
+        i18next.t("text.price_incl_vat") +
         productObj.lastUpdate.dayOfMonth +
         "." +
         productObj.lastUpdate.monthValue +
         "." +
         productObj.lastUpdate.year +
-        " um " +
+        " " +
         productObj.lastUpdate.hour +
         ":" +
         getMinutes +
-        ' Uhr (UTC). <a href="#affiliate-note">Weitere Infos*</a></span>' +
+        ' (UTC). <a href="#affiliate-note">' +
+        i18next.t("text.more_info") +
+        "</a></span>" +
         "</div>" +
         "</div>" +
         "</div>" +
@@ -184,8 +187,7 @@ export default class initLinkifyText extends initQuackPage {
     const urlPattern =
       /\b(?![^<|\[]*[>\]])(?:https?|ftp):\/\/([a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|])/gim;
     // www. sans http:// or https://
-    const pseudoUrlPattern =
-      /(?![^<|\[]*[>\]])(^|[^\/])(www\.[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|])/gim;
+    const pseudoUrlPattern = /(^|[^\/])(\bwww\.[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|])/gim;
     // Email addresses
     const emailAddressPattern =
       /(?![^<|\[]*[>\]])[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
@@ -309,7 +311,7 @@ export default class initLinkifyText extends initQuackPage {
               (asin) => (amazonProductsApiUri += "&ids=" + asin)
             );
 
-            $.ajax({
+            jQuery.ajax({
               type: "GET",
               url: amazonProductsApiUri,
               success: function (productDataRecords) {
@@ -372,8 +374,8 @@ export default class initLinkifyText extends initQuackPage {
 
           //create index list linked to headlines
           target.each(function (index, obj) {
-            let newObj = $(obj)[0];
-            let text = $(newObj).text();
+            let newObj = jQuery(obj)[0];
+            let text = jQuery(newObj).text();
 
             function setID() {
               let newId = text.split(" ")[0] + "-" + index;
@@ -382,16 +384,16 @@ export default class initLinkifyText extends initQuackPage {
             }
 
             let id =
-              typeof $(newObj).attr("id") !== "undefined" &&
-              $(newObj).attr("id") !== false
-                ? $(newObj).attr("id")
+              typeof jQuery(newObj).attr("id") !== "undefined" &&
+              jQuery(newObj).attr("id") !== false
+                ? jQuery(newObj).attr("id")
                 : setID();
 
             tocListElems += `<li><a href="#${id}">${text}</a></li>`;
           });
 
           let toc =
-            '<div class="prdk-toc"><h2 id="toc-headline">In diesem Artikel</h2><ol class="table-of-contents">' +
+            '<div class="prdk-toc"><h2 id="toc-headline">'+i18next.t('text.in_this_article')+'</h2><ol class="table-of-contents">' +
             tocListElems +
             "</ol></div>";
 
@@ -418,11 +420,13 @@ export default class initLinkifyText extends initQuackPage {
           }
 
           let text =
-            '<div class="prdk-intxt-box"><strong>Folgende Angebote könnten dich interessieren</strong><ul>' +
+            '<div class="prdk-intxt-box"><strong>'+i18next.t('text.these_offers_might_interest_you')+'</strong><ul>' +
             offerListElems +
             '</ul><span id="marketing-cookie-hint">Stand: ' +
             time +
-            ' Uhr (UTC). <a href="#affiliate-note">Weitere Infos*</a> | Sie möchten uns unterstützen? Für Käufe über unsere Partnershops erhalten wir eine Provision. Für ein korrektes Tracking ist es jedoch notwendig, dass Sie die Marketingcookies unserer Partner annehmen. Der Preis ändert sich dadurch nicht. Wir würden uns über Ihre Unterstützung freuen und wünschen weiterhin viel Spaß auf unserer Seite. Ihr ProDuck Team</span></div>';
+            ' (UTC). <a href="#affiliate-note">' +
+            i18next.t("text.more_info") +
+            '</a> | '+i18next.t("text.support_us")+'</span></div>';
 
           return text;
         }
@@ -449,20 +453,24 @@ export default class initLinkifyText extends initQuackPage {
    * @param {*} advertisementItems an array of advertisement items
    */
   _replacePlaceholdersWithWidgets(advertisementItems, placeholderRefPrefix) {
+    const instance = this;
     if (!advertisementItems) return;
 
     function replaceFnc() {
       advertisementItems.forEach(function (advertisementItem) {
-        let placeHoldersForAsin = $(
+        let placeHoldersForAsin = jQuery(
           `div[data-ref=${placeholderRefPrefix}-${advertisementItem.referenceId}]`
         );
 
         placeHoldersForAsin.each(function (index, placeholder) {
-          let placeholderElement = $(placeholder);
+          let placeholderElement = jQuery(placeholder);
           let widgetType = placeholderElement.attr("data-widget-type");
-          let widgetHtml = buildWidgetItem(advertisementItem, widgetType);
+          let widgetHtml = instance.buildWidgetItem(
+            advertisementItem,
+            widgetType
+          );
 
-          placeholderElement.replaceWith($(widgetHtml));
+          placeholderElement.replaceWith(jQuery(widgetHtml));
         });
       });
     }
@@ -470,7 +478,7 @@ export default class initLinkifyText extends initQuackPage {
     replaceFnc();
 
     function replaceRemainingPlaceholders() {
-      let remainingElements = $(
+      let remainingElements = jQuery(
         ".js-widget-placeholder[data-ref^='" + placeholderRefPrefix + "-']"
       );
 
@@ -479,13 +487,13 @@ export default class initLinkifyText extends initQuackPage {
 
         replaceFnc();
 
-        let remainingElementsAfterRetry = $(
+        let remainingElementsAfterRetry = jQuery(
           ".js-widget-placeholder[data-ref^='" + placeholderRefPrefix + "-']"
         );
 
         if (remainingElementsAfterRetry.length) {
           remainingElements.replaceWith(
-            '<p class="fs-12" style="text-indent: 20px"><em>Produkt nicht gefunden</em><p>'
+            '<p class="fs-12" style="text-indent: 20px"><em>'+i18next.t('text.produc_not_found')+'</em><p>'
           );
 
           console.log("PRODUCT LOAD FAILED");
@@ -508,7 +516,7 @@ export default class initLinkifyText extends initQuackPage {
   }
 
   // convert url in textelems to clickable links
-  linkifyDialogue(textElem, userId) {
+  async linkifyDialogue(textElem, userId) {
     let instance = this;
     let linkPatterns = instance.linkifyText(),
       textinHTML = textElem.html(),
@@ -528,7 +536,7 @@ export default class initLinkifyText extends initQuackPage {
       textinHTML.match(linkPatterns.asinPatterns)
     ) {
       let note = "*",
-        linkedText = textinHTML.linkify(note, userId),
+        linkedText = await textinHTML.linkify(note, userId),
         headlinesElems;
 
       if (textinHTML.match(linkPatterns.tableOfContentPattern)) {
@@ -549,7 +557,8 @@ export default class initLinkifyText extends initQuackPage {
         if (matchedProductsArr) {
           matchedProductsArr = matchedProductsArr.filter(
             (element) =>
-              element.matches > 0 && instance.checkExpirationDate(element.expirationDate)
+              element.matches > 0 &&
+              instance.checkExpirationDate(element.expirationDate)
           );
           linkedText = linkedText.addDealBox(matchedProductsArr);
         } else {
@@ -564,13 +573,13 @@ export default class initLinkifyText extends initQuackPage {
         headlinesElems.eq(el.index).attr("id", el.id);
       });
 
-      if ($("#affiliate-note").length === 0) setAffiliateNote();
+      if (jQuery("#affiliate-note").length === 0) setAffiliateNote();
     }
 
     function setAffiliateNote() {
-      if (linkFound && $("#affiliate-note").length === 0) {
+      if (linkFound && jQuery("#affiliate-note").length === 0) {
         let affiliateNote =
-          "<hr><p id='affiliate-note'>* Bitte beachten Sie, dass Links auf dieser Seite Links zu Werbepartnern sein k&ouml;nnen. F&uuml;r K&auml;ufe, die &uuml;ber einen dieser Links zustande kommen, erhalten wir (falls sie die Marketingcookies des Werbepartners annehmen) Provision. Ihnen entstehen dadurch keine zus&auml;tzlichen Kosten. Sie unterstützen jedoch unseren Service. Preise, Lieferbedingungen und Verf&uuml;gbarkeiten entsprechen dem angegebenen Stand (Datum/Uhrzeit) und können sich jederzeit ändern. Angaben auf unserer Seite weichen daher ggf. von denen der Partnerseiten ab. Für den Kauf eines betreffenden Produkts gelten die Angaben zu Preis und Verfügbarkeit, die zum Kaufzeitpunkt auf der/den maßgeblichen Website(s) (z.B. Amazon) angezeigt werden. Bestimmte Inhalte, die auf dieser Website angezeigt werden, stammen von Amazon. Diese Inhalte werden‚ 'wie besehen' bereitgestellt und können jederzeit geändert oder entfernt werden.</p>";
+          '<hr><p id="affiliate-note">'+i18next.t('text.affiliate_note')+'</p>';
         textElem.append(affiliateNote);
       }
     }

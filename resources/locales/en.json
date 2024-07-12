@@ -1,0 +1,94 @@
+{
+  "translation": {
+    "locales": {
+      "de": "German",
+      "en": "English"
+    },
+    "general": {
+      "ok": "Ok",
+      "language_label": "Language"
+    },
+    "navigation": {
+      "article": "Article"
+    },
+    "quackpage": {
+      "profile_ref": "Go to profile",
+      "speciality": "Speciality"
+    },
+    "settings": {
+      "general": "General",
+      "produck_user_id": "ProDuck User ID:",
+      "post_options": "Post Options",
+      "open_posts_in_new_window": "Open posts in new window?",
+      "max_title_length_in_url": "Max. number of characters for title in URL:",
+      "use_theme_template": "Use theme's page template?",
+      "show_provided_by_links": "Show \"Content provided by ProDuck\" links?",
+      "max_number_of_posts": "Max. number of displayed posts",
+      "chat_options": "Chat Options",
+      "chat_enabled": "Chat enabled?",
+      "settings_intro_general": "<p>Make general settings here to enable the plugin to work. You can find the ProDuck User ID in your profile and the Quack Token in the settings on <a href=\"https://www.produck.de/xpert.html\" target=\"_blank\">www.produck.de</a>.",
+      "settings_intro_chat": "<p>If you want to use the Produckchat directly on your Wordpress site, you can activate it here.</p>",
+      "settings_intro_links": "<p>Define here whether links to individual posts and the post overview should be opened in a new tab.<br/> You can also influence the maximum length of the URL of individual pages by setting the maximum length of the part that represents the title.<br/> Finally, you can choose whether to use the page template provided by the Produck plugin for post-specific pages or prefer the page template of the theme you are using.</p>",
+      "settings_intro_widget": "<p>Here you can define the maximum number of posts displayed in the ProDuck widget. Please note that you still have to add the widget to the displayed widgets in the menu under \"Design -> Widgets\" if you want to use it.</p>",
+      "yes": "Yes",
+      "no": "No",
+      "plugin_settings_info": "Here you can find settings for the Produck plugin.",
+      "produck_configuration": "Produck Configuration",
+      "user_id_must_be_integer": "The user ID must be an integer.",
+      "quack_token_must_be_hex": "The Quack Token must be a string of hexadecimal digits.",
+      "title_length_must_be_integer": "The title length specification must be an integer.",
+      "number_of_quacks_must_be_integer": "The number of displayed quacks must be an integer.",
+      "invalid_user_id": "Invalid customer ID",
+      "invalid_response": "Invalid response",
+      "save": "Save",
+      "cancel": "Cancel",
+      "produck_id_needed": "To use ProDuck in Wordpress, your ProDuck User ID is required. You can find this in your profile on produck.de/xpert.html.",
+      "produck_user_id_label": "ProDuck User ID:",
+      "support_produck_links": "Support ProDuck with \"Provided By\" links displayed below the posts:",
+      "settings": "Settings",
+      "settings_title": "Settings"
+    },
+    "text": {
+      "affiliate_note": "* Please note that links on this page may be affiliate links. For purchases made through any of these links, we receive a commission (if you accept the partner's marketing cookies). There are no additional costs for you. However, you support our service. Prices, delivery conditions and availabilities correspond to the specified status (date/time) and can change at any time. Information on our site may therefore differ from those on the partner sites. For the purchase of a specific product, the price and availability information displayed on the relevant website(s) (e.g., Amazon) at the time of purchase applies. Certain content displayed on this website comes from Amazon. This content is provided 'as is' and may be changed or removed at any time.",
+      "all_settings": "All Settings",
+      "answered_on": "Answered on",
+      "article_overview": "Article Overview",
+      "buy_on_amzn": "Buy on Amazon*",
+      "chat_with": "Chat with ",
+      "close": "Close",
+      "copy": "Copy",
+      "current_posts": "Current Posts",
+      "current_posts_by_external_authors": "Current Posts by External Authors",
+      "date_on": "from ",
+      "external_article": "External Article",
+      "external_chat": "External Chat",
+      "external_posts": "External Posts",
+      "expert": "Expert",
+      "find_exciting_articles_chats_questions": "Find exciting articles, chats, and questions",
+      "in_this_article": "In this article",
+      "last_updated_on": "Last updated on ",
+      "more_info": "More Information*",
+      "more_posts": "More Posts",
+      "notify": "Notify",
+      "price_incl_vat": "Price incl. VAT, excl. shipping costs. Last update on ",
+      "post_overview": "Post Overview",
+      "product_not_found": "Product not found",
+      "published_on": "Published on",
+      "rating": "Rating",
+      "share": "Share",
+      "share_link": "Share Link",
+      "share_page": "Share Page",
+      "support_us": "Do you want to support us? For purchases made through our partner shops, we receive a commission. For correct tracking, it is necessary for you to accept our partners' marketing cookies. The price does not change because of this. We would appreciate your support and wish you continued enjoyment on our site.",
+      "these_offers_might_interest_you": "These offers might interest you",
+      "view_on_amzn": "View on Amazon*",
+      "views": "Views",
+      "written_by": "by "
+    },
+    "shariff": {
+      "mailBody1": "Hi, I want to recommend the following service to you {url}. There you can get advise and support to a various number of products. Check it out!",
+      "mailBody2": "Hi, you can reach me via the following link",
+      "shareQuack": "My recommendation",
+      "title": "ProDuck - The expert among the online portals"
+    }
+  }
+}

@@ -20,8 +20,8 @@ get_header();
 			the_post();
 		?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-				<header class="quacks-header">
-					<?php the_title( '<h1 class="quacks-h1">', '</h1>' ); ?>
+				<header class="quacks-headline-container">
+					<?php the_title( '<h1 class="quacks-headline">', '</h1>' ); ?>
 				</header><!-- .entry-header -->
 					<?php
 					the_content();
@@ -35,3 +35,16 @@ get_header();
 </div><!-- .content-area -->
 
 <?php get_footer(); ?>
+
+
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+
+		if (produckLib.InitQuackPage !== 'undefined') {
+			const quackOverviewPage = new produckLib.InitQuackPage();
+			quackOverviewPage.pageInitialize();
+		} else {
+			console.log("Quack Page could not be initialized");
+		}
+	});
+</script>

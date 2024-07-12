@@ -1,0 +1,94 @@
+{
+  "translation": {
+    "locales": {
+      "de": "Deutsch",
+      "en": "Englisch"
+    },
+    "general": {
+      "ok": "Ok",
+      "language_label": "Sprache"
+    },
+    "navigation": {
+      "article": "Artikel"
+    },
+    "quackpage": {
+      "profile_ref": "Zum Profil",
+      "speciality": "Spezialgebiet"
+    },
+    "settings": {
+      "general": "Allgemein",
+      "produck_user_id": "ProDuck Benutzer ID:",
+      "post_options": "Beitragsoptionen",
+      "open_posts_in_new_window": "Beiträge in neuem Fenster öffnen?",
+      "max_title_length_in_url": "Max. Anzahl an Zeichen für den Titel in der URL:",
+      "use_theme_template": "Theme-eigenes Seitentemplate verwenden?",
+      "show_provided_by_links": "\"Content provided by ProDuck\"-Links anzeigen?",
+      "max_number_of_posts": "Max. Anzahl angezeigter Beiträgen",
+      "chat_options": "Chat-Optionen",
+      "chat_enabled": "Chat aktiviert?",
+      "settings_intro_general": "<p>Nehmen sie hier grundsätzliche Einstellungen vor, welche den Betrieb des Plugins ermöglichen. Die ProDuck Benutzer ID finden Sie in Ihrem Profil und den Quack Token in den Einstellungen auf <a href=\"https://www.produck.de/xpert.html\" target=\"_blank\">www.produck.de</a>.",
+      "settings_intro_chat": "<p>Wenn Sie den Produckchat direkt auf Ihrer Wordpressseite einsetzen wollen, können Sie ihn hier aktivieren.</p>",
+      "settings_intro_links": "<p>Definieren Sie hier ob Links zu einzelnen Beiträgen und zur Beitragsübersicht in einem neuem Tab geöffnet werden sollen.<br/> Außerdem können Sie die maximale Länge der URL von einzelnen Seiten beeinflussen, indem sie die maximale Länge des Teils, der den Titel darstellt, einstellen.<br/> Schließlich können Sie wählen, ob Sie das vom Produck-Plugin mitgelieferte Seitentemplate für Beitrags-spezifische Seiten verwenden wollen, oder lieber das Seitentemplate des von Ihnen verwendeten Themes.</p>",
+      "settings_intro_widget": "<p>Hier können Sie die Anzahl der maximal angezeigten Beiträge im ProDuck-Widget definieren. Beachten Sie bitte, dass Sie das Widget noch im Menü unter \"Design -> Widgets\" zu den anzuzeigenden Widgets hinzufügen müssen, wenn Sie es verwenden wollen.</p>",
+      "yes": "Ja",
+      "no": "Nein",
+      "plugin_settings_info": "Hier finden Sie Einstellungen für das Produck-Plugin.",
+      "produck_configuration": "Produck Konfiguration",
+      "user_id_must_be_integer": "Die Benutzer ID muss eine ganze Zahl sein.",
+      "quack_token_must_be_hex": "Das Quack Token muss eine Zeichenkette aus hexadezimalen Ziffern sein.",
+      "title_length_must_be_integer": "Die Längenangabe für den Quacktitel muss eine ganze Zahl sein.",
+      "number_of_quacks_must_be_integer": "Die Anzahl der angezeigten Quacks muss eine ganze Zahl sein.",
+      "invalid_user_id": "Benutzer-ID ungültig",
+      "invalid_response": "Antwort ungültig",
+      "save": "Speichern",
+      "cancel": "Abbruch",
+      "produck_id_needed": "Um ProDuck in Wordpress nutzen zu können, wird Ihre Produck Benutzer-ID benötigt. Diese finden Sie in Ihrem Profil unter produck.de/xpert.html.",
+      "produck_user_id_label": "Produck Benutzer-ID:",
+      "support_produck_links": "Unterstütze Produck durch \"Provided By\"-Links, die unterhalb der Beiträge angezeigt werden:",
+      "settings": "Einstellungen",
+      "settings_title": "Einstellungen"
+    },
+    "text": {
+      "affiliate_note": "* Bitte beachten Sie, dass Links auf dieser Seite Links zu Werbepartnern sein können. Für Käufe, die über einen dieser Links zustande kommen, erhalten wir (falls sie die Marketingcookies des Werbepartners annehmen) Provision. Ihnen entstehen dadurch keine zusätzlichen Kosten. Sie unterstützen jedoch unseren Service. Preise, Lieferbedingungen und Verfügbarkeiten entsprechen dem angegebenen Stand (Datum/Uhrzeit) und können sich jederzeit ändern. Angaben auf unserer Seite weichen daher ggf. von denen der Partnerseiten ab. Für den Kauf eines betreffenden Produkts gelten die Angaben zu Preis und Verfügbarkeit, die zum Kaufzeitpunkt auf der/den maßgeblichen Website(s) (z.B. Amazon) angezeigt werden. Bestimmte Inhalte, die auf dieser Website angezeigt werden, stammen von Amazon. Diese Inhalte werden‚ 'wie besehen' bereitgestellt und können jederzeit geändert oder entfernt werden.",
+      "all_settings": "Alle Einstellungen",
+      "answered_on": "beantwortet am",
+      "article_overview": "Artikelübersicht",
+      "buy_on_amzn": "Auf Amazon kaufen*",
+      "chat_with": "Chat mit ",
+      "close": "Schließen",
+      "copy": "Kopieren",
+      "current_posts": "Aktuelle Beiträge",
+      "current_posts_by_external_authors": "Aktuelle Beiträge von externen Autoren",
+      "date_on": "vom ",
+      "external_article": "Externer Artikel",
+      "external_chat": "Externer Chat",
+      "external_posts": "Externe Beiträge",
+      "expert": "Experte",
+      "find_exciting_articles_chats_questions": "Finde spannende Artikel, Chats und Fragen",
+      "in_this_article": "In diesem Artikel",
+      "last_updated_on": "Zuletzt aktualisiert am ",
+      "more_info": "Mehr Informationen*",
+      "more_posts": "Mehr Beiträge",
+      "notify": "Melden",
+      "price_incl_vat": "Preis inkl. MwSt., zzgl. Versandkosten. Letzte Aktualisierung am ",
+      "post_overview": "Beitragsübersicht",
+      "product_not_found": "Produkt nicht gefunden",
+      "published_on": "Veröffentlicht am",
+      "rating": "Bewertungen",
+      "share": "Teilen",
+      "share_link": "Link teilen",
+      "share_page": "Seite teilen",
+      "support_us": "Sie möchten uns unterstützen? Für Käufe über unsere Partnershops erhalten wir eine Provision. Für ein korrektes Tracking ist es jedoch notwendig, dass Sie die Marketingcookies unserer Partner annehmen. Der Preis ändert sich dadurch nicht. Wir würden uns über Ihre Unterstützung freuen und wünschen weiterhin viel Spaß auf unserer Seite.",
+      "these_offers_might_interest_you": "Folgende Angebote könnten dich interessieren",
+      "view_on_amzn": "Auf Amazon ansehen*",
+      "views": "Ansichten",
+      "written_by": "von "
+    },
+    "shariff": {
+      "mailBody1": "Hi, gerne möchte ich dir den Service von {url} empfehlen. Dort kann man sich zu verschiedensten Produkten beraten lassen und Produkte im Chat erwerben. Probier's bei Gelegenheit mal aus!",
+      "mailBody2": "Hi, über folgenden Link bin ich erreichbar",
+      "shareQuack": "Meine Empfehlung",
+      "title": "ProDuck - Der Experte unter den Online-Portalen"
+    }
+  }
+}

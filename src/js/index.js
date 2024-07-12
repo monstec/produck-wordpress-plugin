@@ -1,18 +1,17 @@
 // load the class definitions
-import initQuackPage from './main.js';
-import initQuack from './quack.js';
-import initChat from './chat.js';
-import initLinkifyText from './linkifyText.js';
-import lazyload from './lazyload.js';
-// import i18next from './produck-i18n.js';
-
+import i18next from './produck-i18n.js';
+import InitQuackPage from './main.js';
+import InitQuack from './quack.js';
+import InitChat from './chat.js';
+import LinkifyText from './linkifyText.js';
+import LazyLoad from './lazyload.js';
 
 // export objects or classes
 export {
-    initQuackPage,
-    initQuack,
-    initChat,
-    initLinkifyText,
-    lazyload,
-    // i18next
+    i18next,
+    InitQuackPage,
+    InitQuack,
+    InitChat,
+    LinkifyText,
+    LazyLoad
 };

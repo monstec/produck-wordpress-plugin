@@ -44,6 +44,7 @@ var paths = {
       "node_modules/i18next/i18next.min.js",
       "node_modules/jquery-i18next/jquery-i18next.min.js",
       "node_modules/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js",
+      "node_modules/i18next-http-backend/i18nextHttpBackend.min.js",
     ],
     css: [
       "node_modules/materialize-css/dist/css/materialize.min.css",
@@ -56,6 +57,7 @@ var paths = {
     js: "src/js/**/*",
     img: "resources/img/**/*",
     static: "resources/static/**/*",
+    locales: "resources/locales/**/*",
   },
   build: {
     root: "build",
@@ -64,6 +66,7 @@ var paths = {
     css: "build/css",
     js: "build/js",
     img: "build/img",
+    locales: "build/locales",
     maps: "/maps/", // this directory is meant for use with sourcemaps which uses a relative path
     temp: {
       mainJs: "build/temp/mainJs/",
@@ -76,6 +79,7 @@ var paths = {
     js: "dist/" + pluginName + "/js",
     css: "dist/" + pluginName + "/css",
     img: "dist/" + pluginName + "/img",
+    locales: "dist/" + pluginName + "/locales",
   },
 };
 
@@ -360,7 +364,7 @@ function copyChangedImagesDist() {
 }
 
 /*
- * Images are just copied into the build directory.
+ * Static resources are just copied into the build directory.
  */
 function copyStaticResources(destDir, deploy) {
   var stream = gulp
@@ -379,6 +383,28 @@ function copyStaticResourcesBuild() {
 // for distribution task
 function copyStaticResourcesDist() {
   return copyStaticResources(paths.dist.base, false);
+}
+
+/*
+ * locales files are just copied into the build directory.
+ */
+function copyLocalesResources(destDir, deploy) {
+  var stream = gulp
+    .src(paths.source.locales)
+    .pipe(gulp.dest(destDir))
+    .pipe(deploy ? gulp.dest(getCorrespondingDeploymentDir(destDir)) : noop());
+
+  return addReloadBehaviour(stream);
+}
+
+// for build task
+function copyLocalesResourcesBuild() {
+  return copyLocalesResources(paths.build.locales, doDeployment);
+}
+
+// for distribution task
+function copyLocalesResourcesDist() {
+  return copyLocalesResources(paths.dist.locales, false);
 }
 
 /*
@@ -436,6 +462,9 @@ function watch() {
 
   // Watch images
   gulp.watch(paths.source.img, copyChangedImagesBuild);
+
+  // Watch locales
+  gulp.watch(paths.source.locales, copyLocalesResourcesBuild);
 }
 
 // *************************************** //
@@ -451,13 +480,14 @@ gulp.task("libs", copyLibrariesBuild);
 gulp.task("images", copyChangedImagesBuild);
 gulp.task("php", processPhpBuild);
 gulp.task("static", copyStaticResourcesBuild);
+gulp.task("locales", copyLocalesResourcesBuild);
 gulp.task("clean", clean);
 gulp.task(
     "default",    
     gulp.series(
         clean,
         logDeploymentStatus,
-        gulp.parallel(copyChangedImagesBuild, processStylesBuild, processScriptsBuild, processPhpBuild, copyLibrariesBuild, copyStaticResourcesBuild)
+        gulp.parallel(copyChangedImagesBuild, processStylesBuild, processScriptsBuild, processPhpBuild, copyLibrariesBuild, copyStaticResourcesBuild, copyLocalesResourcesBuild)
     )
 );
 gulp.task(
@@ -471,7 +501,8 @@ gulp.task(
             processStylesDist,
             processScriptsDist,
             copyLibrariesDist,
-            copyStaticResourcesDist
+            copyStaticResourcesDist,
+            copyLocalesResourcesDist
         ),
         createDistributionArchive
     )

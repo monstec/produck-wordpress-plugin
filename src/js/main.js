@@ -1,26 +1,21 @@
 /* global produckLib */
 /* global M */
 
-export default class initQuackPage {
+import i18next from 'i18next';
+
+export default class InitQuackPage {
     constructor(){
 
-        this.initChatJs = initChat;
-        this.initQuackJs = initQuack;
-        this.linkifyJs = initLinkifyText;
-
-        // @if ENV='production'
-        this.log = new produckLib.Log(1);
-        // @endif
-        // @if ENV!='production'
-        this.log = new produckLib.Log(4, "initQuackJs");
-        // @endif
+        this.chatJs = new produckLib.InitChat();
+        this.quackJs = new produckLib.InitQuack();
+        this.linkifyJs = new produckLib.LinkifyText();
     }
 
     'use strict';
 
     pageInitialize() {
-        this.initChatJs.initialise();
-        this.initQuackJs.initialise();
+        this.chatJs.initChatJs();
+        this.quackJs.initialise();
         this.linkifyJs.initialise();
     }
 }

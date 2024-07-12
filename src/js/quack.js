@@ -2,27 +2,13 @@
 /* global M */
 /* global Shariff */
 
-import initQuackPage from './main.js';
-
-export default class initQuack extends initQuackPage {
+export default class InitQuack {
     constructor(){
-        super();
+        this.lazyload = new produckLib.LazyLoad();
 
-        // @if ENV='production'
-        this.log = new produckLib.Log(1);
-        // @endif
-        // @if ENV!='production'
-        this.log = new produckLib.Log(4, "initQuackJs");
-        // @endif
     }
 
-<<<<<<< HEAD
-
     styleShareShariff(quackRef, title) {
-
-=======
-    styleShareShariff(quackRef, title) {
->>>>>>> aritcle export and gulp update
         var buttonsContainer = jQuery('.share-shariff');
         new Shariff(buttonsContainer, {
             orientation: 'horizontal',
@@ -33,7 +19,7 @@ export default class initQuack extends initQuackPage {
             infoUrl: quackRef,
             title: title,
             services: "[facebook; twitter; instagram; xing; linkedin; mail;]",
-            mediaUrl: "/assets/img/ducky.png",
+            mediaUrl: "/assets/img/ducky_xs.png",
             buttonStyle: "icon",
             theme: "standard",
             referrerTrack: null,
@@ -42,32 +28,37 @@ export default class initQuack extends initQuackPage {
     }
 
     initShareContent() {
-<<<<<<< HEAD
+        jQuery(document).on('click', '.share-brand > .share', function (ev) {
+            // for quacksSite and quacksOverview get href from current site
 
-=======
->>>>>>> aritcle export and gulp update
-        jQuery(document).on('click', '.share-brand > .share', function () {
-            // for quacksSite get href from current site
-            var questionRefDetailSite = window.location.href;
-            var questionTextDetailSite = jQuery("#question").text();
+            let questionRefDetailSite = '';
+            let questionTextDetailSite = '';
+
+            if (jQuery(ev.target).parents('#quacklist-wrapper').length) {
+                questionRefDetailSite = jQuery(ev.target).parents('.dialogue-summary').find(".quacks-question-hyperlink").attr('href');
+                questionTextDetailSite = jQuery(ev.target).parents('.dialogue-summary').find(".quacks-question-hyperlink").text();                
+            } else {                
+                var canonicalElement = document.querySelector('link[rel=canonical]');
+                if (canonicalElement !== null) {
+                    questionRefDetailSite = canonicalElement.href;
+                } else {
+                    questionRefDetailSite = window.location.href;
+                }
+                questionTextDetailSite = jQuery('.quacks-headline').find(".quacks-question-hyperlink").text();
+            }            
+
             createShareCard(questionRefDetailSite, questionTextDetailSite);
         });
 
-        function createShareCard(href, question) {
-
-            // for the future, we can provide beautiful shortlinks
-            var canonicalElement = document.querySelector('link[rel=canonical]');
-            if (canonicalElement !== null) {
-                href = canonicalElement.href;
-            }
+        function createShareCard(href, question) {   
 
             if (navigator.share) {
                 navigator.share({
                     title: question,
-                    text: 'Good Question, Good Answer',
+                    text: 'Post',
                     url: href
                 }).then(function () {
-                    return console.log('Successful share');
+                    return console.log('Successful sharing');
                 }).catch(function (error) {
                     return console.log('Error sharing', error);
                 });
@@ -82,10 +73,6 @@ export default class initQuack extends initQuackPage {
     }  
 
     copytoClipboard(inputVal) {
-<<<<<<< HEAD
-
-=======
->>>>>>> aritcle export and gulp update
         jQuery(document).on('click', '.content-copy', function () {
             this.copied = false;
 
@@ -147,6 +134,5 @@ export default class initQuack extends initQuackPage {
         const instance = this;
         instance.initShareContent();
         instance.initMaterializeInContentBlock();
-        instance.lazyload.lazyloaderInit();
     }
 }

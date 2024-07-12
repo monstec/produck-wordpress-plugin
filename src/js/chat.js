@@ -1,26 +1,13 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> aritcle export and gulp update
 /* global produckLib */
 /* global M */
 /* global Cookies */
 
-import initQuackPage from './main.js';
-
-export default class initChat extends initQuackPage {
+export default class InitChat {
   constructor() {
-    super();
-
-    // @if ENV='production'
-    this.log = new produckLib.Log(1);
-    // @endif
-    // @if ENV!='production'
-    this.log = new produckLib.Log(4, "initQuackJs");
-    // @endif
   }
 
-  initialise () {
+  initChatJs() {
+    
     setTimeout(function () {
       jQuery("#produck-chat-block-home")
         .not("quacks-active")
@@ -80,6 +67,13 @@ export default class initChat extends initQuackPage {
 
     function initIframeCommunication() {
       const allowedOrigins = ["https://produck.de", "https://www.produck.de"];
+      const allowedOrigins = [
+        "https://produck.de",
+        "https://www.produck.de",
+        // @if ENV!='production'
+        "https://localhost",
+        // @endif
+      ];
 
       window.onmessage = (e) => {
         if (

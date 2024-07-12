@@ -1,11 +1,12 @@
 <?php
+
 /**
-* Template Name: Quack Detail Page
-*
-* @package MonsTec
-* @subpackage Produck
-* @since Produck 1.1
-*/
+ * Template Name: Quack Detail Page
+ *
+ * @package MonsTec
+ * @subpackage Produck
+ * @since Produck 1.1
+ */
 // prevent direct access
 defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 
@@ -21,13 +22,13 @@ get_header();
 		?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<header class="entry-header quacks-header">
-					<?php the_title( '<h1 class="entry title quacks-headline">', '</h1>' ); ?>
+					<?php the_title('<h1 class="entry title quacks-headline">', '</h1>'); ?>
 				</header><!-- .entry-header -->
-                <div class="entry-content">
-				<?php
-                    the_content();
-                    ?>
-                </div><!-- .entry-content -->
+				<div class="entry-content">
+					<?php
+					the_content();
+					?>
+				</div><!-- .entry-content -->
 			</article><!-- #post-## -->
 		<?php
 		// End of the loop.
@@ -38,3 +39,15 @@ get_header();
 </div><!-- .content-area -->
 
 <?php get_footer(); ?>
+
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+
+		if (produckLib.InitQuackPage !== 'undefined') {
+			const quackPage = new produckLib.InitQuackPage();
+			quackPage.pageInitialize();
+		} else {
+			console.log("Quack Page could not be initialized");
+		}
+	});
+</script>

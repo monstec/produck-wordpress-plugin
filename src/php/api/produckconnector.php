@@ -39,37 +39,13 @@ class ProduckConnector
     }
 
     /**
-     * Get the quack overview from cache or api if cache is expired.
+     * Get all quack data from cache or api if cache is expired.
      */
-    public function getQuacks($max = 0)
-    {
-        //TODO checkCache
-
-        $response = $this->api->getQuacks();
-        $quackData = json_decode($response, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('JSON decode error: ' . json_last_error_msg());
-        } else if (isset($quackData['quacks']['content']) && is_array($quackData['quacks']['content']) && !empty($quackData['quacks']['content'])) {
-            if (isset($max) && is_numeric($max) && $max > 0 && $max <= sizeof($quackData['quacks']['content'])) {
-                $quackData = array_slice($quackData['quacks']['content'], 0, $max);
-            }
-            return $quackData['quacks']['content'];
-        } else {
-            // Handle the case where 'content' is not found or is empty
-            error_log('Content key not found or empty in the response');
-            return null;
-        }
-    }
-
-    /**
-     * Get the user data from quacks object from cache or api if cache is expired.
-     */
-    public function getUsers($max = 0)
+    public function getQuacksAndUsers($max = 0)
     {
         // Retrieve the response
         $response = $this->api->getQuacks();
-        $userData = json_decode($response, true);
+        $data = json_decode($response, true);
 
         // Check for JSON decode errors
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -77,18 +53,40 @@ class ProduckConnector
             return null;
         }
 
-        // Check if 'users' key exists and is an array
-        if (isset($userData['users']) && is_array($userData['users']) && !empty($userData['users'])) {
-            // Handle the case where max limit is set
-            if ($max > 0 && $max <= count($userData['users'])) {
-                return array_slice($userData['users'], 0, $max, true);
+        // Initialize the result array
+        $result = [
+            'quacks' => null,
+            'users' => null,
+            'totalPages' => 0,
+            'pageNumber' => 0
+        ];
+
+        // Check if 'quacks' key exists and is an array
+        if (isset($data['quacks']['content']) && is_array($data['quacks']['content']) && !empty($data['quacks']['content'])) {
+            if (isset($max) && is_numeric($max) && $max > 0 && $max <= sizeof($data['quacks']['content'])) {
+                $result['quacks'] = array_slice($data['quacks']['content'], 0, $max);
+            } else {
+                $result['quacks'] = $data['quacks']['content'];
             }
 
-            return $userData['users'];
+            // Add totalPages and pageNumber to the result
+            $result['totalPages'] = $data['quacks']['totalPages'] ?? 0;
+            $result['pageNumber'] = $data['quacks']['pageable']['pageNumber'] ?? 0;
         } else {
-            // Handle the case where 'users' is not found or is empty
-            error_log('Users key not found or empty in the response');
-            return null;
+            error_log('Content key not found or empty in the response');
         }
+
+        // Check if 'users' key exists and is an array
+        if (isset($data['users']) && is_array($data['users']) && !empty($data['users'])) {
+            if ($max > 0 && $max <= count($data['users'])) {
+                $result['users'] = array_slice($data['users'], 0, $max, true);
+            } else {
+                $result['users'] = $data['users'];
+            }
+        } else {
+            error_log('Users key not found or empty in the response');
+        }
+
+        return $result;
     }
 }

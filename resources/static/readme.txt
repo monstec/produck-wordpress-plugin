@@ -65,8 +65,8 @@ Install the  ProDuck Wordpress plugin in just a few steps:
 * The most important setting is the quack token. This is mandatory if you want to show quacks on your website. You get your token in the settings of your account on https://www.produck.de.
 * Finally, the Produck plugin uses virtual posts/pages, thus the necessary routing does only work if the permalinks setting of Wordpress is set to something other than the first option ("Plain"). Alternatively, you could for example choose "Day and Name".
 
-Now you are ready to go. After you have created the first quacks, they should appear on your website automatically. If not, contact us on https://www.produck.de?cid=53.
-If you want to add products to your account, please contact us under https://www.produck.de?cid=53. We will assist you and provide further instructions.
+Now you are ready to go. After you have created the first quacks, they should appear on your website automatically. If not, contact us on https://www.produck.de/chat.html?cid=53.
+If you want to add products to your account, please contact us under https://www.produck.de/chat.html?cid=53. We will assist you and provide further instructions.
 
 == Screenshots ==
 1. The chat will be displayed on demand at the bottom of your webpage.
@@ -111,11 +111,11 @@ You can use the ProDuck as browser application on any stationary device as well 
 = What happens, if I am offline? =
 This is up to you. You can show a contact email, a contact number or just a notification about your absence to your customer.
 = In which area is ProDuck applicable? =
-ProDuck is already used in various businesses such as smart home and sports retail. Here you can find an example: https://www.smartkat.net. Produck.de is especially useful, if you want to pull potential customer to your site, with minimal extra-effort.
+ProDuck is already used in various businesses such as smart home and sports retail. Here you can find an example: https://www.siio.de. Produck.de is especially useful, if you want to pull potential customer to your site, with minimal extra-effort.
 = Where can I find further instructions =
 Please review our documentation on https://www.produck.de/docu/overview.html. Further FAQs can be found on https://www.produck.de/faq.html.
 = Can I specify groups of experts? =
-Yes, this is possible. Please contact us to form a team of chat recipients: https://www.produck.de?cid=53.
+Yes, this is possible. Please contact us to form a team of chat recipients: https://www.produck.de/chat.html?cid=53.
 = Can I see missed Chats? =
 Yes, missed chats will appear in your settings under "Quacks", except you set "Nicht in Liste aufnehmen" in your account settings.
 = Can I set a secific status =
@@ -141,7 +141,7 @@ Register on https://www.produck.de/signup.html “Als Experte” (as expert).
 = How to share a chat with my social community? =
 On your webpage, a share button is attached to each chat. On click, a popup will open and show several options to share the chat i.e. on facebook, twitter or via email.
 = Got a question =
-Contact us via https://www.produck.de?cid=53. You can also find further FAQs under https://www.produck.de/faq.html.
+Contact us via https://www.produck.de/chat.html?cid=53. You can also find further FAQs under https://www.produck.de/faq.html.
 
 == Changelog ==
 # Version 1.1.0 #

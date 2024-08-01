@@ -12,6 +12,7 @@ class OverviewPageContent implements DynamicPageContent
     protected $connector;
     protected $content;
     protected $headContent;
+    protected $quacksDataObj;
 
     function __construct($produckConnectorObject)
     {
@@ -36,22 +37,20 @@ class OverviewPageContent implements DynamicPageContent
             echo $meta;
         });
 
-        $quacksData = $this->connector->getQuacks();
-        $usersData = $this->connector->getUsers();
-
-        //print_r($usersData[2]['nickname']);
-
-        $contentBuilder = '<div id="quacks-main-div" class="main block bg-dark">';
+        $this->quacksDataObj = $this->connector->getQuacksAndUsers();
+        $usersData = $this->quacksDataObj['users'];
+        
+        $contentBuilder = '<div id="quackListMainContainer" class="main block">';
         $contentBuilder .= '<section id="quacks-overview-container" debog="2">';
         $contentBuilder .= '<h2 data-i18n="text.post_overview">Find exciting articles, chats, and questions</h2>';
         $contentBuilder .= '<div id="quacklist-wrapper" class="flush-left">';
-
-        if ($quacksData != null) {
+        
+        if (!empty($this->quacksDataObj['quacks'])) {            
 
             if (ProduckPlugin::isPoweredByLinkAllowed() > 0) {
                 $contentBuilder .= '<div id="quacks-share-brand">';
                 $contentBuilder .=   '<div id="quacks-host-wrap-wrapper">';
-                $contentBuilder .=     '<a class="quacks-host-ref" href="https://www.produck.de" target="_blank">';
+                $contentBuilder .=     '<a class="quacks-host-ref prdk-link-darkco" href="https://www.produck.de" target="_blank">';
                 $contentBuilder .=       '<span>Provided by ProDuck</span>';
                 $contentBuilder .=       '<img src="' . ProduckPlugin::getImageURL('ducky_xs.png') . '" alt="ProDuck Brand Logo"/>';
                 $contentBuilder .=     '</a>';
@@ -59,7 +58,7 @@ class OverviewPageContent implements DynamicPageContent
                 $contentBuilder .= '</div>';
             }
 
-            foreach ($quacksData as $quack) {
+            foreach ($this->quacksDataObj['quacks'] as $quack) {
                 if (
                     !isset($quack['title']) || strlen($quack['title']) < 1
                     || !isset($quack['id']) || strlen($quack['id']) < 1
@@ -80,7 +79,7 @@ class OverviewPageContent implements DynamicPageContent
                 $quackDisplayTarget = ProduckPlugin::isOpenQuackInNewPage() ? "_blank" : "";
                 $prettyUrlTitlePart = ProduckPlugin::transformTitleToUrlPart($title);
                 $quackPath = '/quack/' . $quackId . '/' . $prettyUrlTitlePart;
-                $quackLink = rtrim(home_url(), '/') . $quackPath;
+                $quackLink = rtrim(home_url(), '/') . $quackPath;   
 
                 $contentBuilder .= '<div class="dialogue-summary broad">';
                 $contentBuilder .= '<div class="quack-category-block bottom">';
@@ -109,13 +108,13 @@ class OverviewPageContent implements DynamicPageContent
                 //Teilen
                 $contentBuilder .= '<div class="share-brand">';
                 $contentBuilder .= '<div class="share">';
-                $contentBuilder .= '<span data-i18n="text.share;[title]text.share">Share</span>';
+                $contentBuilder .= '<span class"prdk-link-darkco" data-i18n="text.share;[title]text.share">Share</span>';
                 $contentBuilder .= '<i class="material-icons" onclick="return;">share</i>';
                 $contentBuilder .= '</div>';
                 $contentBuilder .= '</div>';
                 $contentBuilder .= '</div>';
                 $contentBuilder .= '<div class="summary-text">';
-                $contentBuilder .= '<h3><a class="quacks-question-hyperlink" href="' . $quackLink . '" target="' . $quackDisplayTarget . '">' . $title . '</a></h3>';
+                $contentBuilder .= '<h3><a class="quacks-question-hyperlink prdk-link-darkco" href="' . $quackLink . '" target="' . $quackDisplayTarget . '">' . $title . '</a></h3>';
 
                 if ($summary !== '') {
                     $contentBuilder .= '<div class="info-text">';
@@ -134,7 +133,7 @@ class OverviewPageContent implements DynamicPageContent
                     $contentBuilder .= '<img src="https://produck.de/assets/img/icons/ducky_portrait_placeholder_transparent_xs_borderless.png" loading="lazy" class="image-placeholder" alt="Author\'s Portrait Placeholder" />';
                     $contentBuilder .= '</a>';
                 }
-                $contentBuilder .= '<a class="author-name" href="https://produck.de/profile/' . $userId . '">';
+                $contentBuilder .= '<a class="author-name prdk-link-darkco" href="https://produck.de/profile/' . $userId . '">';
                 $contentBuilder .= '<span data-i18n="[prepend]text.written_by">' . (!empty($user['fullName']) ? $user['fullName'] : 'Unknown Author') . '</span>';
                 $contentBuilder .= '</a>';
                 $contentBuilder .= '</div>';
@@ -203,5 +202,10 @@ class OverviewPageContent implements DynamicPageContent
     public function getPostContent()
     {
         return $this->content;
+    }
+
+    public function getQuacksData()
+    {
+        return $this->quacksDataObj;
     }
 }

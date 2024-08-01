@@ -8,6 +8,7 @@ defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 
 class TemplateLoader {
     protected $pluginDir;
+    protected $virtualTemplates = ['quackdetail.php', 'quacksoverview.php'];
 
     function __construct(String $pluginPath) {
         $this->pluginDir = $pluginPath;
@@ -25,16 +26,29 @@ class TemplateLoader {
 
     public function load() {
         do_action('template_redirect');
+
+        global $isProduckVirtualPage;
+        $isProduckVirtualPage = false;
+
         if (ProduckPlugin::useThemeTemplate()) {
             $template = locate_template(array_filter($this->templates));
         } else {
             $template = $this->locateVirtualPageTemplate(array_filter($this->templates));
         }
-
+    
         if (!empty($template) && file_exists($template)) {
+
+            if (in_array(basename($template), $this->virtualTemplates)) {
+                $isProduckVirtualPage = true;
+            }
+
+            error_log('Loading template: ' . $template); // Debug statement
             require_once $template;
+        } else {
+            error_log('Template not found'); // Debug statement
         }
     }
+    
 
     private function locateVirtualPageTemplate($templateNames) {
             $located = '';

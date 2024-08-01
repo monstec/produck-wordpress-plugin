@@ -11,6 +11,7 @@ export default class LinkifyText {
   constructor() {
     this.asinRunIdCache = [];
     this.requestedAsinsCache = [];
+    this.adsObj = adsObj; //deals.json
     this.adsCache;
   }
 
@@ -199,19 +200,18 @@ export default class LinkifyText {
         let asinTagMatches = [...textInput.matchAll(asinPattern)];
 
         let linkifyRunUid = Math.random().toString(16).slice(2);
+        
+        let currentHostname = window.location.hostname;
+        
+        let verifyInternalOrigin = function (matchVal, returnValFalse = "", returnValTrue = "") {
+          try {
+            let url = new URL(matchVal);        
+            const internalDomains = new RegExp(`(${currentHostname}|siio\\.de|produck\\.de)`);   
 
-        let verifyInternalOrigin = function (
-          matchVal,
-          returnValFalse,
-          returnValTrue
-        ) {
-          return /\.siio.de|:\/\/siio\.de|produck\.de/.test(matchVal)
-            ? returnValTrue
-              ? returnValTrue
-              : ""
-            : returnValFalse
-            ? returnValFalse
-            : "";
+            return internalDomains.test(url.hostname) ? returnValTrue : returnValFalse;
+          } catch (error) {
+            return returnValFalse;
+          }
         };
 
         //replace arguments defined here: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace
@@ -493,7 +493,7 @@ export default class LinkifyText {
 
         if (remainingElementsAfterRetry.length) {
           remainingElements.replaceWith(
-            '<p class="fs-12" style="text-indent: 20px"><em>'+i18next.t('text.produc_not_found')+'</em><p>'
+            '<p class="fs-12" style="text-indent: 20px"><em>'+i18next.t('text.product_not_found')+'</em><p>'
           );
 
           console.log("PRODUCT LOAD FAILED");
@@ -579,7 +579,7 @@ export default class LinkifyText {
     function setAffiliateNote() {
       if (linkFound && jQuery("#affiliate-note").length === 0) {
         let affiliateNote =
-          '<hr><p id="affiliate-note">'+i18next.t('text.affiliate_note')+'</p>';
+          '<hr><div class="flex-box w100 just-center"><p id="affiliate-note">'+i18next.t('text.affiliate_note')+'</p></div>';
         textElem.append(affiliateNote);
       }
     }

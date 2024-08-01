@@ -150,13 +150,64 @@ class ProduckPluginAdministration
     }
 
     /**
-     * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'quackToken'.
+     * Creates the HTML-code for the input elements that lets the user enter up to "maxTokens" values for the option-value 'quackToken'.
      */
-    public function createQuackTokenInputField()
-    {
+    public function createQuackTokenInputField() {
         $options = get_option('produck_config');
-        echo '<input type="text" id="produckQuackTokenField" name="produck_config[quackToken]" size="50" value="' . $options['quackToken'] . '"/>';
+        $tokens = isset($options['quackToken']['quackTokens']) ? $options['quackToken']['quackTokens'] : array();
+
+        ?>
+        <div id="produckQuackTokenContainer">
+            <?php
+            if (!empty($tokens)) {
+                foreach ($tokens as $index => $token) {
+                    echo '<div class="token-field"><input type="text" id="produckQuackTokenField_' . $index . '" name="produck_config[quackTokens][]" size="50" value="' . esc_attr($token) . '"/>';
+                    if ($index > 0) {
+                        echo '<button type="button" class="deleteTokenButton">Delete</button>';
+                    }
+                    echo '</div>';
+                }
+            } else {
+                echo '<div class="token-field"><input type="text" id="produckQuackTokenField_0" name="produck_config[quackTokens][]" size="50" value=""/></div>';
+            }
+            ?>
+        </div>
+        <button type="button" id="addQuackTokenButton"><?php esc_html_e('Add another token', 'textdomain'); ?></button>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                var container = document.getElementById('produckQuackTokenContainer');
+                var addButton = document.getElementById('addQuackTokenButton');
+                var maxTokens = 20;
+    
+                addButton.addEventListener('click', function () {
+                    var tokenFields = container.getElementsByClassName('token-field');
+                    var tokenCount = tokenFields.length;
+    
+                    if (tokenCount < maxTokens) {
+                        var newTokenField = document.createElement('div');
+                        newTokenField.classList.add('token-field');
+                        newTokenField.innerHTML = '<input type="text" id="produckQuackTokenField_' + tokenCount + '" name="produck_config[quackTokens][]" size="50" value=""/><button type="button" class="deleteTokenButton">Delete</button>';
+                        container.appendChild(newTokenField);
+                    } else {
+                        alert('<?php esc_html_e('You have reached the maximum number of tokens.', 'textdomain'); ?>');
+                    }
+                });
+    
+                container.addEventListener('click', function (e) {
+                    if (e.target && e.target.classList.contains('deleteTokenButton')) {
+                        var tokenFields = container.getElementsByClassName('token-field');
+                        if (tokenFields.length > 1) {
+                            e.target.parentElement.remove();
+                        } else {
+                            alert('<?php esc_html_e('You must have at least one token.', 'textdomain'); ?>');
+                        }
+                    }
+                });
+            });
+        </script>
+        <?php
     }
+    
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'chatEnabled'.
      */
@@ -246,6 +297,38 @@ class ProduckPluginAdministration
         echo '</select>';
     }
 
+    private function sanitizeQuackTokensInput($input) {
+        $trustedInput = array();
+        
+        if (isset($input['quackTokens']) && is_array($input['quackTokens'])) {
+            $trustedInput['quackTokens'] = array();
+            
+            foreach ($input['quackTokens'] as $index => $token) {
+                // Trim whitespace and leading zeros off the quack token
+                $trimmedToken = trim($token);
+                
+                // Validate the token to ensure it is a hex string
+                if (preg_match('/^[0-9a-fA-F]+$/i', $trimmedToken)) {
+                    $trustedInput['quackTokens'][] = $trimmedToken;
+                } else {
+                    add_settings_error(
+                        'produck_config',
+                        'produckQuackTokenField_' . $index,
+                        $this->getTranslation('settings', 'quack_token_must_be_hex')
+                    );
+                }
+            }
+        } else {
+            add_settings_error(
+                'produck_config',
+                'produckQuackTokenField',
+                $this->getTranslation('settings', 'quack_token_must_be_array')
+            );
+        }
+    
+        return $trustedInput;
+    }
+
     /**
      * Validate the user's input on the settings page. The validated input will be returned and then stored
      * in the database by the settings-API.
@@ -276,16 +359,7 @@ class ProduckPluginAdministration
         }
 
         // trim whitespace off the quack token
-        $inQuackToken = isset($input['quackToken']) ? ltrim(trim($input['quackToken']), '0') : '';
-        if (preg_match('/^[0-9a-fA-F]+$/i', $inQuackToken)) {
-            $trustedInput['quackToken'] = $inQuackToken;
-        } else {
-            add_settings_error(
-                'produck_config',
-                'produckQuackTokenField',
-                $this->getTranslation('settings', 'quack_token_must_be_hex')
-            );
-        }
+        $trustedInput['quackToken'] = self::sanitizeQuackTokensInput($input);
 
         $inChatEnabled = isset($input['chatEnabled']) ? trim($input['chatEnabled']) : '';
         if (preg_match('/^[0|1]$/i', $inChatEnabled)) {

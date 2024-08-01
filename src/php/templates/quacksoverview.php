@@ -1,6 +1,6 @@
 <?php
 /**
-* Template Name: Quack Detail Page
+* Template Name: Quack Overview Page
 *
 * @package MonsTec
 * @subpackage Produck
@@ -35,16 +35,3 @@ get_header();
 </div><!-- .content-area -->
 
 <?php get_footer(); ?>
-
-
-<script type="text/javascript">
-	document.addEventListener('DOMContentLoaded', function() {
-
-		if (produckLib.InitQuackPage !== 'undefined') {
-			const quackOverviewPage = new produckLib.InitQuackPage();
-			quackOverviewPage.pageInitialize();
-		} else {
-			console.log("Quack Page could not be initialized");
-		}
-	});
-</script>

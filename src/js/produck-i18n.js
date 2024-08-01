@@ -31,7 +31,7 @@ i18next.use(LanguageDetector).init(
       excludeCacheFor: ["cimode"], // languages to not persist (cookie, localStorage)
 
       // optional expire and domain for set cookie
-      cookieMinutes: 10,
+      cookieMinutes: 10000,
 
       // optional htmlTag with lang attribute, the default is:
       htmlTag: document.documentElement,
@@ -62,7 +62,7 @@ i18next.use(LanguageDetector).init(
             settings_title: "Einstellungen",
           },
           text: {
-            affiliate_note: "* Bitte beachten Sie, dass Links auf dieser Seite Links zu Werbepartnern sein können. Für Käufe, die über einen dieser Links zustande kommen, erhalten wir (falls sie die Marketingcookies des Werbepartners annehmen) Provision. Ihnen entstehen dadurch keine zusätzlichen Kosten. Sie unterstützen jedoch unseren Service. Preise, Lieferbedingungen und Verfügbarkeiten entsprechen dem angegebenen Stand (Datum/Uhrzeit) und können sich jederzeit ändern. Angaben auf unserer Seite weichen daher ggf. von denen der Partnerseiten ab. Für den Kauf eines betreffenden Produkts gelten die Angaben zu Preis und Verfügbarkeit, die zum Kaufzeitpunkt auf der/den maßgeblichen Website(s) (z.B. Amazon) angezeigt werden. Bestimmte Inhalte, die auf dieser Website angezeigt werden, stammen von Amazon. Diese Inhalte werden‚ 'wie besehen' bereitgestellt und können jederzeit geändert oder entfernt werden.",
+            affiliate_note: "* Bitte beachten Sie, dass Links auf dieser Seite Links zu Werbepartnern sein können. Für Käufe, die über einen dieser Links zustande kommen, erhalten die Autoren (falls sie die Marketingcookies des Werbepartners annehmen) Provision. Ihnen entstehen dadurch keine zusätzlichen Kosten. Sie unterstützen lediglich den Autor. Preise, Lieferbedingungen und Verfügbarkeiten entsprechen dem angegebenen Stand (Datum/Uhrzeit) und können sich jederzeit ändern. Angaben auf dieser Seite weichen daher ggf. von denen der Partnerseiten ab. Für den Kauf eines betreffenden Produkts gelten die Angaben zu Preis und Verfügbarkeit, die zum Kaufzeitpunkt auf der/den maßgeblichen Website(s) (z.B. Amazon) angezeigt werden. Bestimmte Inhalte, die auf dieser Website angezeigt werden, stammen von Amazon. Diese Inhalte werden‚ 'wie besehen' bereitgestellt und können jederzeit geändert oder entfernt werden.",
             all_settings: "Alle Einstellungen",
             answered_on: "beantwortet am",
             article_overview: "Artikelübersicht",
@@ -78,6 +78,7 @@ i18next.use(LanguageDetector).init(
             external_posts: "Externe Beiträge",
             expert: "Experte",
             find_exciting_articles_chats_questions: "Finde spannende Artikel, Chats und Fragen",
+            go_to_post_overview: "Zur Beitragsübersicht",
             in_this_article: "In diesem Artikel",
             last_updated_on: "Zuletzt aktualisiert am ",
             more_info: "Mehr Informationen*",
@@ -128,7 +129,7 @@ i18next.use(LanguageDetector).init(
             settings_title: "Settings",
           },
           text: {
-            affiliate_note: "* Please note that links on this page may be affiliate links. For purchases made through any of these links, we receive a commission (if you accept the partner's marketing cookies). There are no additional costs for you. However, you support our service. Prices, delivery conditions and availabilities correspond to the specified status (date/time) and can change at any time. Information on our site may therefore differ from those on the partner sites. For the purchase of a specific product, the price and availability information displayed on the relevant website(s) (e.g., Amazon) at the time of purchase applies. Certain content displayed on this website comes from Amazon. This content is provided 'as is' and may be changed or removed at any time.",
+            affiliate_note: "* Please note that links on this page may be affiliate links. For purchases made through any of these links, the author receives a commission (if you accept the partner's marketing cookies). There are no additional costs for you. However, you support the author. Prices, delivery conditions and availabilities correspond to the specified status (date/time) and can change at any time. Information on this page may therefore differ from those on the partner sites. For the purchase of a specific product, the price and availability information displayed on the relevant website(s) (e.g., Amazon) at the time of purchase applies. Certain content displayed on this page comes from Amazon. This content is provided 'as is' and may be changed or removed at any time.",
             all_settings: "All Settings",
             answered_on: "Answered on",
             article_overview: "Article Overview",            
@@ -144,6 +145,7 @@ i18next.use(LanguageDetector).init(
             external_posts: "External Posts",
             expert: "Expert",
             find_exciting_articles_chats_questions: "Find exciting articles, chats, and questions",
+            go_to_post_overview: "To Post Overview",
             in_this_article: "In this article",
             last_updated_on: "Last updated on ",
             more_info: "More Information*",

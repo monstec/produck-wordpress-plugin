@@ -11,6 +11,7 @@
 defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 
 get_header();
+
 ?>
 
 <div id="primary" class="content-area">
@@ -21,7 +22,7 @@ get_header();
 			the_post();
 		?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-				<header class="entry-header quacks-header">
+				<header class="entry-header quacks-headline-container">
 					<?php the_title('<h1 class="entry title quacks-headline">', '</h1>'); ?>
 				</header><!-- .entry-header -->
 				<div class="entry-content">
@@ -39,15 +40,3 @@ get_header();
 </div><!-- .content-area -->
 
 <?php get_footer(); ?>
-
-<script type="text/javascript">
-	document.addEventListener('DOMContentLoaded', function() {
-
-		if (produckLib.InitQuackPage !== 'undefined') {
-			const quackPage = new produckLib.InitQuackPage();
-			quackPage.pageInitialize();
-		} else {
-			console.log("Quack Page could not be initialized");
-		}
-	});
-</script>

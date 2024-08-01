@@ -62,7 +62,7 @@ class QuackPageContent implements DynamicPageContent
         // The reason why no locally defined anonymous functions are used here is namespacing. There us
         // no need for complicately prefixing the methods if functions belonging to a (prefixed) class are used.
 
-        // change title the html-head
+        // change title of the html-head
         $this->title = htmlspecialchars($quackTitle, ENT_QUOTES, 'UTF-8');
         add_filter('pre_get_document_title', array($this, 'changePageTitle'));
 
@@ -131,7 +131,7 @@ class QuackPageContent implements DynamicPageContent
 
     private function renderArticle($quackData, $quackTitle)
     {
-
+        $quackDisplayTarget = ProduckPlugin::isOpenQuackInNewPage() ? "_blank" : "";
         $authorLnk = 'https://www.produck.de' . '/profile/' . htmlspecialchars($quackData['authorId']);
         $views = null;
         if ($quackData['views'] > 0) {
@@ -140,7 +140,7 @@ class QuackPageContent implements DynamicPageContent
 
         ob_start();
 ?>
-        <div id="quackSingleContainer" class="main" itemprop="mainEntity" itemscope itemtype="https://schema.org/Article" data-quack-id="<?php echo htmlspecialchars($quackData['id']); ?>" data-article-id="<?php echo htmlspecialchars($quackData['id']); ?>">
+        <div id="quackSingleMainContainer" class="main" itemprop="mainEntity" itemscope itemtype="https://schema.org/Article" data-quack-id="<?php echo htmlspecialchars($quackData['id']); ?>" data-article-id="<?php echo htmlspecialchars($quackData['id']); ?>">
             <section id="quack-info-bar">
                 <div id="quack-category-block">
                     <div class="chip"><span data-i18n="text.external_article">External Article</span></div>
@@ -221,9 +221,9 @@ class QuackPageContent implements DynamicPageContent
                         <?php endif; ?>
                         <div class="interaction-bar share-brand bottom">
                             <div class="report" data-i18n="[title]text.notify">
-                                <a class="report-link" href="mailto:report-quack@monstec.de?subject=Quack%20melden" data-i18n="text.notify">Report</a>
+                                <a class="report-link prdk-link-darkco" href="mailto:report-quack@monstec.de?subject=Quack%20melden" data-i18n="text.notify">Report</a>
                             </div>
-                            <div class="share" data-i18n="[title]text.share_page"><span data-i18n="text.share">Share</span><i class="material-icons">share</i></div>
+                            <div class="share" data-i18n="[title]text.share_page"><span data-i18n="text.share" class="prdk-link-darkco">Share</span><i class="material-icons prdk-link-darkco">share</i></div>
                         </div>
                         <?php if (!empty($quackData['nickname'])) : ?>
                             <div class="quack-author-block">
@@ -241,16 +241,16 @@ class QuackPageContent implements DynamicPageContent
                                             ?>
                                                 <a class="image-wrapper" target="_blank" href="<?php echo $authorLnk ?>"><img src="<?php echo htmlspecialchars($imagePath); ?>" loading="lazy" class="image" alt="Autoren Portrait" /></a>
                                             <?php else : ?>
-                                                <a class="image-wrapper" target="_blank" href="<?php echo $authorLnk ?>"><img src="<?php ProduckPlugin::getImageURL('ducky.png') ?>" loading="lazy" class="image-placeholder" alt="Autoren Portrait" /></a>
+                                                <a class="image-wrapper" target="_blank" href="<?php echo $authorLnk ?>"><img src="<?php echo ProduckPlugin::getImageURL('ducky_xs.png') ?>" loading="lazy" class="image-placeholder" alt="Autoren Portrait" /></a>
                                             <?php endif; ?>
                                         </div>
                                         <div class="card-text-block">
                                             <a class="author-name" target="_blank" href="<?php echo $authorLnk ?>">
-                                                <span><?php echo !empty($quackData['fullName']) ? htmlspecialchars($quackData['fullName']) : htmlspecialchars($quackData['nickname']); ?></span>
+                                                <span class="prdk-link-darkco"><?php echo !empty($quackData['fullName']) ? htmlspecialchars($quackData['fullName']) : htmlspecialchars($quackData['nickname']); ?></span>
                                             </a>
                                             <?php if (!empty($quackData['specDescr'])) : ?>
                                                 <a class="author-expertise" target="_blank" href="<?php echo $authorLnk ?>">
-                                                    <span data-i18n="quackpage.speciality"></span>&nbsp;<span><?php echo htmlspecialchars($quackData['specDescr']); ?></span>
+                                                    <span data-i18n="quackpage.speciality"></span>:&nbsp;<span><?php echo htmlspecialchars($quackData['specDescr']); ?></span>
                                                 </a>
                                             <?php else : ?>
                                                 <span class="author-expertise">Autor auf ProDuck.de</span>
@@ -266,6 +266,9 @@ class QuackPageContent implements DynamicPageContent
                                 </div>
                             </div>
                         <?php endif; ?>
+                        <div class="quacks-more-quacks-ref">
+                           <a class="btn" href="<?php echo ProduckPlugin::getQuackOverviewUrl() ?>" target="<?php echo $quackDisplayTarget ?>" data-i18n="text.go_to_post_overview">Post Overview</a>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -294,8 +297,8 @@ class QuackPageContent implements DynamicPageContent
 
     private function renderChat($quackData, $quackId, $quackTitle)
     {
+        $quackDisplayTarget = ProduckPlugin::isOpenQuackInNewPage() ? "_blank" : "";
         $expertNickname = $quackData['fullName'] ? $quackData['fullName'] : $quackData['nickname'];
-
         $isodate = null;
         if (isset($quackData['timestamp'])) {
             $isodate = new DateTime($quackData['timestamp']);
@@ -322,9 +325,9 @@ class QuackPageContent implements DynamicPageContent
         add_filter('pre_get_document_title', array($this, 'changePageTitle'));
 
         ob_start();
-    ?>
 
-        <div id="quackSingleContainer" class="main" itemprop="mainEntity" itemscope itemtype="https://schema.org/Article" data-quack-id="<?php echo htmlspecialchars($quackData['quackId']); ?>" data-chat-id="<?php echo htmlspecialchars($quackData['chatId']); ?>">
+    ?>
+        <div id="quackSingleMainContainer" class="main" itemprop="mainEntity" itemscope itemtype="https://schema.org/Article" data-quack-id="<?php echo htmlspecialchars($quackData['quackId']); ?>" data-chat-id="<?php echo htmlspecialchars($quackData['chatId']); ?>">
             <section id="quack-info-bar">
                 <div id="quack-category-block">
                     <span class="chip active" data-i18n="text.external_chat">External Chat</span>
@@ -333,7 +336,7 @@ class QuackPageContent implements DynamicPageContent
                     <?php if ($quackData['quackity'] > 0.0) : ?>
                         <div class="votes" data-i18n="[title]text.rating" itemscope itemtype="https://schema.org/CreativeWorkSeries">
                             <meta itemprop="headline name" content="<?php $quackTitle ?>" />
-                            <div class="mini-counts" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating"><span id="aggregatedRatingLabel" itemprop="ratingValue"><?php echo htmlspecialchars(number_format($quackData['quackity'], 1)); ?></span>&nbsp;(<span id="ratingCountLabel" itemprop="reviewCount"><?php echo htmlspecialchars($quackData['ratingCount']); ?></span>)<div class="flex-box"><i class="fa-solid fa-star"></i></div>
+                            <div class="mini-counts" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating"><span id="aggregatedRatingLabel" itemprop="ratingValue"><?php echo htmlspecialchars(number_format($quackData['quackity'], 1)); ?></span>&nbsp;(<span id="ratingCountLabel" itemprop="reviewCount"><?php echo htmlspecialchars($quackData['ratingCount']); ?></span>)<div class="flex-box"><i class="material-icons">star_border</i></div>
                             </div>
                             <meta itemprop="bestRating" content="5">
                             <meta itemprop="worstRating" content="1">
@@ -399,6 +402,7 @@ class QuackPageContent implements DynamicPageContent
                                         </div>
                                     </div>
                                 <?php endif; ?>
+                                <?php echo ($msg === end($quackData['messages'])) ? '<div class="vertical-spacer small"></div>' : ''; ?>
                             <?php endforeach; ?>
                         </div>
                         <meta itemprop="answerCount" content="<?php echo count($quackData['messages']); ?>" />
@@ -414,8 +418,8 @@ class QuackPageContent implements DynamicPageContent
                             </div>
                         <?php endif; ?>
                         <div class="interaction-bar share-brand bottom">
-                            <div class="report" data-i18n="[title]text.notify"><a class="report-link" href="mailto:report-quack@monstec.de?subject=Quack%20melden" data-i18n="text.notify">Report</a></div>
-                            <div class="share" data-i18n="[title]text.share_page"><span data-i18n="text.share">Share</span><i class="material-icons">share</i></div>
+                            <div class="report" data-i18n="[title]text.notify"><a class="report-link prdk-link-darkco" href="mailto:report-quack@monstec.de?subject=Quack%20melden" data-i18n="text.notify">Report</a></div>
+                            <div class="share" data-i18n="[title]text.share_page"><span data-i18n="text.share" class="prdk-link-darkco">Share</span><i class="material-icons prdk-link-darkco">share</i></div>
                         </div>
                         <?php if (!empty($quackData['nickname'])) : ?>
                             <div class="quack-author-block">
@@ -434,16 +438,16 @@ class QuackPageContent implements DynamicPageContent
                                             ?>
                                                 <a class="image-wrapper" target="_blank" href="<?php echo $expertLnk ?>"><img src="<?php echo htmlspecialchars($imagePath); ?>" loading="lazy" class="image" alt="Autoren Portrait"></a>
                                             <?php else : ?>
-                                                <a class="image-wrapper" target="_blank" href="<?php echo $expertLnk ?>"><img src="<?php ProduckPlugin::getImageURL('ducky.png') ?>" loading="lazy" class="image-placeholder" alt="Autoren Portrait"></a>
+                                                <a class="image-wrapper" target="_blank" href="<?php echo $expertLnk ?>"><img src="<?php echo ProduckPlugin::getImageURL('ducky_xs.png') ?>" loading="lazy" class="image-placeholder" alt="Autoren Portrait"></a>
                                             <?php endif; ?>
                                         </div>
                                         <div class="card-text-block">
                                             <a class="author-name" target="_blank" href="<?php echo $expertLnk ?>">
-                                                <span><?php echo !empty($quackData['fullName']) ? htmlspecialchars($quackData['fullName']) : htmlspecialchars($quackData['nickname']); ?></span>
+                                                <span class="prdk-link-darkco"><?php echo !empty($quackData['fullName']) ? htmlspecialchars($quackData['fullName']) : htmlspecialchars($quackData['nickname']); ?></span>
                                             </a>
                                             <?php if (!empty($quackData['specDescr'])) : ?>
                                                 <a class="author-expertise" target="_blank" href="<?php echo $expertLnk ?>">
-                                                    <span data-i18n="quackpage.speciality"></span>&nbsp;<span><?php echo htmlspecialchars($quackData['specDescr']); ?></span>
+                                                    <span data-i18n="quackpage.speciality"></span>:&nbsp;<span><?php echo htmlspecialchars($quackData['specDescr']); ?></span>
                                                 </a>
                                             <?php else : ?>
                                                 <span class="author-expertise">Autor auf ProDuck.de</span>
@@ -459,6 +463,9 @@ class QuackPageContent implements DynamicPageContent
                                 </div>
                             </div>
                         <?php endif; ?>
+                        <div class="quacks-more-quacks-ref">
+                           <a class="btn" href="<?php echo ProduckPlugin::getQuackOverviewUrl() ?>" target="<?php echo $quackDisplayTarget ?>" data-i18n="text.go_to_post_overview">Post Overview</a>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -479,7 +486,7 @@ class QuackPageContent implements DynamicPageContent
             <div class="quacks-modal-footer">
                 <a id="quacks-close-share-modal" href="#!" class="quacks-modal-close waves-effect waves-teal-light btn-flat" data-i18n="text.close">Close</a>
             </div>
-        </div>       
+        </div> 
 <?php
         return ob_get_clean();
     }

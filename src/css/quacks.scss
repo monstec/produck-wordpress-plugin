@@ -1,65 +1,4 @@
-$background-color1: rgba(16, 54, 66, 1);
-$background-color2: rgba(17, 68, 85, 1);
-$background-color3: rgba(6, 21, 26, 0.6);
-$background-color4: rgba(10, 36, 44, 1);
-$background-color5: rgba(17, 40, 48, 1);
-$background-color6: rgba(17, 119, 119, 1);
-$background-color7: rgba(231, 233, 234, 1);
-$signal-color-red: rgba(178, 0, 35, 0.9);
-$orange-color-very-light: rgb(255, 237, 219);
-$orange-color-light: rgb(238, 182, 98);
-$orange-color-medium: rgb(255, 165, 79);
-$gold-color: rgb(127, 82, 39);
-$red-color-very-light: rgb(250, 166, 169);
-$red-color-light: rgb(238, 110, 115);
-$teal-color: rgba(43, 187, 173, 1);
-$teal-color-dark: rgba(0, 128, 128, 1);
-$hover-teal-color: rgb(73, 217, 203);
-$hover-signal-red: rgba(218, 40, 75, 0.9);
-$mint-green: rgba(43, 187, 173, 0.8);
-$color_light: rgba(219, 219, 219, 1);
-$color_light2: rgba(125, 131, 164, 0.5);
-$color_medium: rgba(148, 148, 148, 1);
-$color-dark: rgba(6, 21, 26, 1);
-$hover-color: rgba(0, 191, 165, 1);
-$hover-color2: rgba(100, 255, 218, 1);
-$placeholder-color: rgb(102, 102, 102);
-$font-color-dark: rgb(90, 90, 90);
-$font-color-extra-dark: rgb(36, 36, 36);
-$font-color-light: #aaa;
-$font-color-super-light: rgb(219, 219, 219);
-$font-color-white: #fff;
-$min-height: "(max-height: 450px)";
-$gradient: linear-gradient(to top, $background-color1, $background-color2);
-/*$gradient-mint: linear-gradient( to top, $mint-green, $mint-green +50% );*/
-$gradient-grey: linear-gradient(to top, #d3d5d6, $background-color7);
-$shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-$shadow-light: 0px 0px 10px -2px rgba(0, 0, 0, 0.4);
-$shadow-small: -2px 2px 4px 1px rgba(0, 0, 0, 0.6);
-$shadow-strong: 0px 0px 10px 10px rgba(0, 0, 0, 0.4);
-$shadow-strong2: 0px 2px 5px 4px rgba(0, 0, 0, 0.4);
-$mobile: "(max-width: 660px)";
-$tablet: "(min-width: 661px) and (max-width: 991px)";
-$medium: "(min-width: 992px) and (max-width: 1199px)";
-$desktop: "(min-width: 1200px)";
-$desktop-xl: "(min-width: 1980px)";
-$font-family: "Philosopher", sans-serif;
-$h1: 1.8rem;
-$h2: 1.6rem;
-$h3: 1.4rem;
-$h4: 1.2rem;
-$p: 16px;
-$main-height: 30px;
-$chat-width: 60vw;
-$chat-height: calc(var(--vh, 1vh) * 100);
-$chat-height-tabs: calc(#{$chat-height} - 46px);
-$container_height: calc(#{$main-height} - 0.9vw);
-$container_width: calc(#{$chat-width} / 4 - 0.6vw);
-$dist: 30px;
-$padding-textarea: 5px;
-$lines-to-show: 2;
-$timing-function: cubic-bezier(0.19, 1, 0.22, 1);
-$standard-box-radius: 5px;
+@use "basicStyles" as *;
 
 @mixin centerOnMobile {
   @media #{$mobile} {
@@ -86,18 +25,16 @@ $standard-box-radius: 5px;
     cursor: pointer;
     margin: 0 10px;
 
-    a, span, i {
+    a,
+    span,
+    i {
       font-size: 15px;
       padding: 0 0 0 5px;
+      color: $font-color-dark;
 
       &:hover {
         color: $teal-color;
       }
-    }
-
-    .report-link {
-      color: inherit;
-      text-decoration: none;
     }
   }
 }
@@ -110,7 +47,7 @@ $standard-box-radius: 5px;
     text-align: left;
 
     @media #{$mobile} {
-      padding-left: 20px;
+      padding-left: 10px;
     }
   }
 
@@ -421,7 +358,15 @@ $standard-box-radius: 5px;
     font-size: inherit;
     box-shadow: 0px 0px 5px -2px rgba(0, 0, 0, 0.4);
 
-    h3 {
+    @media #{$mobile} {
+      padding: 40px 15px 15px 15px;
+    }
+
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       color: $font-color-light !important;
     }
 
@@ -535,9 +480,19 @@ $standard-box-radius: 5px;
 
 .prdk-link {
   color: $teal-color !important;
+  text-decoration: none !important;
 
   &:hover {
     color: $hover-teal-color !important;
+  }
+}
+
+.prdk-link-darkco {
+  color: $font-color-extra-dark !important;
+  text-decoration: none !important;
+
+  &:hover {
+    color: $teal-color !important;
   }
 }
 
@@ -546,7 +501,7 @@ $standard-box-radius: 5px;
 }
 
 #quack-info-bar {
-  display: flex;
+  display: flex !important;
   flex: 0 1 100%;
   justify-content: flex-end;
   flex-flow: wrap;
@@ -642,10 +597,10 @@ $standard-box-radius: 5px;
 
   .page-summary-text-block {
     display: flex;
+    text-align: center;
     flex: 0 1 100%;
     justify-content: flex-end;
     align-items: center;
-    text-align: left;
     font-weight: normal;
   }
 
@@ -655,9 +610,19 @@ $standard-box-radius: 5px;
 }
 
 .quacks-headline-container {
-  padding: 0 20px;
   display: flex;
+  width: 100%;
   justify-content: center;
+  text-align: center;
+  margin: 35px auto 10px auto !important;
+  padding: 0 20px;
+
+  h1 {
+    font-size: 2em;
+    margin: 1em;
+    text-align: center;
+    max-width: $max-site-width;
+  }
 }
 
 #quack-container {
@@ -673,14 +638,20 @@ $standard-box-radius: 5px;
 
   h1,
   h2 {
-    margin: 40px 5px 40px 5px;
+    margin: 40px 5px;
     max-width: 100%;
-    text-align: center;
     font-weight: normal;
+  }
+
+  h1 {
+    text-align: center;
+    text-align-last: center;
   }
 
   h2 {
     font-size: $h2;
+    text-align: left;
+    text-align-last: left;
   }
 
   p {
@@ -712,6 +683,7 @@ $standard-box-radius: 5px;
   .quack-inner-block {
     @include text-content-style();
     font-weight: normal;
+    flex: 0 1 100%;
     flex-flow: wrap;
     line-height: 1.5 !important;
     text-decoration: none;
@@ -722,6 +694,10 @@ $standard-box-radius: 5px;
     hyphens: auto;
     font-family: sans-serif;
     margin: 15px;
+
+    @media #{$mobile} {
+      margin: 0px;
+    }
 
     h2,
     h3,
@@ -739,7 +715,7 @@ $standard-box-radius: 5px;
     }
 
     h3 {
-      font-size: 1.2rem;
+      font-size: 1.4em;
       text-align: left;
       margin: 25px 0;
       font-weight: 700;
@@ -755,13 +731,14 @@ $standard-box-radius: 5px;
 
   .tags {
     justify-content: flex-end;
+
     .chip {
-      background: $background-color7;
+      background: $background-color7 !important;
       overflow: hidden;
       text-decoration: none;
 
       &:hover {
-        background: $teal-color;
+        background: $teal-color !important;
 
         span {
           color: $font-color-white;
@@ -775,7 +752,7 @@ $standard-box-radius: 5px;
   display: flex;
   flex: 0 1 100%;
   justify-content: flex-end;
-  margin: 15px 10px 0 10px;
+  margin: 20px 10px 10px 10px;
 
   &:hover {
     box-shadow: $shadow;
@@ -784,7 +761,7 @@ $standard-box-radius: 5px;
   .info-card {
     display: flex;
     flex: 0 1 100%;
-    border-radius: 5px;
+    border-radius: $standard-box-radius;
   }
 
   .card-wrapper {
@@ -819,12 +796,12 @@ $standard-box-radius: 5px;
         left: 0;
         color: $font-color-white;
         background: #26a69a;
-        padding: 10px 5px;
+        padding: 0;
         border-radius: 5px 0 5px 0;
         justify-content: center;
         align-items: center;
         font-weight: 400;
-        font-size: 0.6rem;
+        font-size: 0.6em;
       }
     }
 
@@ -944,7 +921,7 @@ $standard-box-radius: 5px;
         position: relative;
         justify-content: flex-start;
         align-items: flex-start;
-        color: black;
+        color: black !important;
 
         @media #{$mobile} {
           justify-content: center;
@@ -952,7 +929,7 @@ $standard-box-radius: 5px;
         }
 
         &.author-name {
-          font-size: 16px;
+          font-size: 18px;
           padding: 10px 10px 0 10px;
 
           &.before {
@@ -961,7 +938,7 @@ $standard-box-radius: 5px;
         }
 
         &.author-expertise {
-          font-size: 14px;
+          font-size: 16px;
           padding: 5px 10px;
           text-transform: uppercase;
         }
@@ -1004,6 +981,7 @@ $standard-box-radius: 5px;
     a {
       text-decoration: none !important;
     }
+
     p {
       margin: 0;
     }
@@ -1089,16 +1067,17 @@ $standard-box-radius: 5px;
   &.broad {
     flex: 0 1 80%;
 
-    .summary-text {
-      flex: 0 1 100%;
-    }
-
     @media #{$tablet} {
       flex: 0 1 90%;
     }
 
     @media #{$mobile} {
       flex: 0 1 100%;
+    }
+
+    .summary-text {
+      flex: 0 1 100%;
+      margin: 20px 0;
     }
   }
 
@@ -1129,12 +1108,15 @@ $standard-box-radius: 5px;
   }
 }
 
-#quackSingleContainer {
+#quackSingleMainContainer {
   display: flex;
   flex-flow: row wrap;
   overflow: auto;
   flex: 0 1 100%;
-  min-width: 90%;
+  margin: 0 auto;
+  max-width: $max-site-width;
+  padding-top: 20px;
+  padding-bottom: 20px;
 
   .dialogue-summary {
     @include diaglogue-box;
@@ -1185,12 +1167,10 @@ $standard-box-radius: 5px;
 
     a.prdk-link {
       display: flex;
-      text-decoration: none !important;
     }
 
     .author-name {
       white-space: nowrap;
-      color: $teal-color;
     }
 
     .author-divider {
@@ -1232,16 +1212,26 @@ $standard-box-radius: 5px;
     @include stats-wrapper;
     flex: 0 1 auto;
     padding: 0 4% 0 20px;
+    height: 25px;
     @include centerOnMobile;
+
+    @media #{$mobile} {
+      flex-flow: row wrap;
+      padding: 0 20px;
+    }
   }
 }
 
 //quacks-overview
-#quacks-main-div {
+#quackListMainContainer {
   display: flex;
   flex-flow: row wrap;
   overflow: auto;
   flex: 0 1 100%;
+  margin: 0 auto;
+  max-width: $max-site-width;
+  padding-top: 20px;
+  padding-bottom: 20px;
 
   #quacks-overview-container {
     display: flex;
@@ -1251,15 +1241,16 @@ $standard-box-radius: 5px;
     width: 100%;
 
     h2 {
-      margin: 40px 5px 40px 5px;
+      margin: 10px 5px;
       max-width: 75vw;
       text-align: center;
       font-weight: normal;
-      font-size: 1.8rem;
+      font-size: 1.8em;
     }
 
     h3 {
-      font-size: 1.2rem;
+      font-size: 1.4em;
+      text-align: left;
     }
 
     h3,
@@ -1270,7 +1261,7 @@ $standard-box-radius: 5px;
       padding: 0px 15px;
       color: $font-color-extra-dark;
       overflow-y: hidden;
-    }    
+    }
 
     .tags {
       display: flex;
@@ -1329,6 +1320,32 @@ $standard-box-radius: 5px;
         padding: 0 15px;
       }
     }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin: 10px auto;
+
+      li {
+        &.active {
+          background-color: $teal-color;
+          a {
+            display: flex;
+            color: white !important;
+          }
+        }
+
+        &.disabled {
+          color: $font-color-light;
+        }
+
+        &:not(.disabled):not(.active) a {
+          display: flex;
+          color: $font-color-dark;
+          cursor: pointer;
+        }
+      }
+    }
   }
 }
 
@@ -1345,8 +1362,8 @@ $standard-box-radius: 5px;
     justify-content: flex-start;
 
     .portrait-image-wrapper {
-      height: 25px;
-      width: 25px;
+      height: 40px;
+      width: 40px;
       margin: 0 10px 0 0;
     }
   }
@@ -1384,7 +1401,7 @@ $standard-box-radius: 5px;
     justify-content: center;
     align-items: center;
     color: $font-color-dark;
-    font-size: 1.1rem;
+    font-size: 1em;
 
     &:hover {
       color: $teal-color-dark;
@@ -1403,7 +1420,7 @@ $standard-box-radius: 5px;
   display: flex;
   flex: 0 1 80%;
   flex-flow: nowrap;
-  padding: 0;
+  padding: 5px;
   justify-content: flex-end;
 
   @media #{$mobile} {
@@ -1430,7 +1447,7 @@ $standard-box-radius: 5px;
         font-size: 16px;
 
         @media #{$mobile} {
-          font-size: 0.8rem;
+          font-size: 0.8em;
         }
       }
 
@@ -1460,16 +1477,16 @@ $standard-box-radius: 5px;
   }
 
   .chip {
-    margin-bottom: 0;
-    color: $font-color-light;
-    height: 100%;
-    line-height: 25px;
-    border-radius: 0px;
+    margin-bottom: 0 !important;
+    border-radius: 0px !important;
+    color: $font-color-light !important;
+    height: 100% !important;
+    line-height: 25px !important;
 
     &.active {
-      background: $teal-color;
-      color: $font-color-white;
-      box-shadow: $shadow-small;
+      background: $teal-color !important;
+      color: $font-color-white !important;
+      box-shadow: $shadow-small !important;
     }
   }
 }
@@ -1505,8 +1522,9 @@ $standard-box-radius: 5px;
       justify-content: flex-start;
 
       .quacks-dialogue-summary {
-        flex: 0 1 100;
-        max-width: 30%;
+        display: flex;
+        flex: 0 1 auto;
+        width: auto;
         padding: 0 20px !important;
         height: inherit;
         flex-flow: row wrap;
@@ -1515,6 +1533,7 @@ $standard-box-radius: 5px;
         box-shadow: $shadow;
         box-sizing: border-box;
         border-radius: 5px;
+        max-width: 500px;
 
         .quacks-summary-text {
           display: flex;
@@ -1551,6 +1570,8 @@ $standard-box-radius: 5px;
   align-items: center;
   height: auto;
   padding: 20px 20px;
+  width: 100%;
+  box-sizing: border-box !important;
 
   a {
     text-align: center;

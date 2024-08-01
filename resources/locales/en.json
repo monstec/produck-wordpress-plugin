@@ -49,7 +49,7 @@
       "settings_title": "Settings"
     },
     "text": {
-      "affiliate_note": "* Please note that links on this page may be affiliate links. For purchases made through any of these links, we receive a commission (if you accept the partner's marketing cookies). There are no additional costs for you. However, you support our service. Prices, delivery conditions and availabilities correspond to the specified status (date/time) and can change at any time. Information on our site may therefore differ from those on the partner sites. For the purchase of a specific product, the price and availability information displayed on the relevant website(s) (e.g., Amazon) at the time of purchase applies. Certain content displayed on this website comes from Amazon. This content is provided 'as is' and may be changed or removed at any time.",
+      "affiliate_note": "* Please note that links on this page may be affiliate links. For purchases made through any of these links, the author receives a commission (if you accept the partner's marketing cookies). There are no additional costs for you. However, you support the author. Prices, delivery conditions and availabilities correspond to the specified status (date/time) and can change at any time. Information on this page may therefore differ from those on the partner sites. For the purchase of a specific product, the price and availability information displayed on the relevant website(s) (e.g., Amazon) at the time of purchase applies. Certain content displayed on this page comes from Amazon. This content is provided 'as is' and may be changed or removed at any time.",
       "all_settings": "All Settings",
       "answered_on": "Answered on",
       "article_overview": "Article Overview",
@@ -65,6 +65,7 @@
       "external_posts": "External Posts",
       "expert": "Expert",
       "find_exciting_articles_chats_questions": "Find exciting articles, chats, and questions",
+      "go_to_post_overview": "To Post Overview",
       "in_this_article": "In this article",
       "last_updated_on": "Last updated on ",
       "more_info": "More Information*",

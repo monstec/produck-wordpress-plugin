@@ -1,13 +1,12 @@
 <?php
 // Namespaces do not work here because when putting the widget class in a namespace wordpress
 // won't find it.
-
-// prevent direct access
-defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
-
 use MonsTec\Produck\ProduckApi;
 use MonsTec\Produck\ProduckCache;
 use MonsTec\Produck\ProduckConnector;
+
+// prevent direct access
+defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 
 /**
  * Widget for showing a definite number of Quack Links,
@@ -19,7 +18,7 @@ class ProduckQuacksWidget extends WP_Widget {
     // The headline of the widget is changed in the widget settings in wordpress directly
     public function __construct() {
         parent::__construct(
-            'my_custom_widget',
+            'produck_quacks_widget',
             __( 'Produck Widget', 'text_domain' ),
             array(
                 'customize_selective_refresh' => true,
@@ -30,14 +29,14 @@ class ProduckQuacksWidget extends WP_Widget {
     // The widget form (for the backend )
     public function form($instance) {
 
-        $externalPosts = ProduckPlugin::getTranslations(false, 'text', 'current_posts');
+        $currentlPosts = ProduckPlugin::getTranslations(false, 'text', 'current_posts');
         $defaults = array(
             'widgetTitle' => 'Current Posts'
         );
         if (isset($externalPosts)) {
             // Set widget defaults
             $defaults = array(
-                'widgetTitle' => $externalPosts
+                'widgetTitle' => $currentlPosts
             );
         }
 
@@ -83,17 +82,15 @@ class ProduckQuacksWidget extends WP_Widget {
         }
 
         $quackDisplayTarget = ProduckPlugin::isOpenQuackInNewPage() ? "_blank" : "";
-        $quackData = $connector->getQuacks(ProduckPlugin::getNumberOfQuacksShown());
-
-        //print_r($quackData);
+        $quacksData = $connector->getQuacksAndUsers(ProduckPlugin::getNumberOfQuacksShown());
 
         echo   '<div id="quacks-widget-box" class="quacks-main">';
         echo     '<section id="quacks-container">';
         echo       '<div id="quacklist-wrapper-external-box" class="quacks-block_content flush-left">';
         echo         '<div id="quack-overview-list-external-box">';
 
-        if ($quackData != null) {
-            foreach($quackData as $quack) {
+        if (!empty($quacksData['quacks'])) {
+            foreach($quacksData['quacks'] as $quack) {
                 if (!isset($quack['title']) || strlen($quack['title']) < 1
                         || !isset($quack['id']) || strlen($quack['id']) < 1) {
                     continue;
@@ -108,7 +105,7 @@ class ProduckQuacksWidget extends WP_Widget {
 
                 echo           '<div class="quacks-dialogue-summary narrow">';
                 echo             '<div class="quacks-summary-text">';
-                echo               '<div class="quacks-text-line"><a class="quacks-question-hyperlink" href="'.$quackLink.'" target="'.$quackDisplayTarget.'">'.$title.'</a></div>';
+                echo               '<div class="quacks-text-line"><a class="quacks-question-hyperlink prdk-link-darkco" href="'.$quackLink.'" target="'.$quackDisplayTarget.'">'.$title.'</a></div>';
                 echo             '</div>';
                 echo           '</div>';
             }

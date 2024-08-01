@@ -66,14 +66,13 @@ export default class InitChat {
     }
 
     function initIframeCommunication() {
-      const allowedOrigins = ["https://produck.de", "https://www.produck.de"];
       const allowedOrigins = [
-        "https://produck.de",
-        "https://www.produck.de",
+        'https://produck.de',
+        'https://www.produck.de',
         // @if ENV!='production'
-        "https://localhost",
+        'https://localhost'
         // @endif
-      ];
+    ];
 
       window.onmessage = (e) => {
         if (

@@ -49,7 +49,7 @@
       "settings_title": "Einstellungen"
     },
     "text": {
-      "affiliate_note": "* Bitte beachten Sie, dass Links auf dieser Seite Links zu Werbepartnern sein können. Für Käufe, die über einen dieser Links zustande kommen, erhalten wir (falls sie die Marketingcookies des Werbepartners annehmen) Provision. Ihnen entstehen dadurch keine zusätzlichen Kosten. Sie unterstützen jedoch unseren Service. Preise, Lieferbedingungen und Verfügbarkeiten entsprechen dem angegebenen Stand (Datum/Uhrzeit) und können sich jederzeit ändern. Angaben auf unserer Seite weichen daher ggf. von denen der Partnerseiten ab. Für den Kauf eines betreffenden Produkts gelten die Angaben zu Preis und Verfügbarkeit, die zum Kaufzeitpunkt auf der/den maßgeblichen Website(s) (z.B. Amazon) angezeigt werden. Bestimmte Inhalte, die auf dieser Website angezeigt werden, stammen von Amazon. Diese Inhalte werden‚ 'wie besehen' bereitgestellt und können jederzeit geändert oder entfernt werden.",
+      "affiliate_note": "* Bitte beachten Sie, dass Links auf dieser Seite Links zu Werbepartnern sein können. Für Käufe, die über einen dieser Links zustande kommen, erhalten die Autoren (falls sie die Marketingcookies des Werbepartners annehmen) Provision. Ihnen entstehen dadurch keine zusätzlichen Kosten. Sie unterstützen lediglich den Autor. Preise, Lieferbedingungen und Verfügbarkeiten entsprechen dem angegebenen Stand (Datum/Uhrzeit) und können sich jederzeit ändern. Angaben auf dieser Seite weichen daher ggf. von denen der Partnerseiten ab. Für den Kauf eines betreffenden Produkts gelten die Angaben zu Preis und Verfügbarkeit, die zum Kaufzeitpunkt auf der/den maßgeblichen Website(s) (z.B. Amazon) angezeigt werden. Bestimmte Inhalte, die auf dieser Website angezeigt werden, stammen von Amazon. Diese Inhalte werden‚ 'wie besehen' bereitgestellt und können jederzeit geändert oder entfernt werden.",
       "all_settings": "Alle Einstellungen",
       "answered_on": "beantwortet am",
       "article_overview": "Artikelübersicht",
@@ -65,6 +65,7 @@
       "external_posts": "Externe Beiträge",
       "expert": "Experte",
       "find_exciting_articles_chats_questions": "Finde spannende Artikel, Chats und Fragen",
+      "go_to_post_overview": "Zur Beitragsübersicht",
       "in_this_article": "In diesem Artikel",
       "last_updated_on": "Zuletzt aktualisiert am ",
       "more_info": "Mehr Informationen*",

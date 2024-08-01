@@ -1,32 +1,32 @@
-const gulp = require("gulp"),
-  fs = require("fs"),
-  log = require("fancy-log"),
-  through2 = require("through2"),
-  environments = require("gulp-environments"),
-  preprocess = require("gulp-preprocess"),
-  gfile = require("gulp-file"),
-  gchanged = require("gulp-changed"),
-  merge = require("merge-stream"),
-  plumber = require("gulp-plumber"),
-  livereload = require("gulp-livereload"),
-  expect = require("gulp-expect-file"),
-  sass = require("gulp-sass")(require("sass")),
-  cssnano = require("cssnano"),
-  postcss = require("gulp-postcss"),
-  jshint = require("gulp-jshint"),
-  stripDebug = require("gulp-strip-debug"),
-  uglify = require("gulp-uglify"),
-  rename = require("gulp-rename"),
-  concat = require("gulp-concat"),
-  sourcemaps = require("gulp-sourcemaps"),
-  del = require("del"),
-  chalk = require("chalk"),
-  babel = require("gulp-babel"),
-  zip = require("gulp-zip"),
-  webpack = require("webpack"),
-  webpackstream = require("webpack-stream"),
-  extend = require("extend");
-
+const gulp = (require("gulp"));
+  (fs = require("fs")),
+  (log = require("fancy-log")),
+  (through2 = require("through2")),
+  (environments = require("gulp-environments")),
+  (preprocess = require("gulp-preprocess")),
+  (gfile = require("gulp-file")),
+  (gchanged = require("gulp-changed")),
+  (merge = require("merge-stream")),
+  (plumber = require("gulp-plumber")),
+  (livereload = require("gulp-livereload")),
+  (expect = require("gulp-expect-file")),
+  (sass = require("gulp-sass")(require("sass"))),
+  (cssnano = require("cssnano")),
+  (postcss = require("gulp-postcss")),
+  (jshint = require("gulp-jshint")),
+  (stripDebug = require("gulp-strip-debug")),
+  (uglify = require("gulp-uglify")),
+  (rename = require("gulp-rename")),
+  (concat = require("gulp-concat")),
+  (sourcemaps = require("gulp-sourcemaps")),
+  (del = require("del")),
+  (chalk = require("chalk")),
+  (babel = require("gulp-babel")),
+  (zip = require("gulp-zip")),
+  (webpack = require("webpack")),
+  (webpackstream = require("webpack-stream")),
+  (imagemin = require("gulp-imagemin")),
+  (extend = require("extend"));
 
 // *************************** //
 // *** Build configuration *** //
@@ -47,7 +47,6 @@ var paths = {
       "node_modules/i18next-http-backend/i18nextHttpBackend.min.js",
     ],
     css: [
-      "node_modules/materialize-css/dist/css/materialize.min.css",
       "node_modules/shariff/dist/shariff.min.css",
     ],
   },
@@ -103,7 +102,7 @@ var constants = {
   },
 };
 
-// activate production build by passing '--env production' to gulp
+// activate production build by passing '--env production' to gulp (also "gulp dist --env production")
 var production = environments.production;
 var development = environments.development;
 var enableDebug = true;
@@ -139,8 +138,6 @@ function processPhp(destDir, deploy) {
     .pipe(deploy ? gulp.dest(getCorrespondingDeploymentDir(destDir)) : noop());
 
   return stream;
-
-  return addReloadBehaviour(stream);
 }
 
 // for build task
@@ -195,7 +192,7 @@ function runWebpack() {
     mode: getEnvironment() === "production" ? "production" : "development", // necessary because webpack doesn't know 'staging'
     optimization: {
       minimize: false, // overwrite default of production-mode since minimising is currently done by gulp-plugin
-    }
+    },
   });
 
   //gulp.src(['build/temp/*.js', 'src/main/scripts/**/**/*.js'])
@@ -203,31 +200,34 @@ function runWebpack() {
   var stream = gulp
     .src("src/js" /* just create a pipe the actual files are not used */)
     .pipe(webpackstream(webpackconfig, webpack))
-    .on("error", errorHandlerFunction) // see https://github.com/shama/webpack-stream/issues/34    
+    .on("error", errorHandlerFunction) // see https://github.com/shama/webpack-stream/issues/34
     .pipe(gulp.dest(paths.build.js))
     .pipe(
       doDeployment
-        ? gulp.dest(getCorrespondingDeploymentDir(paths.build.js)) : noop()
+        ? gulp.dest(getCorrespondingDeploymentDir(paths.build.js))
+        : noop()
     )
-    .pipe(!production() ? sourcemaps.write(paths.build.maps).on('error', log) : noop());
+    .pipe(
+      !production()
+        ? sourcemaps.write(paths.build.maps).on("error", log)
+        : noop()
+    );
 
-    return stream; // reload will be done by minify which always should runs after this task
+   return addReloadBehaviour(stream) // reload will be done by minify which always should run after this task
 }
 
 // create minified version using gulp which is normally faster (enable only for production via variable?)
 // the dependency to webpack ensures that minify is not run on an old version
-function minify() {
+function minify(destDir) {
   var stream = gulp
     .src(paths.build.js + "/" + pluginName + ".js")
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(rename({ suffix: ".min" }))
     .pipe(uglify())
     .pipe(sourcemaps.write(paths.build.maps).on("error", log))
-    .pipe(gulp.dest(paths.build.js))
+    .pipe(gulp.dest(destDir))
     .pipe(
-      doDeployment
-        ? gulp.dest(getCorrespondingDeploymentDir(paths.build.js))
-        : noop()
+      doDeployment ? gulp.dest(getCorrespondingDeploymentDir(destDir)) : noop()
     );
 
   return addReloadBehaviour(stream);
@@ -243,7 +243,7 @@ function processStyles(destDir, deploy) {
     .src(paths.source.css)
     .pipe(plumber(errorHandlerFunction))
     .pipe(!production() ? sourcemaps.init() : noop())
-    
+
     .pipe(sass({ errLogToConsole: true }))
     .pipe(postcss(postCssPlugins))
     .pipe(rename({ suffix: ".min" }))
@@ -311,19 +311,22 @@ function processStylesDist() {
  * Include necessary third party libraries.
  */
 function copyLibraries(destDirJs, destDirCss, deploy, distribute) {
-
-   let streamJs = gulp.src(paths.libs.js, {"allowEmpty": true})
+  let streamJs = gulp
+    .src(paths.libs.js, { allowEmpty: true })
     .pipe(plumber(errorHandlerFunction))
     .pipe(expect(paths.libs.js))
     .pipe(gulp.dest(destDirJs))
     .pipe(deploy ? gulp.dest(getCorrespondingDeploymentDir(destDirJs)) : noop())
     .pipe(plumber.stop());
 
-  let streamCss = gulp.src(paths.libs.css, {"allowEmpty": true})
+  let streamCss = gulp
+    .src(paths.libs.css, { allowEmpty: true })
     .pipe(plumber(errorHandlerFunction))
     .pipe(expect(paths.libs.css))
     .pipe(gulp.dest(destDirCss))
-    .pipe(deploy ? gulp.dest(getCorrespondingDeploymentDir(destDirCss)) : noop())   
+    .pipe(
+      deploy ? gulp.dest(getCorrespondingDeploymentDir(destDirCss)) : noop()
+    )
     .pipe(plumber.stop());
 
   return addReloadBehaviour(merge(streamJs, streamCss));
@@ -344,9 +347,10 @@ function copyLibrariesDist() {
  */
 function copyChangedImages(destDir, deploy) {
   var stream = gulp
-    .src(paths.source.img)
+    .src(paths.source.img, {encoding: false })
     // only process changed images; this should save time for consecutive runs of this task or 'default'
-    .pipe(gchanged(destDir))
+    .pipe(gchanged(destDir))    
+    .pipe(imagemin())
     .pipe(gulp.dest(destDir))
     .pipe(deploy ? gulp.dest(getCorrespondingDeploymentDir(destDir)) : noop());
 
@@ -407,6 +411,13 @@ function copyLocalesResourcesDist() {
   return copyLocalesResources(paths.dist.locales, false);
 }
 
+function minifyResourcesBuild() {
+  return minify(paths.build.js);
+}
+function minifyResourcesDist() {
+  return minify(paths.dist.js);
+}
+
 /*
  * Creates a zip archive for each module that can be installed via WPs plugin section.
  */
@@ -427,13 +438,14 @@ var processScriptsBuild = gulp.series(
   createConstantsFile,
   prepareWebpack,
   runWebpack,
-  minify
+  minifyResourcesBuild
 );
+
 var processScriptsDist = gulp.series(
   createConstantsFile,
   prepareWebpack,
   runWebpack,
-  minify
+  minifyResourcesDist
 );
 
 /*
@@ -471,9 +483,9 @@ function watch() {
 // *** Definition of actual gulp tasks *** //
 // *************************************** //
 
-gulp.task('constants', createConstantsFile);
-gulp.task('webpack', gulp.series(prepareWebpack, runWebpack));
-gulp.task('minify', gulp.series('webpack', minify));
+gulp.task("constants", createConstantsFile);
+gulp.task("webpack", gulp.series(prepareWebpack, runWebpack));
+gulp.task("minify", gulp.series("webpack", minifyResourcesBuild));
 gulp.task("styles", processStylesBuild);
 gulp.task("scripts", processScriptsBuild);
 gulp.task("libs", copyLibrariesBuild);
@@ -483,29 +495,37 @@ gulp.task("static", copyStaticResourcesBuild);
 gulp.task("locales", copyLocalesResourcesBuild);
 gulp.task("clean", clean);
 gulp.task(
-    "default",    
-    gulp.series(
-        clean,
-        logDeploymentStatus,
-        gulp.parallel(copyChangedImagesBuild, processStylesBuild, processScriptsBuild, processPhpBuild, copyLibrariesBuild, copyStaticResourcesBuild, copyLocalesResourcesBuild)
+  "default",
+  gulp.series(
+    clean,
+    logDeploymentStatus,
+    gulp.parallel(
+      copyChangedImagesBuild,
+      processStylesBuild,
+      processScriptsBuild,
+      processPhpBuild,
+      copyLibrariesBuild,
+      copyStaticResourcesBuild,
+      copyLocalesResourcesBuild
     )
+  )
 );
 gulp.task(
-    "dist",
-    gulp.series(
-        "clean",
-        logDeploymentStatus,
-        gulp.parallel(
-            processPhpDist,
-            copyChangedImagesDist,
-            processStylesDist,
-            processScriptsDist,
-            copyLibrariesDist,
-            copyStaticResourcesDist,
-            copyLocalesResourcesDist
-        ),
-        createDistributionArchive
-    )
+  "dist",
+  gulp.series(
+    clean,
+    logDeploymentStatus,
+    gulp.parallel(
+      copyChangedImagesDist,
+      processStylesDist,
+      processScriptsDist,
+      processPhpDist,
+      copyLibrariesDist,
+      copyStaticResourcesDist,
+      copyLocalesResourcesDist
+    ),
+    createDistributionArchive
+  )
 );
 gulp.task("watch", watch);
 
@@ -590,38 +610,44 @@ function addReloadBehaviour(stream) {
 }
 
 function doRelease(doneHandler) {
-    if (!production()) {
-        console.log('doRelease only enabled for production build')
-        return doneHandler();
-    }
+  if (!production()) {
+    console.log("doRelease only enabled for production build");
+    return doneHandler();
+  }
 
-    /*
+  /*
     gitLastCommit.getLastCommit(function (err, commit) {
         // read commit object properties
         console.log(commit);
     });
     */
 
-    // get commit hash
-    git.revParse({ args: ' HEAD', quiet: true }, function (err, stdout) {
+  // get commit hash
+  git.revParse({ args: " HEAD", quiet: true }, function (err, stdout) {
+    if (err) throw err;
+
+    var fileContents = "commithash:\t\t" + stdout + "\n";
+
+    // get commit date
+    git.exec(
+      { args: "log -1 --pretty=format:%cd", quiet: true },
+      function (err, stdout) {
         if (err) throw err;
 
-        var fileContents = 'commithash:\t\t' + stdout + "\n";
+        fileContents += "commitdate:\t\t" + stdout + "\n";
 
-        // get commit date
-        git.exec({ args: 'log -1 --pretty=format:%cd', quiet: true }, function (err, stdout) {
-            if (err) throw err;
+        fileContents += "builddate:\t\t" + new Date() + "\n";
 
-            fileContents += 'commitdate:\t\t' + stdout + "\n";
+        // write to output folder
+        require("fs").writeFileSync(
+          paths.build.root + "/version",
+          fileContents
+        );
+      }
+    );
+  });
 
-            fileContents += 'builddate:\t\t' + new Date() + "\n";
+  // TODO use gulp-git and others to automatically create tag, push to server, deploy, ...
 
-            // write to output folder
-            require('fs').writeFileSync(paths.build.root + '/version', fileContents);
-        });
-    });
-
-    // TODO use gulp-git and others to automatically create tag, push to server, deploy, ...
-
-    return doneHandler();
+  return doneHandler();
 }

@@ -1,24 +1,4 @@
-$background-color1: rgba(17, 40, 48, 1);
-$background-color2: rgba(17, 119, 119, 1);
-$background-color3: rgba(231, 233, 234, 1);
-$signal-color-red: rgba(178,0,35,.9);
-$hover-color: rgba(26, 221, 164, 1);
-$placeholder-color: rgba(80, 204, 174, 1);
-$teal-color: rgba(43, 187, 173, 1);
-$mint-green: rgba(43, 187, 173, 0.8);
-$mobile: "(max-width: 600px)";
-$tablet: "(min-width: 600px) and (max-width: 991px)";
-$medium: "(min-width: 992px) and (max-width: 1199px)";
-$desktop: "(min-width: 1200px)";
-$desktop-xl: "(min-width: 1980px)";
-$min-height: "(max-height: 450px)";
-$shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-$shadow-small: -2px 2px 4px 1px rgba(0, 0, 0, 0.6);
-$font-color-extradark: rgba(90,90,90, 1);
-$font-color-light: #aaa;
-$font-color-super-light: rgb(219,219,219);
-$font-color-white: #fff;
-
+@use 'basicStyles' as *;
 
 /* BLOCK #produckchat ******************************************************************** */
 
@@ -213,8 +193,8 @@ $font-color-white: #fff;
         justify-content: flex-start;
         align-items: center;
         height: 28px;
-        background: $background-color3;
-        color: $font-color-extradark;
+        background: $background-color7;
+        color: $font-color-extra-dark;
         width: 170px;
         padding: 5px 5px 5px 10px;
         border-bottom-left-radius: 10px;

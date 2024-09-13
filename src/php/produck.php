@@ -279,10 +279,11 @@ class ProduckPlugin
                             quackPage.pageInitialize();
 
                             const totalPages = quacksDataObj.totalPages;
-                            const pageNumber = quacksDataObj.pageNumber; //starts with 0
+                            const pageNumber = parseInt(quacksDataObj.pageNumber, 10) + 1; //starts with 0
 
-                            quackPage.initOverviewPagination(totalPages, parseInt(pageNumber, 10) + 1);
-
+                            if (totalPages > 1) {
+                                quackPage.initOverviewPagination(totalPages, pageNumber);
+                            }    
                         } else {
                             console.log("Quack Page could not be initialized");
                         }
@@ -407,10 +408,12 @@ class ProduckPlugin
             if (isset($translations['translation'][$subsection][$value])) {
                 return $translations['translation'][$subsection][$value];
             } else {
-                return "Translation not found for {$subsection}.{$value}.";
+                error_log("Translation not found for {$subsection}.{$value}.");
+                return null;
             }
         } else {
-            return "Error decoding the translation file. Translation file not found.";
+            error_log("Error decoding the translation file. Translation file not found.");
+            return null;
         }
     }
 

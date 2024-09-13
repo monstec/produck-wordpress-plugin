@@ -38,11 +38,11 @@ class OverviewPageContent implements DynamicPageContent
         });
 
         $this->quacksDataObj = $this->connector->getQuacksAndUsers();
-        $usersData = $this->quacksDataObj['users'];
+        $usersData = !empty($this->quacksDataObj['users']) ? $this->quacksDataObj['users'] : null;
         
         $contentBuilder = '<div id="quackListMainContainer" class="main block">';
         $contentBuilder .= '<section id="quacks-overview-container" debog="2">';
-        $contentBuilder .= '<h2 data-i18n="text.post_overview">Find exciting articles, chats, and questions</h2>';
+        $contentBuilder .= '<h2 data-i18n="text.post_overview">Post Overview</h2>';
         $contentBuilder .= '<div id="quacklist-wrapper" class="flush-left">';
         
         if (!empty($this->quacksDataObj['quacks'])) {            
@@ -114,7 +114,7 @@ class OverviewPageContent implements DynamicPageContent
                 $contentBuilder .= '</div>';
                 $contentBuilder .= '</div>';
                 $contentBuilder .= '<div class="summary-text">';
-                $contentBuilder .= '<h3><a class="quacks-question-hyperlink prdk-link-darkco" href="' . $quackLink . '" target="' . $quackDisplayTarget . '">' . $title . '</a></h3>';
+                $contentBuilder .= '<h3><a class="prdk-link-darkco " href="' . $quackLink . '" target="' . $quackDisplayTarget . '">' . $title . '</a></h3>';
 
                 if ($summary !== '') {
                     $contentBuilder .= '<div class="info-text">';
@@ -153,8 +153,12 @@ class OverviewPageContent implements DynamicPageContent
                 $contentBuilder .= '</div>';
             }
         } else {
-            $contentBuilder .= '<p>';
-            $contentBuilder .=   'Host your Content on <a href="' . ProduckPlugin::getCustomerProduckLink() . '" target="_blank">ProDuck.de</a>!';
+
+            $contentBuilder .= '<p class="w100 center-txt">';
+            $contentBuilder .=   'Unfortunately, the search returned no results.';
+            $contentBuilder .= '</p>';            
+            $contentBuilder .= '<p class="w100 center-txt">';
+            $contentBuilder .=   'Provided by <a href="' . ProduckPlugin::getCustomerProduckLink() . '" target="_blank">ProDuck</a> - Free Content Hosting Service';
             $contentBuilder .= '</p>';
         }
 

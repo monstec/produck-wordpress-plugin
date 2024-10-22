@@ -6,7 +6,7 @@ defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 
 interface DynamicPageContent {
     /*
-     * Creates title and content.
+     * Creates among others title and content.
      */
     public function create(Array $requestParams);
 

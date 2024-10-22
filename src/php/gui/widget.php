@@ -29,14 +29,14 @@ class ProduckQuacksWidget extends WP_Widget {
     // The widget form (for the backend )
     public function form($instance) {
 
-        $currentlPosts = ProduckPlugin::getTranslations(false, 'text', 'current_posts');
+        $currentPosts = ProduckPlugin::getTranslations(false, 'text', 'current_posts');
         $defaults = array(
-            'widgetTitle' => 'Current Posts'
+            'widgetTitle' => 'Recent Posts'
         );
         if (isset($externalPosts)) {
             // Set widget defaults
             $defaults = array(
-                'widgetTitle' => $currentlPosts
+                'widgetTitle' => $currentPosts
             );
         }
 

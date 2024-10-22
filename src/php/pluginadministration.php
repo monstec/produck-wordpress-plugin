@@ -81,7 +81,7 @@ class ProduckPluginAdministration
     }
 
     /**
-     * Adds sesctions and field definitions.
+     * Adds sections and field definitions.
      * For each section a callback is used to define a descriptive text. Sections are not necessary but just means to
      * logically group options/fields.
      * For each field a callback is used to define the actual HTML code for the field.
@@ -102,7 +102,10 @@ class ProduckPluginAdministration
 
         add_settings_section('produck_settings_widget', 'Widget', array($this, 'widgetSectionText'), 'produck_settings_page');
         add_settings_field('numberOfQuacksShownField', $this->getTranslation('settings', 'max_number_of_posts'), array($this, 'createNumberOfQuacksShownField'), 'produck_settings_page', 'produck_settings_widget');
-        //add_settings_field('verifyQuacksBeforePublishing', 'Erlaubt es dem Seitenbesitzer Beiträge vor der Veröffentlichung zuzustimmen', array($this, 'createverifyQuacksBeforePublishing'), 'produck_settings_page');
+
+        add_settings_section('produck_settings_integration', 'Front Page Integration', array($this, 'integrationSectionText'), 'produck_settings_page');
+        add_settings_field('combineProDuckAndLocalPostsArea', $this->getTranslation('settings', 'direct_integration'), array($this, 'createCombineProDuckAndLocalPostsArea'), 'produck_settings_page', 'produck_settings_integration');
+        add_settings_field('displayShortCodeField', $this->getTranslation('settings', 'integration_per_short_code'), array($this, 'createShortCodeField'), 'produck_settings_page', 'produck_settings_integration');
 
         add_settings_section('produck_settings_chat', $this->getTranslation('settings', 'chat_options'), array($this, 'chatSectionText'), 'produck_settings_page');
         add_settings_field('chatEnabledField', $this->getTranslation('settings', 'chat_enabled'), array($this, 'createChatEnabledField'), 'produck_settings_page', 'produck_settings_chat');
@@ -141,22 +144,33 @@ class ProduckPluginAdministration
     }
 
     /**
+     * Defines the description for the section 'integration settings'.
+     */
+    public function integrationSectionText()
+    {
+        echo $this->getTranslation('settings', 'settings_intro_integration_options');
+    }
+
+    /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'customerId'.
      */
     public function createCustomerIdInputField()
     {
         $options = get_option('produck_config');
+        error_log('Settings: createCustomerIdInputField ' . print_r($options['customerId'], true));
         echo '<input type="text" id="produckCustomerIdField" name="produck_config[customerId]" size="10" value="' . $options['customerId'] . '"/>';
     }
-
+    
     /**
      * Creates the HTML-code for the input elements that lets the user enter up to "maxTokens" values for the option-value 'quackToken'.
      */
-    public function createQuackTokenInputField() {
+    public function createQuackTokenInputField()
+    {
         $options = get_option('produck_config');
+        error_log('Settings: createQuackTokenInputField ' . print_r($options['quackToken']['quackTokens'], true));
         $tokens = isset($options['quackToken']['quackTokens']) ? $options['quackToken']['quackTokens'] : array();
 
-        ?>
+    ?>
         <div id="produckQuackTokenContainer">
             <?php
             if (!empty($tokens)) {
@@ -174,15 +188,15 @@ class ProduckPluginAdministration
         </div>
         <button type="button" id="addQuackTokenButton"><?php esc_html_e('Add another token', 'textdomain'); ?></button>
         <script type="text/javascript">
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 var container = document.getElementById('produckQuackTokenContainer');
                 var addButton = document.getElementById('addQuackTokenButton');
                 var maxTokens = 20;
-    
-                addButton.addEventListener('click', function () {
+
+                addButton.addEventListener('click', function() {
                     var tokenFields = container.getElementsByClassName('token-field');
                     var tokenCount = tokenFields.length;
-    
+
                     if (tokenCount < maxTokens) {
                         var newTokenField = document.createElement('div');
                         newTokenField.classList.add('token-field');
@@ -192,8 +206,8 @@ class ProduckPluginAdministration
                         alert('<?php esc_html_e('You have reached the maximum number of tokens.', 'textdomain'); ?>');
                     }
                 });
-    
-                container.addEventListener('click', function (e) {
+
+                container.addEventListener('click', function(e) {
                     if (e.target && e.target.classList.contains('deleteTokenButton')) {
                         var tokenFields = container.getElementsByClassName('token-field');
                         if (tokenFields.length > 1) {
@@ -205,15 +219,17 @@ class ProduckPluginAdministration
                 });
             });
         </script>
-        <?php
+    <?php
     }
-    
+
     /**
      * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'chatEnabled'.
      */
     public function createChatEnabledField()
     {
         $options = get_option('produck_config');
+        error_log('Settings: createChatEnabledField ' . print_r($options['chatEnabled'], true));
+
         echo '<select id="chatEnabledField" name="produck_config[chatEnabled]">';
         echo ' <option value="1"' . (($options['chatEnabled']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'yes') . '</option>';
         echo ' <option value="0"' . ((!$options['chatEnabled']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'no') . '</option>';
@@ -226,6 +242,8 @@ class ProduckPluginAdministration
     public function createOpenQuackInNewPageField()
     {
         $options = get_option('produck_config');
+        error_log('Settings: createOpenQuackInNewPageField ' . print_r($options['openQuackInNewPage'], true));
+
         echo '<select id="openQuackInNewPageField" name="produck_config[openQuackInNewPage]">';
         echo ' <option value="1"' . (($options['openQuackInNewPage']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'yes') . '</option>';
         echo ' <option value="0"' . ((!$options['openQuackInNewPage']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'no') . '</option>';
@@ -238,6 +256,8 @@ class ProduckPluginAdministration
     public function createMaxQuackUrlTitleLengthField()
     {
         $options = get_option('produck_config');
+        error_log('Settings: createMaxQuackUrlTitleLengthField ' . print_r($options['maxQuackUrlTitleLength'], true));
+
         echo '<input id="maxQuackUrlTitleLengthField" name="produck_config[maxQuackUrlTitleLength]" size="10" type="text" value="' . $options['maxQuackUrlTitleLength'] . '"/>';
     }
 
@@ -247,6 +267,8 @@ class ProduckPluginAdministration
     public function createNumberOfQuacksShownField()
     {
         $options = get_option('produck_config');
+        error_log('Settings: createNumberOfQuacksShownField ' . print_r($options['numberOfQuacksShown'], true));
+
         echo '<input id="numberOfQuacksShownField" name="produck_config[numberOfQuacksShown]" size="10" type="text" value="' . $options['numberOfQuacksShown'] . '"/>';
     }
 
@@ -257,10 +279,45 @@ class ProduckPluginAdministration
     public function createUseThemeTemplateField()
     {
         $options = get_option('produck_config');
+        error_log('Settings: createUseThemeTemplateField ' . print_r($options['useThemeTemplate'], true));
+
         echo '<select id="useThemeTemplateField" name="produck_config[useThemeTemplate]">';
         echo ' <option value="1"' . (($options['useThemeTemplate']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'yes') . '</option>';
         echo ' <option value="0"' . ((!$options['useThemeTemplate']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'no') . '</option>';
         echo '</select>';
+    }
+
+    /**
+     * Creates a selection to choose whether to show produck posts just in the main query or in every post related query
+     */
+    public function createCombineProDuckAndLocalPostsArea()
+    {
+        $options = get_option('produck_config');
+        error_log('Settings: combineProduckPosts ' . print_r($options['combineProduckPosts'], true));       
+
+        echo '<p>' . $this->getTranslation('settings', 'settings_intro_integration') . '</p>';
+        echo '<ol>';
+        echo '<li><i><b>' . $this->getTranslation('settings', 'combine_produck_posts_main_area') . ':</b> ' . $this->getTranslation('settings', 'integration_options_text_main_area') . '</i></li>';
+        echo '<li><i><b>' . $this->getTranslation('settings', 'combine_produck_posts_all_areas') . ':</b> ' . $this->getTranslation('settings', 'integration_options_text_all_areas') . '</i></li>';
+        echo '<li><i><b>' . $this->getTranslation('settings', 'combine_produck_posts_redirect') . ':</b> ' . $this->getTranslation('settings', 'integration_options_text_redirect') . '</i></li>';
+        echo '</ol>';
+
+        echo '<select id="combineProDuckAndLocalPostsArea" name="produck_config[combineProduckPosts]">';
+        echo ' <option value="NoIntegration"' . (($options['combineProduckPosts'] == 'NoIntegration') ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'combine_produck_posts_no_integration') . '</option>';
+        echo ' <option value="integrateInMainQuery"' . (($options['combineProduckPosts'] == 'integrateInMainQuery') ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'combine_produck_posts_main_area') . '</option>';
+        echo ' <option value="integrateInAllQueries"' . (($options['combineProduckPosts'] == 'integrateInAllQueries') ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'combine_produck_posts_all_areas') . '</option>';
+        echo ' <option value="integratePerRedirect"' . (($options['combineProduckPosts'] == 'integratePerRedirect') ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'combine_produck_posts_redirect') . '</option>';
+        echo '</select>';
+    }
+
+    /**
+     * Acivates redirect front page to combined produck+wordpress article overview
+     */
+    public function createShortCodeField()
+    {
+        $shortcode_example = '[combined_posts]';
+        echo '<p><i>' . $this->getTranslation('settings', 'integration_per_short_code_description') . '</i></p>';
+        echo '<pre>' . esc_attr($shortcode_example) . '</pre>';
     }
 
     /**
@@ -269,6 +326,8 @@ class ProduckPluginAdministration
     public function createPoweredByLinkAllowedField()
     {
         $options = get_option('produck_config');
+        error_log('Settings: createPoweredByLinkAllowedField ' . print_r($options['poweredByLinkAllowed'], true));
+
         echo '<select id="poweredByLinkAllowedField" name="produck_config[poweredByLinkAllowed]">';
         if ($options['poweredByLinkAllowed'] > 0) {
             echo ' <option value="1" selected="selected">' . $this->getTranslation('settings', 'yes') . '</option>';
@@ -280,33 +339,17 @@ class ProduckPluginAdministration
         echo '</select>';
     }
 
-    /**
-     * Creates the HTML-code for the input element that let's the user decide whether to verify articles before publishing or not.
-     */
-    public function createverifyQuacksBeforePublishing()
+    private function sanitizeQuackTokensInput($input)
     {
-        $options = get_option('produck_config');
-        echo '<select id="verifyArticlesBeforePublishing" name="produck_config[verifyArticlesBeforePublishing]">';
-        if ($options['verifyArticlesBeforePublishing'] > 0) {
-            echo ' <option value="1" selected="selected">' . $this->getTranslation('settings', 'yes') . '</option>';
-            echo ' <option value="0">' . $this->getTranslation('settings', 'no') . '</option>';
-        } else {
-            echo ' <option value="1">' . $this->getTranslation('settings', 'yes') . '</option>';
-            echo ' <option value="0" selected="selected">' . $this->getTranslation('settings', 'no') . '</option>';
-        }
-        echo '</select>';
-    }
-
-    private function sanitizeQuackTokensInput($input) {
         $trustedInput = array();
-        
+
         if (isset($input['quackTokens']) && is_array($input['quackTokens'])) {
             $trustedInput['quackTokens'] = array();
-            
+
             foreach ($input['quackTokens'] as $index => $token) {
                 // Trim whitespace and leading zeros off the quack token
                 $trimmedToken = trim($token);
-                
+
                 // Validate the token to ensure it is a hex string
                 if (preg_match('/^[0-9a-fA-F]+$/i', $trimmedToken)) {
                     $trustedInput['quackTokens'][] = $trimmedToken;
@@ -325,7 +368,7 @@ class ProduckPluginAdministration
                 $this->getTranslation('settings', 'quack_token_must_be_array')
             );
         }
-    
+
         return $trustedInput;
     }
 
@@ -344,7 +387,7 @@ class ProduckPluginAdministration
         // And of course the original user input of this function (i.e. the argument $input) is not directly stored
         // as new value of the option, so that unwanted additional data in $input a user might have
         // sent along with the plugin settings is discarded.
-        $trustedInput = get_option('produck_config');
+        $trustedInput = get_option('produck_config');        
 
         // trim whitespace and leading zeros off the customer-ID
         $inCustomerId = isset($input['customerId']) ? ltrim(trim($input['customerId']), '0') : '';
@@ -396,6 +439,15 @@ class ProduckPluginAdministration
         $useThemeTemplate = isset($input['useThemeTemplate']) ? trim($input['useThemeTemplate']) : '';
         if (preg_match('/^[0|1]$/i', $useThemeTemplate)) {
             $trustedInput['useThemeTemplate'] = $useThemeTemplate;
+        }
+
+        // Validate combineProduckPosts
+        $combineProDuckPosts = isset($input['combineProduckPosts']) ? trim($input['combineProduckPosts']) : '';
+        if (in_array($combineProDuckPosts, ['NoIntegration', 'integrateInMainQuery', 'integrateInAllQueries', 'integratePerRedirect'])) {
+            $trustedInput['combineProduckPosts'] = $combineProDuckPosts;
+        } else {
+            // Default to 'NoIntegration' if invalid
+            $trustedInput['combineProduckPosts'] = 'NoIntegration';
         }
 
         $poweredByLinkAllowed = isset($input['poweredByLinkAllowed']) ? trim($input['poweredByLinkAllowed']) : '';

@@ -36,9 +36,10 @@ defined('ABSPATH') or die('Quidquid agis, prudenter agas et respice finem!');
 
 // @if ENV!='production'
 // development / debug mode switches
-// has to go in 'wp-config.php' to work properly
-//define('WP_DEBUG', true);
-//define('WP_DEBUG_LOG', true);
+// has to go in 'wp-config.php' to work properly / or activate directly in wp-config
+// define('WP_DEBUG', true);
+// define('WP_DEBUG_LOG', true);
+// define('WP_DEBUG_DISPLAY', false);
 // @endif
 
 require_once 'vpage/page.php';
@@ -47,6 +48,7 @@ require_once 'vpage/controller.php';
 require_once 'vpage/templateloader.php';
 require_once 'gui/quackpagecontent.php';
 require_once 'gui/quacksoverviewpagecontent.php';
+require_once 'gui/combinedpostspagecontent.php';
 require_once 'gui/widget.php';
 require_once 'gui/chat.php';
 require_once 'api/produckconnector.php';
@@ -62,6 +64,7 @@ use MonsTec\Produck\Controller;
 use MonsTec\Produck\TemplateLoader;
 use MonsTec\Produck\QuackPageContent;
 use MonsTec\Produck\OverviewPageContent;
+use MonsTec\Produck\MergedOverviewPageContent;
 use MonsTec\Produck\ProduckQuacksWidget;
 use MonsTec\Produck\Chat;
 
@@ -79,10 +82,13 @@ function produck_activatePlugin()
         'numberOfQuacksShown' => '6',
         'maxQuackUrlTitleLength' => '100',
         'openQuackInNewPage' => 1,
-        'chatEnabled' => 0,
         'useThemeTemplate' => 0,
-        'poweredByLinkAllowed' => -1
+        'combineProduckPosts' => 'NoIntegration',
+        'poweredByLinkAllowed' => -1,
+        'chatEnabled' => 0,
     ));
+
+    $options = get_option('produck_config');
 }
 /*** end of activation hook ***/
 
@@ -113,6 +119,7 @@ class ProduckPlugin
     private static $options;
     private static $pluginPath;
     private static $pluginUrl;
+    private $connector;
 
     public function __construct()
     {
@@ -131,10 +138,14 @@ class ProduckPlugin
             // Get the global post object
             global $post, $isProduckVirtualPage;
 
-            // Check for standard page templates
+            // Check if $post is an object and if it has the correct page template
             if (
-                get_post_meta($post->ID, '_wp_page_template', true) === 'quackdetail.php' ||
-                get_post_meta($post->ID, '_wp_page_template', true) === 'quacksoverview.php'
+                is_object($post) && isset($post->ID) &&
+                (
+                    get_post_meta($post->ID, '_wp_page_template', true) === 'quackdetail.php' ||
+                    get_post_meta($post->ID, '_wp_page_template', true) === 'quacksoverview.php' ||
+                    get_post_meta($post->ID, '_wp_page_template', true) === 'combinedpage.php'
+                )
             ) {
                 return true;
             }
@@ -149,14 +160,14 @@ class ProduckPlugin
 
     public function init()
     {
+
         // add hooks for custom dynamic pages
-        // a possible alternative could be using "custom post types"
+        // a possible alternative could be using "custom posttypes"
         add_action('init', array($this->controller, 'init'));
 
         // Note! The following filter does not work on admin pages!
         add_filter('do_parse_request', array($this->controller, 'dispatch'), PHP_INT_MAX, 2);
 
-        
         add_action('loop_end', function (\WP_Query $query) {
             if (isset($query->virtual_page) && !empty($query->virtual_page)) {
                 $query->virtual_page = NULL;
@@ -177,6 +188,22 @@ class ProduckPlugin
 
             return $plink;
         });
+
+        //TODO - attach to options
+        add_filter('post_link', function ($post_link, $post) {
+            // Check if this is a produck virtual post type
+            if (
+                is_front_page() &&
+                isset($post->post_type)
+                && isset($post->is_produck_virtual) && $post->is_produck_virtual
+                && isset($post->guid)
+            ) {
+                // Override the permalink with the external link (stored in 'guid')
+                return $post->guid;
+            }
+
+            return $post_link;
+        }, 10, 2);
 
         global $overviewPageContentInstance;
         $overviewPageContentInstance = null;
@@ -240,13 +267,20 @@ class ProduckPlugin
             $controller->addPage(new Page('quacks'))
                 ->setContent($overviewPageContentInstance)
                 ->setTemplate('quacksoverview.php');
-        });
 
-        add_action('produck_virtual_pages', function ($controller) {
+            $controller->addPage(new Page('category/produck-guestpost/'))
+                ->setContent($overviewPageContentInstance)
+                ->setTemplate('quacksoverview.php');
+
             $controller->addPage(new Page('quack'))
                 ->setContent(new QuackPageContent($this->connector))
                 ->setTemplate('quackdetail.php');
+
+            $controller->addPage(new Page('combined-post-overview'))
+                ->setContent(new MergedOverviewPageContent($this->connector))
+                ->setTemplate('combinedpage.php');
         });
+
 
         // Register the widget
         add_action('widgets_init', array($this, 'registerQuacksWidget'));
@@ -258,7 +292,7 @@ class ProduckPlugin
             });
         }
 
-        add_filter('the_content', function($content) {
+        add_filter('the_content', function ($content) {
             if (ProduckPlugin::is_specific_template()) {
                 // wpautop wraps content in <p>-tags but also adds unwanted <p>-tags and <br> in the code, so it is removed here
                 remove_filter('the_content', 'wpautop');
@@ -266,7 +300,19 @@ class ProduckPlugin
             return $content;
         }, 9); //higher priority to run before other filters
 
-        
+        //Optional: Insert this short code in a php file of your choice in the form "[combined_posts]", to get an overview of the merged articles at this place
+        add_shortcode('combined_posts', function () {
+
+            if (is_front_page()) {
+                $mergedContent = new MergedOverviewPageContent($this->connector);
+                $mergedContentOutput = $mergedContent->getPostContent();
+
+                return $mergedContentOutput;
+            }
+
+            return '<p>Keine Artikel verfügbar oder Funktion nicht gefunden.</p>';
+        });
+
         add_action('wp_footer', function () {
 
             if (ProduckPlugin::is_specific_template()) {
@@ -283,7 +329,7 @@ class ProduckPlugin
 
                             if (totalPages > 1) {
                                 quackPage.initOverviewPagination(totalPages, pageNumber);
-                            }    
+                            }
                         } else {
                             console.log("Quack Page could not be initialized");
                         }
@@ -298,6 +344,66 @@ class ProduckPlugin
 <?php
             }
         });
+
+        
+        function setIntegrationModus($connector)
+        {
+            $modeOfIntegration = ProduckPlugin::getModusOfPostIntegration();
+    
+            // Create a single instance of the MergedOverviewPageContent class
+            $mergedOverviewPageContent = new MergedOverviewPageContent($connector);
+
+            if ($modeOfIntegration == 'integrateInMainQuery' || $modeOfIntegration == 'integrateInAllQueries') {
+
+                // Pre get posts handler
+                add_action('pre_get_posts', [$mergedOverviewPageContent, 'pre_get_posts_handler']);
+
+                // The posts handler
+                add_filter('the_posts', function ($posts, $query) use ($mergedOverviewPageContent, $modeOfIntegration) {
+                    return $mergedOverviewPageContent->the_posts_handler($posts, $query, $modeOfIntegration);
+                }, 10, 2);
+
+                // Handling post metadata
+                add_filter('get_post_metadata', function ($value, $post_id, $meta_key, $single) use ($mergedOverviewPageContent) {
+                    return $mergedOverviewPageContent->getPostMetadata($value, $post_id, $meta_key, $single); // Return the result
+                }, 10, 4);
+
+                // Handling post thumbnail
+                add_filter('post_thumbnail_html', function ($html, $post_id, $post_thumbnail_id, $size, $attr) use ($mergedOverviewPageContent) {
+                    return $mergedOverviewPageContent->setPostThumbnail($html, $post_id, $post_thumbnail_id, $size, $attr); // Return the result
+                }, 10, 5);
+
+                // Handling attachment image
+                add_filter('wp_get_attachment_image_src', function ($image, $attachment_id, $size, $icon) use ($mergedOverviewPageContent) {
+                    return $mergedOverviewPageContent->getAttachementImage($image, $attachment_id, $size, $icon); // Return the result
+                }, 10, 4);
+
+                // Handling author name
+                add_filter('the_author', function ($author) use ($mergedOverviewPageContent) {
+                    return $mergedOverviewPageContent->setAuthorName($author); // Return the result
+                });
+
+                // Handling author display name
+                add_filter('get_the_author_display_name', function ($display_name, $user_id) use ($mergedOverviewPageContent) {
+                    return $mergedOverviewPageContent->setAuthorDisplayName($display_name, $user_id); // Return the result
+                }, 10, 2);
+
+                // Handling author link
+                add_filter('author_link', function ($link, $author_id) use ($mergedOverviewPageContent) {
+                    return $mergedOverviewPageContent->setAuthorLink($link, $author_id); // Return the result
+                }, 10, 2);
+
+                // Handling avatar image
+                add_filter('get_avatar', function ($avatar, $id_or_email, $size, $default, $alt, $args) use ($mergedOverviewPageContent) {
+                    return $mergedOverviewPageContent->setAvatarImg($avatar, $id_or_email, $size, $default, $alt, $args); // Return the result
+                }, 10, 6);
+            } else if ($modeOfIntegration == 'integratePerRedirect') {
+                // Redirect action
+                add_action('template_redirect', [$mergedOverviewPageContent, 'createRedirectToMergedOverview']);
+            }
+        }
+
+        setIntegrationModus($this->connector);
     }
 
     public function registerQuacksWidget()
@@ -443,6 +549,13 @@ class ProduckPlugin
     {
         return isset(ProduckPlugin::$options['useThemeTemplate'])
             && boolval(ProduckPlugin::$options['useThemeTemplate']);
+    }
+
+    public static function getModusOfPostIntegration()
+    {
+        return isset(ProduckPlugin::$options['combineProduckPosts'])
+            ? ProduckPlugin::$options['combineProduckPosts']
+            : 'NoIntegration';
     }
 
     /**

@@ -1,15 +1,15 @@
 === Produck Shop Chat ===
 Contributors: monstec
-Plugin Name: Customer Service to Content Marketing Converter by Produck 
+Plugin Name: ProDuck Content Everywhere - Publish ProDuck Posts on Connected Blogs  
 Plugin URI: https://produck.de
-Tags: chat, content marketing, social media marketing
+Tags: content sharing, text hosting, guest post management, chat, content marketing, social media marketing
 Author URI: https://produck.de/
 Author: MonsTec GmbH
 Requires at least: 5.0.0
-Tested up to: 5.1.1
+Tested up to: 6.6.2
 Requires PHP: 5.6
-Stable tag: 1.1.0
-Version: 1.1.0
+Stable tag: 2.1.0
+Version: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 

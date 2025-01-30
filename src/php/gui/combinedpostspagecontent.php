@@ -16,7 +16,8 @@ class MergedOverviewPageContent implements DynamicPageContent
     protected $internal_posts = array(); // Store internal articles
     protected $external_posts = array(); // Store external articles
     protected $combined_posts = array(); // Store combined articles
-
+    protected $added_external_post_ids = array(); // Array to track already merged external post IDs
+    protected $implementationLoopsRun = 0; // Number of implementation loops run
 
     function __construct($produckConnectorObject)
     {
@@ -100,16 +101,19 @@ class MergedOverviewPageContent implements DynamicPageContent
         }
 
         // 2. External API Articles (Quacks)
-        $this->quacksDataObj = $this->connector->getQuacksAndUsers();
+        $this->quacksDataObj = $this->connector->getQuacksAndUsers(ProduckPlugin::getMaxPostsToRecall());
         if (is_wp_error($this->quacksDataObj)) {
             error_log('Error occured while creating an external post object: ' . $this->quacksDataObj->get_error_message());
             return;  // Exit early if external API failed
         }
         $usersData = !empty($this->quacksDataObj['users']) ? $this->quacksDataObj['users'] : null;
 
+        $modePrimaryImages = ProduckPlugin::getPostsWoPrimaryImageModus();
+
         if (!empty($this->quacksDataObj['quacks'])) {
             foreach ($this->quacksDataObj['quacks'] as $quack) {
-                if (!isset($quack['title']) || strlen($quack['title']) < 1 || !isset($quack['id']) || strlen($quack['id']) < 1) {
+
+                if (!isset($quack['title']) || strlen($quack['title']) < 1 || !isset($quack['id']) || strlen($quack['id']) < 1 || ($modePrimaryImages == 1 && !isset($quack['primaryImage']))) {
                     continue;
                 }
 
@@ -130,12 +134,12 @@ class MergedOverviewPageContent implements DynamicPageContent
                     'post_content' => $summary,
                     'post_excerpt' => $summary,
                     'post_date' => $publicationTime,
-                    'post_modified' => date('Y-m-d H:i:s', strtotime($quack['lastModifiedTime'])),
+                    'post_modified' => isset($quack['lastModifiedTime']) ? date('Y-m-d H:i:s', strtotime($quack['lastModifiedTime'])) : $publicationTime,
                     'post_author' => $userId,
                     'post_author_name' => self::get_author_name(null, $user),
                     'link' => $quackLink,
-                    'primaryImage' => isset($quack['primaryImage']) ? $quack['primaryImage'] : null,
-                    'portraitImage' => isset($user['portraitImg']) ? $user['portraitImg'] : null,
+                    'primaryImage' => isset($quack['primaryImage']) ? $quack['primaryImage'] : ProduckPlugin::getImageURL('monstec_image_placeholder.jpg'),
+                    'portraitImage' => isset($user['portraitImg']) ? $user['portraitImg'] : ProduckPlugin::getImageURL('ducky_portrait_placeholder_transparent_xs_borderless.png'),
                     'post_type' => $quack['referenceType'],
                     'post_status' => $quack['quackMode'],
                     'tags' => $quack['tags'],
@@ -162,7 +166,7 @@ class MergedOverviewPageContent implements DynamicPageContent
     private static function create_virtual_wp_post($article)
     {
         if (is_wp_error($article)) {
-            error_log('Error occured while creating a virtual post object: ' .$article->get_error_message());
+            error_log('Error occured while creating a virtual post object: ' . $article->get_error_message());
             return null;
         }
 
@@ -170,7 +174,7 @@ class MergedOverviewPageContent implements DynamicPageContent
         $post = new \stdClass(); // Create a new stdClass to hold post data
 
         // Assign unique data from the article to the new post
-        $post->ID = 900000 + abs($article['ID']); // Use negative values for virtual posts
+        $post->ID = 900000 + abs($article['ID']); // Use high value for post id to avoid conflicts
         $post->post_author = -abs($article['post_author']); // Default to 1 or the article's author
         $post->post_author_id = $article['post_author']; // Default to 1 or the article's author
         $post->post_author_name = $article['post_author_name'];
@@ -216,8 +220,8 @@ class MergedOverviewPageContent implements DynamicPageContent
 
     public function pre_get_posts_handler($query)
     {
-        if ($query->is_main_query() && ($query->is_home() || $query->is_front_page()) && !$query->is_admin()) {
-            error_log("pre_get_posts handler running on main query and front page");
+        if ($query->is_main_query() && !$query->is_admin()) {
+            error_log("pre_get_posts handler running on main query");
 
             // Fetch external posts using the connector
             $this->external_posts = $this->getExternalPostData();
@@ -225,7 +229,7 @@ class MergedOverviewPageContent implements DynamicPageContent
             if (empty($this->external_posts)) {
                 error_log("External posts are empty in pre_get_posts");
             } else {
-                error_log("External posts fetched in pre_get_posts: " . print_r($this->external_posts, true));
+                error_log("External posts fetched in pre_get_posts: ");
             }
         }
     }
@@ -233,55 +237,66 @@ class MergedOverviewPageContent implements DynamicPageContent
     /**
      * Turn if the query is related to the menu.
      */
-    public function the_posts_handler($posts, $query, $modeOfIntegration)
+    public function the_posts_handler($posts, $query, $modeOfIntegration, $modeOfDuplicatePosts, $maxLoops)
     {
-        // Exclude menu queries
-        if ($this->is_menu_query($query)) {
-            error_log("This is a menu query, skipping external posts.");
-            return $posts;
-        }
-
         $localMainQuery = $query->is_main_query();
         $globalQuery = is_main_query();
 
         $queryRealm = $modeOfIntegration == 'integrateInMainQuery' ? $localMainQuery : $globalQuery;
-
-        if ($queryRealm && is_front_page() && !is_admin()) {
-            // Merge external posts for various queries on the front page, i.e., sidebar and widgets
-
-            if (empty($this->external_posts)) {
-                error_log("No external posts found and thus not set in the_posts handler.");
-                return $posts;  // Return original posts if nothing was fetched
-            }
-
-            // Merge external posts with the main posts
-            error_log("Post Handler is now merging external and internal posts");
-
-            // Map external posts to WP_Post objects
-            $new_posts = array_map(function ($external_post) {
-                return $this->create_virtual_wp_post($external_post);
-            }, $this->external_posts);
-
-            // Merge the new virtual posts with the existing posts
-            $merged_posts = array_merge($posts, $new_posts);
-
-            // Sort the merged posts by date (most recent first)
-            usort($merged_posts, function ($a, $b) {
-                return strtotime($b->post_date) - strtotime($a->post_date);
+        
+        // Exclude menu queries
+        if ($this->is_menu_query($query) || !$queryRealm || !is_front_page() || is_admin()) {
+            error_log("This is a non-valid (menu/off-realm/not front page or admin) query, skipping external posts.");
+            return $posts;
+        }
+        
+        
+        // Merge external posts for various queries on the front page, i.e., sidebar and widgets
+        if (empty($this->external_posts)) {
+            error_log("No external posts found and thus not set in the_posts handler.");
+            return $posts;  // Return original posts if nothing was fetched
+        }
+        
+        // Merge external posts with the main posts
+        error_log("Post Handler is now merging external and internal posts.") ;        
+        
+        $filtered_external_posts = $this->external_posts;
+        if ($this->implementationLoopsRun >= $maxLoops && $modeOfDuplicatePosts == 1) {
+            $filtered_external_posts = array_filter($this->external_posts, function ($external_post) {
+                return !in_array($external_post['ID'], $this->added_external_post_ids);
             });
 
-            // Cache each virtual post to make them behave like real posts in WP
-            foreach ($merged_posts as $virtual_post) {
-                if (!wp_cache_get($virtual_post->ID, 'posts')) {
-                    wp_cache_set($virtual_post->ID, $virtual_post, 'posts');
-                }
+            if (empty($filtered_external_posts)) {
+                error_log("All external posts are duplicates; returning only internal posts.");
+                return $posts;
             }
-
-            error_log("Merging accomplished. Returning merged posts.");
-            return $merged_posts;
         }
 
-        return $posts;
+        // Convert remaining external posts to WP_Post objects
+        $new_posts = array_map(function ($external_post) {
+            // Track this post ID as added to prevent duplication in other areas
+            $this->added_external_post_ids[] = $external_post['ID'];
+            return $this->create_virtual_wp_post($external_post);
+        }, $filtered_external_posts);
+
+        // Merge the new virtual posts with the existing posts
+        $merged_posts = array_merge($posts, $new_posts);
+
+        // Sort the merged posts by date (most recent first)
+        usort($merged_posts, function ($a, $b) {
+            return strtotime($b->post_date) - strtotime($a->post_date);
+        });
+
+        // Cache each virtual post to make them behave like real posts in WP
+        foreach ($merged_posts as $virtual_post) {
+            if (!wp_cache_get($virtual_post->ID, 'posts')) {
+                wp_cache_set($virtual_post->ID, $virtual_post, 'posts');
+            }
+        }
+
+        $this->implementationLoopsRun++;
+        error_log("Merging run " . $this->implementationLoopsRun . " of " . $maxLoops . " runs accomplished. Returning merged posts.");
+        return $merged_posts;
     }
 
     /**
@@ -403,7 +418,6 @@ class MergedOverviewPageContent implements DynamicPageContent
         return $image; // Default image handling for non-virtual posts
     }
 
-    //TODO - attach to options
     // Filtering the authors display name is theme dependent, so subsequently we use multiple approaches to cover all themes
     // Filter to override the author name display
     public function setAuthorName($author)
@@ -419,7 +433,6 @@ class MergedOverviewPageContent implements DynamicPageContent
         return $author; // Return the default if it's not a virtual post
     }
 
-    //TODO - attach to options
     //Filter to override the author display name
     public function setAuthorDisplayName($display_name, $user_id)
     {
@@ -550,24 +563,24 @@ class MergedOverviewPageContent implements DynamicPageContent
             // Titel
             $output .= '<h2>' . esc_html($article['post_title']) . '</h2>';
 
-            $authorOutput = function($authorName, $post_date = null) {
+            $authorOutput = function ($authorName, $post_date = null) {
                 $output = '<p class="article-author">From: ' . esc_html($authorName);
-        
+
                 // If post_date is set, add it to the output
                 if ($post_date) {
                     $output .= ' | ' . esc_html(date('d.m.Y', strtotime($post_date)));
                 }
-        
+
                 $output .= '</p>';
                 return $output;
             };
-        
+
             // Check if the author name is set
             if (isset($article['post_author_name'])) {
                 $output .= $authorOutput($article['post_author_name'], $article['post_date']);
             } else if (isset($article['author'])) {
                 $output .= $authorOutput($article['author'], $article['post_date']);
-            }            
+            }
 
             // Kurzfassung/Abstract
             if (isset($article['post_excerpt']) && !empty($article['post_excerpt'])) {

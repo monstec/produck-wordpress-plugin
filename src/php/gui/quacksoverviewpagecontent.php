@@ -27,7 +27,7 @@ class OverviewPageContent implements DynamicPageContent
             if (isset($externalPosts)) {
                 return $externalPosts;
             } else {
-                return 'External Posts';
+                return 'ProDuck Guest Posts';
             }
         });
 
@@ -199,7 +199,7 @@ class OverviewPageContent implements DynamicPageContent
         if (isset($externalPosts)) {
             return $externalPosts;
         } else {
-            return 'External Posts';
+            return 'ProDuck Guest Posts';
         }
     }
 

@@ -84,6 +84,10 @@ function produck_activatePlugin()
         'openQuackInNewPage' => 1,
         'useThemeTemplate' => 0,
         'combineProduckPosts' => 'NoIntegration',
+        'ignoreDuplicatePosts' => 1,
+        'maxImplementationLoops' => '1',
+        'ignorePostsWoPrimaryImage' => 1,
+        'maxPostsToRecall' => '10',
         'poweredByLinkAllowed' => -1,
         'chatEnabled' => 0,
     ));
@@ -163,7 +167,7 @@ class ProduckPlugin
 
         // add hooks for custom dynamic pages
         // a possible alternative could be using "custom posttypes"
-        add_action('init', array($this->controller, 'init'));
+        add_action('init', array($this->controller, 'init'));        
 
         // Note! The following filter does not work on admin pages!
         add_filter('do_parse_request', array($this->controller, 'dispatch'), PHP_INT_MAX, 2);
@@ -189,7 +193,6 @@ class ProduckPlugin
             return $plink;
         });
 
-        //TODO - attach to options
         add_filter('post_link', function ($post_link, $post) {
             // Check if this is a produck virtual post type
             if (
@@ -345,22 +348,21 @@ class ProduckPlugin
             }
         });
 
-        
         function setIntegrationModus($connector)
         {
             $modeOfIntegration = ProduckPlugin::getModusOfPostIntegration();
-    
+
             // Create a single instance of the MergedOverviewPageContent class
             $mergedOverviewPageContent = new MergedOverviewPageContent($connector);
 
             if ($modeOfIntegration == 'integrateInMainQuery' || $modeOfIntegration == 'integrateInAllQueries') {
 
                 // Pre get posts handler
-                add_action('pre_get_posts', [$mergedOverviewPageContent, 'pre_get_posts_handler']);
+                add_action('pre_get_posts', [$mergedOverviewPageContent, 'pre_get_posts_handler'], 1);
 
                 // The posts handler
                 add_filter('the_posts', function ($posts, $query) use ($mergedOverviewPageContent, $modeOfIntegration) {
-                    return $mergedOverviewPageContent->the_posts_handler($posts, $query, $modeOfIntegration);
+                    return $mergedOverviewPageContent->the_posts_handler($posts, $query, $modeOfIntegration, ProduckPlugin::getDuplicatePostsModus(), ProduckPlugin::getMaxLoopsPostsToImplement());
                 }, 10, 2);
 
                 // Handling post metadata
@@ -397,6 +399,18 @@ class ProduckPlugin
                 add_filter('get_avatar', function ($avatar, $id_or_email, $size, $default, $alt, $args) use ($mergedOverviewPageContent) {
                     return $mergedOverviewPageContent->setAvatarImg($avatar, $id_or_email, $size, $default, $alt, $args); // Return the result
                 }, 10, 6);
+
+                add_filter('category_link', function ($url, $category_id) {
+                    $produck_category = get_term_by('slug', 'produck-guestpost', 'category');
+                
+                    // Check if this is the ProDuck category and redirect
+                    if ($produck_category && $category_id === $produck_category->term_id) {
+                        return site_url('/category/produck-guestpost/');
+                    }
+                
+                    return $url;
+                }, 10, 2);
+                
             } else if ($modeOfIntegration == 'integratePerRedirect') {
                 // Redirect action
                 add_action('template_redirect', [$mergedOverviewPageContent, 'createRedirectToMergedOverview']);
@@ -556,6 +570,36 @@ class ProduckPlugin
         return isset(ProduckPlugin::$options['combineProduckPosts'])
             ? ProduckPlugin::$options['combineProduckPosts']
             : 'NoIntegration';
+    }
+
+    public static function getDuplicatePostsModus()
+    {
+        return isset(ProduckPlugin::$options['ignoreDuplicatePosts'])
+            && boolval(ProduckPlugin::$options['ignoreDuplicatePosts']);
+    }
+
+    public static function getPostsWoPrimaryImageModus()
+    {
+        return isset(ProduckPlugin::$options['ignorePostsWoPrimaryImage'])
+            && boolval(ProduckPlugin::$options['ignorePostsWoPrimaryImage']);
+    }
+
+    public static function getMaxLoopsPostsToImplement()
+    {
+        $maxLoops = 1;
+        if (isset(ProduckPlugin::$options['maxImplementationLoops'])) {
+            $maxLoops = ProduckPlugin::$options['maxImplementationLoops'];
+        }
+        return $maxLoops;
+    }
+
+    public static function getMaxPostsToRecall()
+    {
+        $maxPosts = 10;
+        if (isset(ProduckPlugin::$options['maxPostsToRecall'])) {
+            $maxPosts = ProduckPlugin::$options['maxPostsToRecall'];
+        }
+        return $maxPosts;
     }
 
     /**

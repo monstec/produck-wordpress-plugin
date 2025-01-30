@@ -106,6 +106,10 @@ class ProduckPluginAdministration
         add_settings_section('produck_settings_integration', 'Front Page Integration', array($this, 'integrationSectionText'), 'produck_settings_page');
         add_settings_field('combineProDuckAndLocalPostsArea', $this->getTranslation('settings', 'direct_integration'), array($this, 'createCombineProDuckAndLocalPostsArea'), 'produck_settings_page', 'produck_settings_integration');
         add_settings_field('displayShortCodeField', $this->getTranslation('settings', 'integration_per_short_code'), array($this, 'createShortCodeField'), 'produck_settings_page', 'produck_settings_integration');
+        add_settings_field('ignoreDuplicatePosts', $this->getTranslation('settings', 'ignore_duplicate_posts'), array($this, 'createIgnoreDuplicatePostsField'), 'produck_settings_page', 'produck_settings_integration');
+        add_settings_field('maxImplementationLoops', $this->getTranslation('settings', 'integration_loops'), array($this, 'createMaxImplementationLoopsInput'), 'produck_settings_page', 'produck_settings_integration');
+        add_settings_field('ignorePostsWoPrimaryImage', $this->getTranslation('settings', 'ignore_noimage_posts'), array($this, 'createIgnorePostsWoImageField'), 'produck_settings_page', 'produck_settings_integration');
+        add_settings_field('maxPostsToRecall', $this->getTranslation('settings', 'set_max_posts_to_recall'), array($this, 'createMaxPostsInput'), 'produck_settings_page', 'produck_settings_integration');
 
         add_settings_section('produck_settings_chat', $this->getTranslation('settings', 'chat_options'), array($this, 'chatSectionText'), 'produck_settings_page');
         add_settings_field('chatEnabledField', $this->getTranslation('settings', 'chat_enabled'), array($this, 'createChatEnabledField'), 'produck_settings_page', 'produck_settings_chat');
@@ -160,7 +164,7 @@ class ProduckPluginAdministration
         error_log('Settings: createCustomerIdInputField ' . print_r($options['customerId'], true));
         echo '<input type="text" id="produckCustomerIdField" name="produck_config[customerId]" size="10" value="' . $options['customerId'] . '"/>';
     }
-    
+
     /**
      * Creates the HTML-code for the input elements that lets the user enter up to "maxTokens" values for the option-value 'quackToken'.
      */
@@ -293,7 +297,7 @@ class ProduckPluginAdministration
     public function createCombineProDuckAndLocalPostsArea()
     {
         $options = get_option('produck_config');
-        error_log('Settings: combineProduckPosts ' . print_r($options['combineProduckPosts'], true));       
+        error_log('Settings: combineProduckPosts ' . print_r($options['combineProduckPosts'], true));
 
         echo '<p>' . $this->getTranslation('settings', 'settings_intro_integration') . '</p>';
         echo '<ol>';
@@ -308,6 +312,57 @@ class ProduckPluginAdministration
         echo ' <option value="integrateInAllQueries"' . (($options['combineProduckPosts'] == 'integrateInAllQueries') ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'combine_produck_posts_all_areas') . '</option>';
         echo ' <option value="integratePerRedirect"' . (($options['combineProduckPosts'] == 'integratePerRedirect') ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'combine_produck_posts_redirect') . '</option>';
         echo '</select>';
+    }
+
+    /**
+     * Creates the HTML-code for the input element that lets the user decide whether to ignore posts without a primary image.
+     */
+    public function createIgnorePostsWoImageField()
+    {
+        $options = get_option('produck_config');
+        error_log('Settings: createIgnorePostsWoImageField ' . print_r($options['ignorePostsWoPrimaryImage'], true));
+
+        echo '<select id="ignorePostsWoPrimaryImageField" name="produck_config[ignorePostsWoPrimaryImage]">';
+        echo ' <option value="1"' . (($options['ignorePostsWoPrimaryImage']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'yes') . '</option>';
+        echo ' <option value="0"' . ((!$options['ignorePostsWoPrimaryImage']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'no') . '</option>';
+        echo '</select>';
+    }
+
+    /**
+     * Creates the HTML-code for the input element that lets the user decide whether to ignore duplicate posts.
+     */
+    public function createIgnoreDuplicatePostsField()
+    {
+        $options = get_option('produck_config');
+        error_log('Settings: createIgnoreDuplicatePostsField ' . print_r($options['ignoreDuplicatePosts'], true));
+
+        echo '<select id="ignoreDuplicatePostsField" name="produck_config[ignoreDuplicatePosts]">';
+        echo ' <option value="1"' . (($options['ignoreDuplicatePosts']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'yes') . '</option>';
+        echo ' <option value="0"' . ((!$options['ignoreDuplicatePosts']) ? 'selected="selected"' : '') . '>' . $this->getTranslation('settings', 'no') . '</option>';
+        echo '</select>';
+    }
+
+    /**
+     * Creates the HTML-code for the input element that limits the loops for post implementation to limit duplicate posts.
+     */
+    public function createMaxImplementationLoopsInput()
+    {
+        $options = get_option('produck_config');
+        error_log('Settings: maxImplementationLoopsInput ' . print_r($options['maxImplementationLoops'], true));
+
+        echo '<p>' . $this->getTranslation('settings', 'set_post_loop_limit') . '</p><br/>';
+        echo '<input id="maxImplementationLoopsInput" name="produck_config[maxImplementationLoops]" size="10" type="number" min="1" value="' . esc_attr($options['maxImplementationLoops']) . '"/>';
+    }
+
+    /**
+     * Creates the HTML-code for the input element that lets the user enter a maximum number of posts to fetch.
+     */
+    public function createMaxPostsInput()
+    {
+        $options = get_option('produck_config');
+        error_log('Settings: maxPostsToRecallField ' . print_r($options['maxPostsToRecall'], true));
+
+        echo '<input id="maxPostsToRecallField" name="produck_config[maxPostsToRecall]" size="10" type="number" min="1" value="' . esc_attr($options['maxPostsToRecall']) . '"/>';
     }
 
     /**
@@ -387,11 +442,11 @@ class ProduckPluginAdministration
         // And of course the original user input of this function (i.e. the argument $input) is not directly stored
         // as new value of the option, so that unwanted additional data in $input a user might have
         // sent along with the plugin settings is discarded.
-        $trustedInput = get_option('produck_config');        
+        $trustedInput = get_option('produck_config');
 
         // trim whitespace and leading zeros off the customer-ID
         $inCustomerId = isset($input['customerId']) ? ltrim(trim($input['customerId']), '0') : '';
-        if (preg_match('/^[1-9][0-9]{0,31}$/i', $inCustomerId)) {
+        if (preg_match('/^[1-9][0-9]{0,31}$/', $inCustomerId)) {
             $trustedInput['customerId'] = $inCustomerId;
         } else {
             add_settings_error(
@@ -415,7 +470,7 @@ class ProduckPluginAdministration
         }
 
         $maxQuackUrlTitleLength = isset($input['maxQuackUrlTitleLength']) ? trim($input['maxQuackUrlTitleLength']) : '';
-        if (preg_match('/^[1-9][0-9]{0,31}$/i', $maxQuackUrlTitleLength)) {
+        if (preg_match('/^[1-9][0-9]{0,31}$/', $maxQuackUrlTitleLength)) {
             $trustedInput['maxQuackUrlTitleLength'] = $maxQuackUrlTitleLength;
         } else {
             add_settings_error(
@@ -426,7 +481,7 @@ class ProduckPluginAdministration
         }
 
         $inNumberOfQuacksShown = isset($input['numberOfQuacksShown']) ? trim($input['numberOfQuacksShown']) : '';
-        if (preg_match('/^[1-9][0-9]{0,31}$/i', $inNumberOfQuacksShown)) {
+        if (preg_match('/^[1-9][0-9]{0,31}$/', $inNumberOfQuacksShown)) {
             $trustedInput['numberOfQuacksShown'] = $inNumberOfQuacksShown;
         } else {
             add_settings_error(
@@ -448,6 +503,42 @@ class ProduckPluginAdministration
         } else {
             // Default to 'NoIntegration' if invalid
             $trustedInput['combineProduckPosts'] = 'NoIntegration';
+        }
+
+        // Validation for "Ignore Posts without Primary Image"
+        $ignorePostsWoPrimaryImage = isset($input['ignorePostsWoPrimaryImage']) ? trim($input['ignorePostsWoPrimaryImage']) : '';
+        if (preg_match('/^[0|1]$/', $ignorePostsWoPrimaryImage)) {
+            $trustedInput['ignorePostsWoPrimaryImage'] = $ignorePostsWoPrimaryImage;
+        }
+
+        // Validation for "Ignore Duplicate Posts"
+        $ignoreDuplicatePosts = isset($input['ignoreDuplicatePosts']) ? trim($input['ignoreDuplicatePosts']) : '';
+        if (preg_match('/^[0|1]$/', $ignoreDuplicatePosts)) {
+            $trustedInput['ignoreDuplicatePosts'] = $ignoreDuplicatePosts;
+        }
+
+        // Validation for "Set Max Loops for Post Implementation Runs"
+        $setMaxImplementationLoops = isset($input['maxImplementationLoops']) ? trim($input['maxImplementationLoops']) : 1;
+        if (preg_match('/^[1-9][0-9]{0,31}$/', $setMaxImplementationLoops)) {
+            $trustedInput['maxImplementationLoops'] = $setMaxImplementationLoops;
+        } else {
+            add_settings_error(
+                'produck_config',
+                'maxImplementationLoops',
+                $this->getTranslation('settings', 'max_loops_must_be_integer')
+            );
+        }
+
+        // Validation for "Set Max Posts to Recall"
+        $setMaxPostsToRecall = isset($input['maxPostsToRecall']) ? trim($input['maxPostsToRecall']) : 10;
+        if (preg_match('/^[1-9][0-9]{0,31}$/', $setMaxPostsToRecall)) {
+            $trustedInput['maxPostsToRecall'] = $setMaxPostsToRecall;
+        } else {
+            add_settings_error(
+                'produck_config',
+                'maxPostsToRecall',
+                $this->getTranslation('settings', 'max_posts_must_be_integer')
+            );
         }
 
         $poweredByLinkAllowed = isset($input['poweredByLinkAllowed']) ? trim($input['poweredByLinkAllowed']) : '';

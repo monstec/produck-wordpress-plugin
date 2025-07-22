@@ -243,23 +243,23 @@ class MergedOverviewPageContent implements DynamicPageContent
         $globalQuery = is_main_query();
 
         $queryRealm = $modeOfIntegration == 'integrateInMainQuery' ? $localMainQuery : $globalQuery;
-        
+
         // Exclude menu queries
         if ($this->is_menu_query($query) || !$queryRealm || !is_front_page() || is_admin()) {
             error_log("This is a non-valid (menu/off-realm/not front page or admin) query, skipping external posts.");
             return $posts;
         }
-        
-        
+
+
         // Merge external posts for various queries on the front page, i.e., sidebar and widgets
         if (empty($this->external_posts)) {
             error_log("No external posts found and thus not set in the_posts handler.");
             return $posts;  // Return original posts if nothing was fetched
         }
-        
+
         // Merge external posts with the main posts
-        error_log("Post Handler is now merging external and internal posts.") ;        
-        
+        error_log("Post Handler is now merging external and internal posts.");
+
         $filtered_external_posts = $this->external_posts;
         if ($this->implementationLoopsRun >= $maxLoops && $modeOfDuplicatePosts == 1) {
             $filtered_external_posts = array_filter($this->external_posts, function ($external_post) {
@@ -402,16 +402,26 @@ class MergedOverviewPageContent implements DynamicPageContent
 
     public function getAttachementImage($image, $attachment_id, $size, $icon)
     {
-        $post = get_post();
+        // 1. Skip if it's the site's logo attachment
+        $custom_logo_id = get_theme_mod('custom_logo');
+        if ((int) $attachment_id === (int) $custom_logo_id) {
+            return $image;
+        }
 
-        // Check if the current post is virtual and override the image URL
+        // 2. Optional: Skip in backend, AJAX, REST
+        if (wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST) || is_admin()) {
+            return $image;
+        }
+
+        // 3. Custom logic for virtual posts
+        $post = get_post();
+        // Check if the current post is virtual and override the image URL 
         if (isset($post->is_produck_virtual) && $post->is_produck_virtual) {
             // Get external image URL
             $external_image_url = get_post_meta($post->ID, 'featured_image', true);
-
             if (!empty($external_image_url)) {
                 // Return the external image as an array similar to wp_get_attachment_image_src output
-                return array($external_image_url, 800, 600, true); // Modify width/height as needed
+                return array($external_image_url, 800, 600, true);
             }
         }
 

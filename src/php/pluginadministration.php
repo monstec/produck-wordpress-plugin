@@ -92,6 +92,7 @@ class ProduckPluginAdministration
 
         add_settings_section('produck_settings_general', $this->getTranslation('settings', 'general'), array($this, 'generalSectionText'), 'produck_settings_page');
         add_settings_field('produckCustomerIdField', $this->getTranslation('settings', 'produck_user_id'), array($this, 'createCustomerIdInputField'), 'produck_settings_page', 'produck_settings_general');
+        add_settings_field('produckDNSTokenField', 'DNS Token:', array($this, 'createDNSTokenInputField'), 'produck_settings_page', 'produck_settings_general');
         add_settings_field('produckQuackTokenField', 'Quack Token:', array($this, 'createQuackTokenInputField'), 'produck_settings_page', 'produck_settings_general');
 
         add_settings_section('produck_settings_quacks', $this->getTranslation('settings', 'post_options'), array($this, 'quacksSectionText'), 'produck_settings_page');
@@ -164,6 +165,32 @@ class ProduckPluginAdministration
         error_log('Settings: createCustomerIdInputField ' . print_r($options['customerId'], true));
         echo '<input type="text" id="produckCustomerIdField" name="produck_config[customerId]" size="10" value="' . $options['customerId'] . '"/>';
     }
+
+    /**
+     * Creates the HTML-code for the input element that let's the user enter a value for the option-value 'customerId'.
+     */
+    public function createDNSTokenInputField()
+    {
+        $options = get_option('produck_config');
+        $token = isset($options['dnsToken']) ? $options['dnsToken'] : '';
+    
+        error_log('Settings: createDNSTokenInputField – token=' . print_r($token, true));
+    
+        ?>
+        <div id="produckDNSTokenContainer">
+            <div class="token-field">
+                <input 
+                    type="text" 
+                    id="produckDNSTokenField" 
+                    name="produck_config[dnsToken]" 
+                    size="50" 
+                    value="<?= esc_attr($token) ?>" 
+                />
+            </div>
+        </div>
+        <?php
+    }
+
 
     /**
      * Creates the HTML-code for the input elements that lets the user enter up to "maxTokens" values for the option-value 'quackToken'.
@@ -425,7 +452,7 @@ class ProduckPluginAdministration
         }
 
         return $trustedInput;
-    }
+    }   
 
     /**
      * Validate the user's input on the settings page. The validated input will be returned and then stored
@@ -453,6 +480,17 @@ class ProduckPluginAdministration
                 'produck_config',
                 'produckCustomerIdField',
                 $this->getTranslation('settings', 'user_id_must_be_integer')
+            );
+        }
+
+        $dnsToken = isset($input['dnsToken']) ? trim($input['dnsToken']) : '';
+        if (preg_match('/^[A-Za-z0-9\-_]{30,45}$/', $dnsToken)) {
+            $trustedInput['dnsToken'] = $dnsToken;
+        } else {
+            add_settings_error(
+                'produck_config',
+                'produckDNSTokenField',
+                $this->getTranslation('settings', 'quack_dnstoken_must_be_valid_token')
             );
         }
 

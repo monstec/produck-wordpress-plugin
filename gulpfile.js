@@ -350,7 +350,7 @@ function copyChangedImages(destDir, deploy) {
     .src(paths.source.img, {encoding: false })
     // only process changed images; this should save time for consecutive runs of this task or 'default'
     .pipe(gchanged(destDir))    
-    .pipe(imagemin())
+    //.pipe(imagemin()) - seems to produce corrupt images, esp. in the zipped folder
     .pipe(gulp.dest(destDir))
     .pipe(deploy ? gulp.dest(getCorrespondingDeploymentDir(destDir)) : noop());
 

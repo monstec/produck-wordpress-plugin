@@ -1,7 +1,7 @@
 /* global produck */
 /* global M */
 
-/* Copyright (c) MonsTec GmbH 2024 | https://monstec.de
+/* Copyright (c) MonsTec GmbH 2025 | https://monstec.de
  ** Author: Dr. Joerg Heinze
  */
 
@@ -28,6 +28,8 @@ export default class LinkifyText {
       instance.linkifyDialogue(teaserContent, userId);
     if (mainContent != undefined && mainContent.length > 0)
       instance.linkifyDialogue(mainContent, userId);
+
+    instance.addSourceNoteOnCopyToClipboard();
   }
 
   buildWidgetItem(productObj, widgetType) {
@@ -311,9 +313,16 @@ export default class LinkifyText {
               (asin) => (amazonProductsApiUri += "&ids=" + asin)
             );
 
+            if (!window.PRODUCK_CONFIG || !window.PRODUCK_CONFIG.apiKey) {
+              console.warn("API key not set — request may be blocked.");
+            }
+
             jQuery.ajax({
               type: "GET",
               url: amazonProductsApiUri,
+              headers: {
+                "x-api-key": window.PRODUCK_CONFIG.apiKey
+              },
               success: function (productDataRecords) {
                 return instance._replacePlaceholdersWithWidgets(
                   productDataRecords,
@@ -649,5 +658,24 @@ export default class LinkifyText {
 
       return sortedArray;
     }
+  }
+
+  addSourceNoteOnCopyToClipboard() {    
+    document.addEventListener('copy', function (e) {
+      const selection = window.getSelection();
+      const copiedText = selection.toString().trim();
+      if (!copiedText) return; // Exit if no text is selected
+   
+      const baseUrl = window.location.origin + window.location.pathname;
+      const sourceName = window.location.hostname;
+    
+      const newHtmlText = `${copiedText} (Quelle: <a href="${baseUrl}" target="_blank" rel="noopener noreferrer">${sourceName}</a>)`;
+      const newPlainText = `${copiedText} (Quelle: ${baseUrl})`;
+    
+      e.preventDefault();
+    
+      e.clipboardData.setData('text/html', newHtmlText);
+      e.clipboardData.setData('text/plain', newPlainText);
+    });
   }
 }

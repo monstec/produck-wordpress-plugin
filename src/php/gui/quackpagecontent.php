@@ -181,7 +181,7 @@ class QuackPageContent implements DynamicPageContent
                             $publicationTime = new DateTime($quackData['publicationTime']);
                             $formattedPublicationTime = $publicationTime->format('d.m.Y');
                             ?>
-                            <span class="published" datetime="<?php echo htmlspecialchars($quackData['publicationTime']); ?>" data-i18n="[title]text.published_on" ><?php echo htmlspecialchars($formattedPublicationTime); ?></span><i data-i18n="[title]text.published_on" ?>" class="material-icons">public</i>
+                            <span class="published" datetime="<?php echo htmlspecialchars($quackData['publicationTime']); ?>" data-i18n="[title]text.published_on" ><?php echo htmlspecialchars($formattedPublicationTime); ?></span><i data-i18n="[title]text.published_on" class="material-icons">public</i>
                         <?php endif; ?>
                     </div>
                     <div class="share-brand">

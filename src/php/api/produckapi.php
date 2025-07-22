@@ -17,7 +17,7 @@ class ProduckApi {
     protected $urlQuacksEndpoint;
     protected $urlQuackEndpoint;
 
-    // User's quack fetch tolen from Produck
+    // User's quack fetch token from Produck
     protected $quackTokens;
     protected $pageNumber;
 

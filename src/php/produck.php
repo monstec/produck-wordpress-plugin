@@ -78,6 +78,7 @@ function produck_activatePlugin()
     // That means deacivating the plugin and then activating it again will not reset the settings.
     add_option('produck_config', array(
         'customerId' => null,
+        'dnsToken' => null,
         'quackToken' => null,
         'numberOfQuacksShown' => '6',
         'maxQuackUrlTitleLength' => '100',
@@ -321,6 +322,9 @@ class ProduckPlugin
             if (ProduckPlugin::is_specific_template()) {
 ?>
                 <script type="text/javascript">
+                    window.PRODUCK_CONFIG = {
+                        apiKey: "<?= esc_js(ProduckPlugin::getDNSToken() ?? '') ?>"
+                    };
                     let quackPage = null;
                     document.addEventListener('DOMContentLoaded', function() {
                         if (typeof produckLib !== 'undefined' && typeof produckLib.InitQuackPage !== 'undefined') {
@@ -418,6 +422,25 @@ class ProduckPlugin
         }
 
         setIntegrationModus($this->connector);
+
+        // add key file to website root to allow indexNow Trigger
+        add_action('parse_request', function () {
+            $key = 'da045eccaf79a101cbccbef9ee702d8032c9eda9d6fba4cb1fe65ae4e875f38b'; // Shared static key for IndexNow
+            // Sanitize request path (this avoids issues with query params)
+           $requestedPath = strtok($_SERVER['REQUEST_URI'], '?');
+
+           if ($requestedPath === "/$key.txt") {
+               // Return plain text and stop further execution, but only at the *very start*
+               status_header(200);
+               header("Content-Type: text/plain");
+               echo $key;
+
+               // Avoid breaking admin or REST calls
+               if (!defined('DOING_AJAX') && !is_admin()) {
+                   exit;
+               }
+           }   
+        });
     }
 
     public function registerQuacksWidget()
@@ -452,6 +475,15 @@ class ProduckPlugin
     {
         if (isset(ProduckPlugin::$options['customerId'])) {
             return ProduckPlugin::$options['customerId'];
+        } else {
+            return null;
+        }
+    }
+
+    public static function getDNSToken()
+    {
+        if (isset(ProduckPlugin::$options['dnsToken'])) {
+            return ProduckPlugin::$options['dnsToken'];
         } else {
             return null;
         }

@@ -172,6 +172,7 @@
     }
 
     p {
+      color: inherit !important;
       margin: 0;
     }
 
@@ -182,6 +183,14 @@
       &:hover {
         color: $teal-color;
       }
+    }
+
+    thead th {
+      color: inherit
+    }
+
+    tbody tr {
+      background-color: inherit;
     }
   }
 
@@ -358,6 +367,10 @@
     font-size: inherit;
     box-shadow: 0px 0px 5px -2px rgba(0, 0, 0, 0.4);
 
+    p {
+      color: inherit !important;
+    }
+
     @media #{$mobile} {
       padding: 40px 15px 15px 15px;
     }
@@ -371,7 +384,15 @@
     }
 
     table {
-          background: $background-color1;
+      background: $background-color1;
+
+      thead th {
+        color: inherit
+      }
+          
+      tbody tr {
+            background-color: inherit;
+      }
     }
 
     p {
@@ -626,6 +647,19 @@
     margin: 1em;
     text-align: center;
     max-width: $max-site-width;
+  }
+}
+
+.quack-main-content-wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  flex-flow: 0 1 100%;
+  justify-content: center;
+  max-width: 100vw;
+  padding: 0 0 0 20px;
+
+    @media #{$mobile}, #{$tablet} {
+    padding: 0;
   }
 }
 
@@ -1116,11 +1150,18 @@
   display: flex;
   flex-flow: row wrap;
   overflow: auto;
-  flex: 0 1 100%;
-  margin: 0 auto;
+  flex: 0 1 auto;
+  margin: 0 20px;
+  width: 75%;
   max-width: $max-site-width;
   padding-top: 20px;
   padding-bottom: 20px;
+  
+  @media #{$mobile}, #{$tablet} {
+    flex: 0 1 100%;
+    max-width: 100%;
+    margin: 0 10px;
+  }
 
   .dialogue-summary {
     @include diaglogue-box;
@@ -1706,5 +1747,41 @@
       justify-content: center;
       align-items: center;
     }
+  }
+}
+
+.produck-widget-wrapper {
+  display: flex;
+  position: relative;
+  margin-top: 20px;
+  overflow: visible;
+  box-sizing: border-box;
+  min-height: 1px;
+  flex-flow: row wrap;
+  flex: 0 1 20%;
+  max-width: 350px;
+  height: auto;
+  justify-content: center;
+  padding: 0 10px;
+  
+  @media #{$tablet} {
+    flex: 0 1 80%;
+    justify-content: center;
+  }
+  
+  @include centerOnMobile; 
+  
+  .produck-quack-widgets {
+    display: flex;    
+    position: sticky;
+    height: fit-content;
+    align-self: flex-start;
+    background-color: white;
+    box-shadow: $shadow;
+    top: 10rem;
+    overflow-y: auto;
+    flex-flow: column;
+    justify-content: flex-start;
+    text-align: center;
   }
 }

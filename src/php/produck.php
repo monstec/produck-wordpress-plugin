@@ -317,6 +317,31 @@ class ProduckPlugin
             return '<p>Keine Artikel verfügbar oder Funktion nicht gefunden.</p>';
         });
 
+        // enables setting custom widgets on produck sites
+        add_action('widgets_init', function () {
+            register_sidebar([
+                'name'          => __('ProDuck Quack Widgets', 'produck'),
+                'id'            => 'produck_quack_widgets',
+                'description'   => __('Widgets shown on ProDuck quack detail pages.', 'produck'),
+                'before_widget' => '<section id="%1$s" class="widget %2$s produck-quack-widget">',
+                'after_widget'  => '</section>',
+                'before_title'  => '<h2 class="widget-title produck-quack-widget-title">',
+                'after_title'   => '</h2>',
+            ]);
+        });
+
+        add_shortcode('produck_quack_widgets', function () {
+            ob_start();
+        
+            if (is_active_sidebar('produck_quack_widgets')) {
+                echo '<aside class="produck-quack-widgets widget-area">';
+                dynamic_sidebar('produck_quack_widgets');
+                echo '</aside>';
+            }
+        
+            return ob_get_clean();
+        });
+
         add_action('wp_footer', function () {
 
             if (ProduckPlugin::is_specific_template()) {

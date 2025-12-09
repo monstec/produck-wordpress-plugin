@@ -404,7 +404,8 @@ class MergedOverviewPageContent implements DynamicPageContent
     {
         // 1. Skip if it's the site's logo attachment
         $custom_logo_id = get_theme_mod('custom_logo');
-        if ((int) $attachment_id === (int) $custom_logo_id) {
+        $site_icon_id   = get_option('site_icon');
+        if ((int) $attachment_id === (int) $custom_logo_id || (int) $attachment_id === (int) $site_icon_id) {
             return $image;
         }
 

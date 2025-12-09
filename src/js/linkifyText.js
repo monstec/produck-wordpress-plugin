@@ -32,6 +32,28 @@ export default class LinkifyText {
     instance.addSourceNoteOnCopyToClipboard();
   }
 
+  transformDate(timestamp) {
+    var dd = timestamp.getDate();
+    var mm = timestamp.getMonth() + 1; //January is 0!
+    var yyyy = timestamp.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    var date = dd + '.' + mm + '.' + yyyy;
+    return date;
+  }
+
+  transformTimeObj(timestamp) {
+    var hours = timestamp.getHours();
+    var minutes = timestamp.getMinutes();
+    if (hours < 10) hours = '0' + hours;
+    if (minutes < 10) minutes = '0' + minutes;
+    return hours + ':' + minutes;
+  }
+
   buildWidgetItem(productObj, widgetType) {
     let instance = this;
 
@@ -63,6 +85,30 @@ export default class LinkifyText {
         productObj.description.substr(0, textToViewportRatio) +
         "</li></ul>";
     }
+
+    function getFormattedDateTime(productObj) {
+        let dateData = productObj.lastUpdate;
+        let d = null;
+    
+        if (typeof dateData === "string") {
+            d = new Date(dateData);
+        } else if (typeof dateData === "object" && dateData !== null) {
+            d = new Date(
+                dateData.year,
+                dateData.monthValue - 1,
+                dateData.dayOfMonth,
+                dateData.hour,
+                dateData.minute
+            );
+        } else {
+            // Fallback: now minus 2 hours
+            d = new Date(Date.now() - 2 * 60 * 60 * 1000);
+        }
+    
+        return instance.transformDate(d) + ' um ' + instance.transformTimeObj(d);
+    }
+
+    let formattedDate = getFormattedDateTime(productObj);
 
     function transformPrice(price, currency, alternativeText) {
       function setAlternativeTextAndTriggerAnalytics() {
@@ -103,10 +149,6 @@ export default class LinkifyText {
         "</span>" +
         primeString +
         "</div>",
-      getMinutes =
-        productObj.lastUpdate.minute < 10
-          ? "0" + productObj.lastUpdate.minute
-          : productObj.lastUpdate.minute,
       widgetString =
         '<div class="prdk-widget">' +
         '<div class="product-block" data-product-id="' +
@@ -151,17 +193,8 @@ export default class LinkifyText {
         "</div>" +
         '<div class="product-notes">' +
         '<span class="product-price-info">' +
-        i18next.t("text.price_incl_vat") +
-        productObj.lastUpdate.dayOfMonth +
-        "." +
-        productObj.lastUpdate.monthValue +
-        "." +
-        productObj.lastUpdate.year +
-        " " +
-        productObj.lastUpdate.hour +
-        ":" +
-        getMinutes +
-        ' (UTC). <a href="#affiliate-note">' +
+        i18next.t('text.update_info', { formattedDate: formattedDate }) +
+        ' <a href="#affiliate-note">' +
         i18next.t("text.more_info") +
         "</a></span>" +
         "</div>" +

@@ -21,7 +21,9 @@ get_header();
 		?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 				<header class="quacks-headline-container">
-					<?php the_title( '<h1 class="quacks-headline">', '</h1>' ); ?>
+					    <h1 class="quacks-headline">
+        					<?php echo html_entity_decode(get_the_title()); ?>
+    					</h1>
 				</header><!-- .entry-header -->
 					<?php
 					the_content();
